@@ -3,7 +3,7 @@ import FormInput from "./FormInput";
 import SubmitButton from "./SubmitButton";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { register } from "../actions";
+import { register } from "../reducers";
 import { useHistory } from "react-router-dom";
 import {Link} from "react-router-dom";
 
@@ -37,32 +37,15 @@ const Register = () => {
 
   const submitRegister = (e) => {
     e.preventDefault();
-    axios.defaults.withCredentials = true;
-
-    axios
-      .post("http://localhost:3001/register", {
+    dispatch(
+      register({
         username: username,
         password: password,
         Fname: Fname,
-        num: num,
+        phoneNumber: num,
+        isLogged: true,
       })
-      .then((response) => {
-        if (response.status === 202) {
-          alert(response.data.message);
-          dispatch(
-            register({
-              username: username,
-              password: password,
-              Fname: Fname,
-              phoneNumber: num,
-              isLogged: true,
-            })
-          );
-          history.push("/dashboard");
-        } else {
-          alert("Registration Failed");
-        }
-      });
+    );
   };
 
   return (
