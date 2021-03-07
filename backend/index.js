@@ -116,7 +116,7 @@ app.post("/login", (req, res) => {
           }
         });
       } else {
-        res.status(252).send({ message: "User does not exist" });
+        res.status(252).send({ message: "Username and Password combination incorrect." });
       }
     }
   );

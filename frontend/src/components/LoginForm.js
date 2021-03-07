@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import FormInput from "./FormInput";
 import SubmitButton from "./SubmitButton";
-import { useDispatch } from "react-redux";
-import { login } from "../actions";
-import { Link, useHistory } from "react-router-dom";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../reducers";
+import { Link, Redirect } from "react-router-dom";
+
 //Login component
 const LoginForm = () => {
   var [username, setUsername] = useState("");
   var [password, setPassword] = useState("");
-  let history = useHistory();
-
+  const user = useSelector((state) => state.user);
   //username change handler to update state variable with the text entered by the user
   const usernameChangeHandler = (e) => {
     setUsername(e.target.value);
@@ -24,56 +23,45 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const submitLogin = (e) => {
     e.preventDefault();
-    axios.defaults.withCredentials = true;
-    axios
-      .post("http://localhost:3001/login", {
+    dispatch(
+      login({
         username: username,
         password: password,
+        Fname: "",
+        phoneNumber: "",
+        isLogged: true,
       })
-      .then((response) => {
-        console.log("Status Code : ", response.status);
-        if (response.status === 200) {
-          console.log("Logged In");
-          // <Redirect to="/dashboard" />
-          dispatch(
-            login({
-              username: username,
-              password: password,
-              Fname: "",
-              phoneNumber: "",
-              isLogged: true,
-            })
-          );
-          history.push("/dashboard");
-        } else {
-          alert(response.data.message);
-        }
-      });
+    );
   };
+  let redirectVar = null;
+  if (user ? user.isLogged : false) {
+    redirectVar = <Redirect to="/dashboard" />;
+  }
 
   return (
     <div className="loginForm container mt-5">
+      <div>{redirectVar}</div>
+      {user ?<div className="alert alert-danger"> {user.error} </div>: ""}
       <form onSubmit={submitLogin} action="/dashboard">
         <FormInput
           text="Email"
           id="username"
           type="email"
           onChange={usernameChangeHandler}
+          style={user && user.error ? true : false}
         />
         <FormInput
           text="Password"
           id="password"
           type="password"
           onChange={passwordChangeHandler}
+          style={user && user.error ? true : false}
         />
-        <SubmitButton
-          text="Log In"
-          type="submit"
-          // onClick={submitLogin}
-        />
-        <Link to="/register" className="btn btn-primary ml-3">New user?</Link>
+        <SubmitButton text="Log In" type="submit" />
+        <Link to="/register" className="btn btn-primary ml-3">
+          New user?
+        </Link>
       </form>
-      
     </div>
   );
   // }
