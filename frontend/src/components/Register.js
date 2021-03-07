@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import FormInput from "./FormInput";
 import SubmitButton from "./SubmitButton";
-import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { register } from "../reducers";
-import { useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import {Link} from "react-router-dom";
 
 const Register = () => {
@@ -14,7 +13,7 @@ const Register = () => {
   let [Fname, setFname] = useState("");
   let [num, setNum] = useState("");
   const dispatch = useDispatch();
-  const history = useHistory();
+  const user = useSelector(state=>state.user)
   // Phone Number change handler
   const numHandler = (e) => {
     setNum(e.target.value);
@@ -43,13 +42,17 @@ const Register = () => {
         password: password,
         Fname: Fname,
         phoneNumber: num,
-        isLogged: true,
       })
     );
   };
-
+  let redirectVar = null;
+  if (user ? user.isLogged : false) {
+    redirectVar = <Redirect to="/dashboard" />;
+  }
   return (
     <div>
+      {redirectVar}
+      {user && user.error?<div className="alert alert-danger"> {user.error} </div>: ""}
       <div className="resgisterForm container mt-5">
         <form onSubmit={submitRegister}>
           <FormInput

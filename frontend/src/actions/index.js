@@ -1,5 +1,4 @@
 const setLogin = (payload) => {
-    console.log("setLogin called");
     return {
         type: "setLogin",
         payload: payload,

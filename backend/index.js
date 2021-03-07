@@ -63,7 +63,7 @@ app.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   const Fname = req.body.Fname;
-  const num = req.body.num;
+  const num = req.body.phoneNumber;
   bcrypt.hash(password, saltRounds, (err, hash) => {
     if (err) {
       console.log(err);

@@ -27,9 +27,6 @@ const LoginForm = () => {
       login({
         username: username,
         password: password,
-        Fname: "",
-        phoneNumber: "",
-        isLogged: true,
       })
     );
   };
@@ -41,7 +38,7 @@ const LoginForm = () => {
   return (
     <div className="loginForm container mt-5">
       <div>{redirectVar}</div>
-      {user ?<div className="alert alert-danger"> {user.error} </div>: ""}
+      {user && user.error?<div className="alert alert-danger"> {user.error} </div>: ""}
       <form onSubmit={submitLogin} action="/dashboard">
         <FormInput
           text="Email"

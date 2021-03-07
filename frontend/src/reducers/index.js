@@ -26,7 +26,8 @@ const userReducer = (state = initialState, action) => {
         password: action.payload.password,
         Fname: action.payload.Fname,
         phoneNumber: action.payload.phoneNumber,
-        isLogged: true,
+        isLogged: action.payload.isLogged,
+        error: action.payload.err
       };
     default:
       return state;
@@ -43,7 +44,6 @@ export const login = (payload) => async (dispatch, getState) => {
     .then((response) => {
       console.log("Status Code : ", response.status);
       if (response.status === 200) {
-        console.log("Logged In");
         // <Redirect to="/dashboard" />
         dispatch(setLogin({...payload, isLogged:true}));
       } else {
@@ -60,20 +60,21 @@ export const login = (payload) => async (dispatch, getState) => {
 
 export const register = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
-
   await axios
     .post("http://localhost:3001/register", {
       username: payload.username,
       password: payload.password,
       Fname: payload.Fname,
-      num: payload.num,
+      phoneNumber: payload.phoneNumber,
     })
     .then((response) => {
       if (response.status === 202) {
-        alert(response.data.message);
-        dispatch(setRegister(payload));
+        console.log("success");
+        dispatch(setRegister({...payload, isLogged:true}));
       } else {
-        alert("Registration Failed");
+        console.log("Error on registation");
+        console.log(response.data.err)
+        dispatch(setRegister({err: "Registration Error", isLogged:false}));
       }
     });
 };
