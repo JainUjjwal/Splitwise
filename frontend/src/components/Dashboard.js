@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import AddBillModal from "./AddBillModal";
+
 import CreateGroupModal from "./CreateGroupModal";
 // import Navbar from './Nav2';
 // import {selectUser} from "../features/userSlice";
@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
-  var [openBillDialog, setOpenBillDialog] = useState(false);
+  
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
   var dataBlock = [
@@ -33,20 +33,18 @@ const Dashboard = () => {
       });
     }
     setTotal({ ...total, credit: credit, debt: debt });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   useEffect(() => {
     //axios call for setting total balance and balance list
     setData(dataBlock);
-    console.log("second use");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const GroupDialogOpen = () => {
     setOpenGroupDialog(true);
   };
-  const BillDialogOpen = () => {
-    setOpenBillDialog(true);
-  };
+ 
   const dialogClose = () => {
-    setOpenBillDialog(false);
     setOpenGroupDialog(false);
   };
   const settleHandler = (e) => {
@@ -57,11 +55,7 @@ const Dashboard = () => {
   return (
     <div>
       <div className="mt-3 mx-auto">
-        <h3 className="container">Welcome {username}</h3>
-        <Container fluid="md" style={{ marginLeft: "65%" }}>
-          <div className="btn-group mx2"></div>
-        </Container>
-        <AddBillModal show={openBillDialog} hide={dialogClose} />
+        <h3 className="container">Welcome {username}</h3>        
         <CreateGroupModal show={openGroupDialog} hide={dialogClose} />
         <Container className="mt-3">
           <div className='row'

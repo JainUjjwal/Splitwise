@@ -7,7 +7,6 @@ const cors = require("cors");
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -15,14 +14,6 @@ app.use(
     method: ["GET", "POST"],
   })
 );
-app.use(express.json());
-const db = mysql.createConnection({
-  host: "splitwise.cdastitva5m4.us-east-2.rds.amazonaws.com",
-  user: "admin",
-  password: "rootadmin",
-  database: "main",
-  multipleStatements: true
-});
 
 //app.use(cookieParser);
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -36,6 +27,16 @@ app.use(
     activeDuration: 5 * 60 * 1000,
   })
 );
+app.use(express.json());
+const db = mysql.createConnection({
+  host: "splitwise.cdastitva5m4.us-east-2.rds.amazonaws.com",
+  user: "admin",
+  password: "rootadmin",
+  database: "main",
+  multipleStatements: true
+});
+
+
 //Database connection
 db.connect(function (err) {
   if (err) {

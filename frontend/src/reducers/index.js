@@ -27,7 +27,7 @@ const userReducer = (state = initialState, action) => {
         Fname: action.payload.Fname,
         phoneNumber: action.payload.phoneNumber,
         isLogged: action.payload.isLogged,
-        error: action.payload.err
+        regError: action.payload.err
       };
     default:
       return state;

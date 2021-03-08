@@ -1,11 +1,9 @@
 import React from "react";
 import {Dropdown } from "react-bootstrap";
 import "./profile.css";
-import Navbar from "./Nav2"
 const Profile = () => {
   return (
     <div>
-      <Navbar />
       <div className="container">
         <div className="my-4">
           <h2>My Profile</h2>

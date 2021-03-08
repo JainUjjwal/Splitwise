@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions";
-import axios from "axios";
 //create the Navbar Component
 const Navbar = () => {
   //handle logout to destroy the cookie
@@ -24,12 +23,7 @@ const Navbar = () => {
   };
   //   const setLink = () => {
   //if Cookie is set render Logout Button
-  let changeNav;
-  axios.get("http://localhost:3001/login").then((response) => {
-    changeNav = true;
-    console.log(changeNav);
-  });
-
+  
   let navLogin = null;
   if (isLoggedIn) {
     console.log("Able to read cookie");

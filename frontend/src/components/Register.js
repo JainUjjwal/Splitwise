@@ -52,7 +52,7 @@ const Register = () => {
   return (
     <div>
       {redirectVar}
-      {user && user.error?<div className="alert alert-danger"> {user.error} </div>: ""}
+      {user && user.regError?<div className="alert alert-danger"> {user.regError} </div>: ""}
       <div className="resgisterForm container mt-5">
         <form onSubmit={submitRegister}>
           <FormInput
