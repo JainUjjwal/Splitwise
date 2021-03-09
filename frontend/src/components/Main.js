@@ -11,6 +11,7 @@ import MyGroups from './MyGroups';
 import GroupPage from './GroupPage';
 import Profile from './Profile';
 import Landing from './Landing';
+import EditProfile from './EditProfile';
 //Create a Main Component
 class Main extends Component {
     render(){
@@ -19,13 +20,14 @@ class Main extends Component {
                 <Navbar />
                 {/*Render Different Component based on Route*/}
                 
-                <Route path="/" exact component={Landing}/>
-                <Route path="/login" component={LoginForm}/>
-                <Route path="/register" component={Register}/>
-                <Route path="/dashboard" component={Dashboard}/>
-                <Route path="/mygroups" component={MyGroups}/>
-                <Route path="/groupPage" component={GroupPage}/>
-                <Route path="/profile" component={Profile}/>
+                <Route path="/" exact component={Landing} />
+                <Route path="/login" component={LoginForm} />
+                <Route path="/register" component={Register} />
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/mygroups" component={MyGroups} />
+                <Route path="/groupPage" component={GroupPage} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/editprofile" component={EditProfile} />
             </div>
         )
     }
