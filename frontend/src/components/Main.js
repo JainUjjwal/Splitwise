@@ -11,7 +11,6 @@ import MyGroups from './MyGroups';
 import GroupPage from './GroupPage';
 import Profile from './Profile';
 import Landing from './Landing';
-import EditProfile from './EditProfile';
 //Create a Main Component
 class Main extends Component {
     render(){
@@ -27,7 +26,6 @@ class Main extends Component {
                 <Route path="/mygroups" component={MyGroups} />
                 <Route path="/groupPage" component={GroupPage} />
                 <Route path="/profile" component={Profile} />
-                <Route path="/editprofile" component={EditProfile} />
             </div>
         )
     }

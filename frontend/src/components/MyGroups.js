@@ -40,19 +40,11 @@ const MyGroups = () => {
     newInviteList.splice(e.target.dataset.id, 1);
     setInviteList(newInviteList);
   };
+
   const searchTermHandler = (e) => {
-    setSearchTerm(e.target.value);
-  }
-  const dynamicSearch = () =>{
-    let i = 0;
-    for(i=0; i<groupList.length; i++){
-      if (searchTerm.toLowerCase() ===groupList[i].name.toLowerCase()){
-        console.log(searchTerm.toLowerCase())
-        console.log('Word found');
-      }
-    }
-    // return groupList.filter(group=>group.toLowerCase().includes(searchTerm.toLowerCase))
-  }
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
   const renderInviteList = () => {
     return inviteList
       ? inviteList.map((group, index) => (
@@ -90,15 +82,12 @@ const MyGroups = () => {
           <h2>My Groups</h2>
         </div>
         <div>
-          <FormInput id="GroupSearch" text="Search for Group" type="text" onChange={searchTermHandler}/>
-          <Button
-            type="Submit"
-            className="form-group"
-            style={{ marginLeft: "15px" }}
-            onClick={dynamicSearch}
-          >
-            Search
-          </Button>
+          <FormInput
+            id="GroupSearch"
+            text="Search for Group"
+            type="text"
+            onChange={searchTermHandler}
+          />
         </div>
         {/* LIST OF ACCEPTED GROUPS */}
         <Row className="pt-4">
@@ -109,30 +98,42 @@ const MyGroups = () => {
             <b>Action</b>
           </Col>
         </Row>
-        {}
+
         {groupList
-          ? groupList.map((group, index) => (
-              <Row className="pt-4" key={index}>
-                <Col xs={9} className="border-right">
-                  <Link to="/groupPage">{group.name}</Link>
-                </Col>
-                <Col>
-                  <div className="btn-group mx2 ml-5">
-                    <Button data-id={index}>View Group</Button>
-                  </div>
-                </Col>
-              </Row>
-            ))
+          ? groupList.map((group, index) => {
+              return searchTerm.length === 0 ||
+                group.name.toLowerCase().search(searchTerm) > -1 ? (
+                <Row className="pt-4" key={index}>
+                  <Col xs={9} className="border-right">
+                    <Link to="/groupPage">{group.name}</Link>
+                  </Col>
+                  <Col>
+                    <div className="btn-group mx2 ml-5">
+                      <Button data-id={index} variant="outline-primary">
+                        <Link to="/groupPage"> View Group</Link>
+                      </Button>
+                    </div>
+                  </Col>
+                </Row>
+              ) : (
+                ""
+              );
+            })
           : ""}
-        {/* LIST OF GROUP INVITES */}        
-        <Row className="pt-4">
-          <Col xs={9} className="border-right">
-            <b>Group Invites</b>
-          </Col>
-          <Col className="text-center" >
-            <b>Action</b>
-          </Col>
-        </Row>
+        {/* LIST OF GROUP INVITES */}
+        {/* {inviteList.length} */}
+        {inviteList && inviteList.length > 0 ? (
+          <Row className="pt-4">
+            <Col xs={9} className="border-right">
+              <b>Group Invites</b>
+            </Col>
+            <Col className="text-center">
+              <b>Action</b>
+            </Col>
+          </Row>
+        ) : (
+          ""
+        )}
         {renderInviteList()}
       </div>
     </div>
