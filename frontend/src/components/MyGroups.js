@@ -109,9 +109,10 @@ const MyGroups = () => {
                   </Col>
                   <Col>
                     <div className="btn-group mx2 ml-5">
-                      <Button data-id={index} variant="outline-primary">
-                        <Link to="/groupPage"> View Group</Link>
-                      </Button>
+                      <Link to="/groupPage" className="btn btn-outline-primary">
+                        {" "}
+                        View Group
+                      </Link>
                     </div>
                   </Col>
                 </Row>

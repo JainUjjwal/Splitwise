@@ -25,19 +25,13 @@ const Profile = () => {
   };
 
   const saveEdit = () => {
-    const newName = document.getElementById("newName").value;
-    const newEmail = document.getElementById("newEmail").value;
-    const newNumber = document.getElementById("newNumber").value;
-    const newLanguage = document.getElementById('newLanguage').value;
-    const newcurrency = document.getElementById('newcurrency').value;
-    const newtimezone = document.getElementById('newtimezone').value;
     const updatedData = {
-      username: newEmail,
-      firstName: newName,
-      phoneNumber: newNumber,
-      language: newLanguage,
-      currency: newcurrency,
-      timezone: newtimezone
+      username: document.getElementById("newEmail").value,
+      firstName: document.getElementById("newName").value,
+      phoneNumber: document.getElementById("newNumber").value,
+      language: document.getElementById('newLanguage').value,
+      currency: document.getElementById('newcurrency').value,
+      timezone: document.getElementById('newtimezone').value
     };
     setUserInfo(updatedData);
     setEditStatus(false);
@@ -100,7 +94,7 @@ const Profile = () => {
                       Phone Number:{" "}
                       {editStatus ? (
                         <input
-                          type="text"
+                          type="number"
                           id="newNumber"
                           defaultValue={userInfo ? userInfo.phoneNumber : ""}
                         />
