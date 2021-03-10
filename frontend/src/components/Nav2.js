@@ -21,12 +21,9 @@ const Navbar = () => {
       })
     );
   };
-  //   const setLink = () => {
-  //if Cookie is set render Logout Button
   
   let navLogin = null;
   if (isLoggedIn) {
-    console.log("Able to read cookie");
     navLogin = (
       <span>
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -36,6 +33,9 @@ const Navbar = () => {
             </Link>
             <Link className="nav-item nav-link active" to="/mygroups">
               My Groups <span className="sr-only"></span>
+            </Link>
+            <Link className="nav-item nav-link" to="/history">
+              All Transactions <span className="sr-only"></span>
             </Link>
           </div>
           <ul className="nav navbar-nav navbar-right">
