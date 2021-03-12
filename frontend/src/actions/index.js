@@ -7,9 +7,9 @@ const setLogin = (payload) => {
 };
 
 
-const logout = (payload) => {
+const setLogout = (payload) => {
   return {
-    type: "logout",
+    type: "setLogout",
     payload: payload,
   };
 };
@@ -21,4 +21,4 @@ const setRegister = (payload) => {
   };
 };
 
-export { setLogin, logout, setRegister };
+export { setLogin, setLogout, setRegister };

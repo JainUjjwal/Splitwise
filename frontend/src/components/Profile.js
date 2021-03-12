@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
 import "./profile.css";
 import img from "../constants/image1.jpg";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 // import { Link } from "react-router-dom";
 
 const Profile = () => {
@@ -40,9 +42,16 @@ const Profile = () => {
   const closeEdit = () => {
     setEditStatus(false);
   };
+  const user = useSelector((state) => state.user);
+  const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
 
   return (
     <div>
+      {redirectVar}
       <div className="container">
         <Card className="my-4">
           <Card.Header>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setLogin, setRegister } from "../actions";
+import { setLogin, setRegister, setLogout } from "../actions";
 const initialState = null;
 
 const userReducer = (state = initialState, action) => {
@@ -14,7 +14,7 @@ const userReducer = (state = initialState, action) => {
         isLogged: action.payload.isLogged,
         error: action.payload.err
       };
-    case "logout":
+    case "setLogout":
       return {
         ...state,
         isLogged: false,
@@ -78,5 +78,17 @@ export const register = (payload) => async (dispatch, getState) => {
       }
     });
 };
-
+export const logout = (payload) => async (dispatch, getState) =>{
+  await axios
+    .post("http://localhost:3001/logout")
+    .then((response) => {
+      if (response.status === 204) {
+        dispatch(setLogout({...payload, isLogged:false}));
+      } else {
+        console.log("Error on logout");
+        console.log(response.data.err)
+        dispatch(setLogout({err: "Logout Error", isLogged:false}));
+      }
+    });
+}
 export default userReducer;

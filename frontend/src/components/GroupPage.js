@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 const GroupPage = () => {
   let transactionList = [
     { discription: "Rent", amount: 2000, typeClass: true },
@@ -38,19 +40,27 @@ const GroupPage = () => {
       typeClass: true,
     });
     setData(newdata);
-
+    dialogClose();
     // TRASHY FRONTEND LOGIC FOR UPDATING GROUP MEMBER BALANCE 
     // PLEASE UPDATE THIS 
-    let perPerson = parseFloat((newAmount/memberList.length).toFixed(2))
-    let members = groupInfo.members;
-    members[1].amount = members[1].amount + perPerson;
+    // let perPerson = parseFloat((newAmount/memberList.length).toFixed(2))
+    // let members = groupInfo.members;
+    // members[1].amount = members[1].amount + perPerson;
 
-    console.log(groupInfo.members[1].amount + perPerson);
+    // console.log(groupInfo.members[1].amount + perPerson);
     
 
   };
+  const user = useSelector((state) => state.user);
+  const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
+
   return (
     <div className="container-fluid">
+      {redirectVar}
       <div className="row">
         {/* DISPLAYING AMOUNT FOR EACH GROUP MEMBER */}
         {/* ######################### */}

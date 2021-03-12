@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 // import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
-
+import axios from 'axios';
 import CreateGroupModal from "./CreateGroupModal";
 // import Navbar from './Nav2';
 // import {selectUser} from "../features/userSlice";
 import { useSelector } from "react-redux";
+import { Redirect } from "react-router";
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
-  
+  const isLoggedIn = user ? user.isLogged : false;
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
   var dataBlock = [
@@ -19,10 +20,23 @@ const Dashboard = () => {
     { id: "3", name: "Shashwat", amount: 15, typeClass: true },
     { id: "4", name: "Ankit", amount: 30, typeClass: false },
   ];
+  let friendList = [
+    { userId: 1, name: "Ujjwal", email:"ujjwal@gmail.com" },
+    { userId: 2, name: "Mohit", email:"mohit@gmail.com" },
+    { userId: 3, name: "Ankit", email:"ankit@gmail.com" },
+    {userId: 4, name:'Shashwat', email:"shashwat@gmail.com"}
+  ];
   let [total, setTotal] = useState();
   var [data, setData] = useState();
+  // var userInfo;
   useEffect(() => {
+    
     //axios call for updating total balance and settling balance list changes
+    axios.post("http://localhost:3001/dashboard").then((res)=>{
+       const userInfo = res.data.user;
+      //  console.log(userInfo);
+    })
+    
     let credit = 0;
     let debt = 0;
     if (data) {
@@ -43,22 +57,30 @@ const Dashboard = () => {
   const GroupDialogOpen = () => {
     setOpenGroupDialog(true);
   };
- 
+
   const dialogClose = () => {
     setOpenGroupDialog(false);
+    
   };
   const settleHandler = (e) => {
     let newData = [...data];
     newData.splice(e.target.dataset.id, 1);
     setData(newData);
   };
+
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
   return (
     <div>
+      {redirectVar}
       <div className="mt-3 mx-auto">
-        <h3 className="container">Welcome {username}</h3>        
-        <CreateGroupModal show={openGroupDialog} hide={dialogClose} />
-        <Container className="mt-3">
-          <div className='row'
+        <h3 className="container">Welcome {username}</h3>
+        <CreateGroupModal show={openGroupDialog} hide={dialogClose} friends={friendList}/>
+        <Container className="mt-5">
+          <div
+            className="row"
             style={{
               fontSize: 14,
               color: "grey",
@@ -67,7 +89,8 @@ const Dashboard = () => {
               textAlign: "center",
             }}
           >
-            <div className="col"
+            <div
+              className="col"
               style={{
                 padding: "0px 50px",
                 borderRight: "1px solid #9e9e9e",
@@ -81,7 +104,8 @@ const Dashboard = () => {
                 ${total ? total.debt : ""}
               </span>
             </div>
-            <div className="col"
+            <div
+              className="col"
               style={{
                 padding: "0px 50px",
                 borderRight: "1px solid #9e9e9e",
@@ -94,7 +118,8 @@ const Dashboard = () => {
                 ${total ? total.credit : ""}
               </span>
             </div>
-            <div className="col"
+            <div
+              className="col"
               style={{
                 padding: "0px 50px",
                 borderRight: "1px solid #9e9e9e",
@@ -106,7 +131,7 @@ const Dashboard = () => {
             </div>
           </div>
         </Container>
-        <Container id="user-holder" className="mt-4">
+        <Container id="user-holder" className="mt-5 pt-4">
           <div id="table-title" className="pb-4">
             <Row className="text-center">
               <Col id="name">

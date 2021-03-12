@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import {useSelector} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 const History = () => {
   const groupList = ["House", "Trip", "xyz"];
@@ -58,9 +60,15 @@ const History = () => {
     setFilteredHistory(filteredData)
     }
   };
-
+  const user = useSelector((state) => state.user);
+  const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
   return (
     <div className="container">
+      {redirectVar}
       <div className="my-4">
         <h2>Transaction History</h2>
       </div>

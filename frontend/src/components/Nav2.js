@@ -1,16 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import cookie from "react-cookies";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../actions";
+import { logout } from "../reducers";
+import { propTypes } from "react-bootstrap/esm/Image";
+import {createBrowserHistory} from 'history';
 //create the Navbar Component
-const Navbar = () => {
+const Navbar = (props) => {
   //handle logout to destroy the cookie
+  const history = useHistory();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const isLoggedIn = user ? user.isLogged : false;
   const handleLogout = () => {
-    cookie.remove("cookie", { path: "/" });
+    history.push('/login');
     dispatch(
       logout({
         username: null,
@@ -20,8 +22,8 @@ const Navbar = () => {
         isLogged: false,
       })
     );
+      
   };
-  
   let navLogin = null;
   if (isLoggedIn) {
     navLogin = (
@@ -55,7 +57,6 @@ const Navbar = () => {
     );
   } else {
     //Else display login button
-    console.log("Not Able to read cookie");
     navLogin = (
       <ul className="nav navbar-nav navbar-right">
         <li className="nav-item text-nowrap">
@@ -77,9 +78,9 @@ const Navbar = () => {
     <header>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <div className="container-fluid">
-          <Link className="navbar-brand" to="/dashboard">
+          <span className="navbar-brand" onClick={()=>{history.push('/dashboard')}}>
             Splitwise
-          </Link>
+          </span>
           <button
             className="navbar-toggler"
             type="button"

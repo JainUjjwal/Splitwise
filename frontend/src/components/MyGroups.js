@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import FormInput from "./FormInput";
+import {useSelector} from "react-redux";
 
 const MyGroups = () => {
   const inviteGroup = [
@@ -74,9 +75,15 @@ const MyGroups = () => {
         ))
       : "";
   };
-
+  const user = useSelector((state) => state.user);
+  const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
   return (
     <div>
+      {redirectVar}
       <div className="container">
         <div className="my-4">
           <h2>My Groups</h2>
