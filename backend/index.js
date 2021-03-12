@@ -42,13 +42,28 @@ app.get("/", function (req, res) {
 });
 
 // User Route
-const userRoute = require('./routes/userRoutes'); 
+const userRoute = require('./routes/UserRoutes'); 
 app.use(userRoute);
 
 // dashboard route
-const dashboardRoute = require('./routes/dashboardRoute');
+const dashboardRoute = require('./routes/DashboardRoute');
 app.use(dashboardRoute);
 
+// My Groups route
+const myGroupsRoute = require('./routes/MyGroupsRoute');
+app.use(myGroupsRoute);
+
+//single Group Page route
+const groupPageRoute = require("./routes/GroupPageRoute");
+app.use(groupPageRoute);
+
+//transacton history page route
+const HistoryPageRoute = require('./routes/HistoryPageRoute');
+app.use(HistoryPageRoute);
+
+//Profile Page Route
+const ProfileRoute = require('./routes/ProfileRoute');
+app.use(ProfileRoute);
 
 //starting server on port 3001
 app.listen(3001);

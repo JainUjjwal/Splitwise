@@ -3,27 +3,20 @@ import { Button, Row, Col } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import FormInput from "./FormInput";
 import {useSelector} from "react-redux";
-
+import axios from "axios";
 const MyGroups = () => {
-  const inviteGroup = [
-    { id: "1", name: "Group 1" },
-    { id: "2", name: "Group 2" },
-  ];
-  const myGroups = [
-    { id: "1", name: "House" },
-    { id: "2", name: "Trips" },
-  ];
+
   const [inviteList, setInviteList] = useState();
   const [groupList, setGroupList] = useState();
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
-    setInviteList(inviteGroup);
+    axios.post("http://localhost:3001/mygroups").then((res)=>{
+       setInviteList(res.data.inviteGroup);
+       setGroupList(res.data.myGroups);
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    setGroupList(myGroups);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  
   const acceptHandler = (e) => {
     // Updating group List
     let newGroupList = [...groupList];

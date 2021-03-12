@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
+import axios from 'axios';
 import "./profile.css";
 import img from "../constants/image1.jpg";
 import {useSelector} from "react-redux";
@@ -18,7 +19,10 @@ const Profile = () => {
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
   useEffect(() => {
-    setUserInfo(data);
+    axios.get("http://localhost:3001/profile").then((res)=>{
+      setUserInfo(res.data.userInformation);
+    })
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -37,6 +41,10 @@ const Profile = () => {
     };
     setUserInfo(updatedData);
     setEditStatus(false);
+    axios.post("http://localhost:3001/profile", updatedData).then((res,req)=>{
+      console.log('updated Data sent.')
+      console.log(res.data.message)
+    })
   };
 
   const closeEdit = () => {

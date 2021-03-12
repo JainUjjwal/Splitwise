@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
 import {useSelector} from "react-redux";
@@ -21,8 +22,11 @@ const GroupPage = () => {
   let [data, setData] = useState();
   useEffect(() => {
     //axios call for setting total balance and balance list
-    setGroupInfo(dummyInfo);
-    setData(transactionList);
+    axios.post("http://localhost:3001/groupPage").then((res)=>{
+      setGroupInfo(res.data.dummyInfo);
+      setData(res.data.transactionList);
+    })
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

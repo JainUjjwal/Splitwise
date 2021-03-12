@@ -1,50 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {useSelector} from "react-redux";
 import {Redirect} from "react-router-dom";
-
+import axios from "axios";
 const History = () => {
   const groupList = ["House", "Trip", "xyz"];
-  const store = [
-    {
-      payer: "user 1",
-      payee: "user 2",
-      discription: "fruits",
-      amount: 20,
-      group: "Trip",
-      status: true,
-    },
-    {
-      payer: "user 3",
-      payee: "user 4",
-      discription: "eggs",
-      amount: 3,
-      group: "House",
-      status: false,
-    },
-    {
-      payer: "user 1",
-      payee: "user 4",
-      discription: "Settle Up",
-      amount: 25,
-      group: "xyz",
-      status: true,
-    },
-    {
-      payer: "user 2",
-      payee: "user 1",
-      discription: "cheese",
-      amount: 6,
-      group: "House",
-      status: false,
-    },
-  ];
   let [transactionHistory, setTransactionHistory] = useState();
-  let [filteredHistory, setFilteredHistory] = useState(store);
+  let [filteredHistory, setFilteredHistory] = useState();
   let [groups, setGroups] = useState();
   
   useEffect(() => {
-    setTransactionHistory(store);
-    setGroups(groupList)
+    axios.post("http://localhost:3001/history").then((res)=>{
+      setTransactionHistory(res.data.store);
+      setFilteredHistory(res.data.store)
+      setGroups(res.data.groupList)
+    })
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let filteredData;
