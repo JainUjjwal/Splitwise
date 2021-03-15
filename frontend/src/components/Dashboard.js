@@ -14,29 +14,12 @@ const Dashboard = () => {
   const isLoggedIn = user ? user.isLogged : false;
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
-  var dataBlock = [
-    { id: "1", name: "Ujjwal", amount: 2000, typeClass: true },
-    { id: "2", name: "Mohit", amount: 1000, typeClass: false },
-    { id: "3", name: "Shashwat", amount: 15, typeClass: true },
-    { id: "4", name: "Ankit", amount: 30, typeClass: false },
-  ];
-  let friendList = [
-    { userId: 1, name: "Ujjwal", email:"ujjwal@gmail.com" },
-    { userId: 2, name: "Mohit", email:"mohit@gmail.com" },
-    { userId: 3, name: "Ankit", email:"ankit@gmail.com" },
-    {userId: 4, name:'Shashwat', email:"shashwat@gmail.com"}
-  ];
   let [total, setTotal] = useState();
   var [data, setData] = useState();
+  var [userList, setUserList] = useState();
   // var userInfo;
   useEffect(() => {
-    
-    //axios call for updating total balance and settling balance list changes
-    axios.post("http://localhost:3001/dashboard").then((res)=>{
-       const userInfo = res.data.user;
-      //  console.log(userInfo);
-    })
-    
+      
     let credit = 0;
     let debt = 0;
     if (data) {
@@ -51,10 +34,21 @@ const Dashboard = () => {
   }, [data]);
   useEffect(() => {
     //axios call for setting total balance and balance list
-    setData(dataBlock);
+    // setData(dataBlock);
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    //axios call for updating total balance and settling balance list changes
+    axios.get("http://localhost:3001/dashboard", {params: {username:username}}).then((res)=>{
+      //Getting list of users to pass to create group modal
+      if (res.data.message === 'User Info not found'){
+        console.log('no users in the database')
+      }else{
+        setUserList(res.data.userList);
+        setData(res.data.dataBlock);
+      }
+      
+    })
   }, []);
-  const GroupDialogOpen = () => {
+  const openDialog = () => {
     setOpenGroupDialog(true);
   };
 
@@ -77,7 +71,7 @@ const Dashboard = () => {
       {redirectVar}
       <div className="mt-3 mx-auto">
         <h3 className="container">Welcome {username}</h3>
-        <CreateGroupModal show={openGroupDialog} hide={dialogClose} friends={friendList}/>
+        <CreateGroupModal show={openGroupDialog} hide={dialogClose} friends={userList}/>
         <Container className="mt-5">
           <div
             className="row"
@@ -127,7 +121,7 @@ const Dashboard = () => {
                 textAlign: "center",
               }}
             >
-              <Button onClick={GroupDialogOpen}>Create Group</Button>
+              <Button onClick={openDialog}>Create Group</Button>
             </div>
           </div>
         </Container>
@@ -150,7 +144,7 @@ const Dashboard = () => {
             ? data.map((friend, index) => (
                 <div id={friend.id} className="pb-4" key={friend.id}>
                   <Row className="text-center">
-                    <Col id="name">{friend.name}</Col>
+                    <Col id="name">{friend.Fname}</Col>
                     <Col
                       id="amount"
                       className="border-left border-right"

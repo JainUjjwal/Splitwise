@@ -4,7 +4,7 @@ const dbconfig={
     host: "splitwise.cdastitva5m4.us-east-2.rds.amazonaws.com",
     user: "admin",
     password: "rootadmin",
-    database: "main",
+    database: "split",
     multipleStatements: true
   }
 

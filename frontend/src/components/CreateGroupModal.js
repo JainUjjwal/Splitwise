@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import { Modal, Button } from "react-bootstrap";
 import FormInput from "./FormInput";
 const CreateGroupModal = (props) => {
   const [groupName, setGroupName]=useState("");
   const [addedFriend, setAddedFriend] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [show, setShow] = useState(props.show);
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
@@ -17,8 +19,8 @@ const CreateGroupModal = (props) => {
           ...addedFriend,
           {
             userId: element.userId,
-            email: element.email,
-            name: element.name,
+            username: element.username,
+            Fname: element.Fname,
           },
         ]) ;
         removeKey=index;
@@ -39,16 +41,25 @@ const CreateGroupModal = (props) => {
     newList.splice(removeKey, 1);
     setAddedFriend(newList);
   };
-  const randomFunction = () => {
-    console.log(groupName);
+  const createGroupFunction = () => {
+    axios.post("http://localhost:3001/createGroup",{addedFriend, groupName}).then((res,req)=>{
+      //ADD CONFIRMATION ON GROUP CREATION
+    })
+    console.log('xyz');
+    setShow(props.hide);
   };
+  const closeModal = () =>{
+    props.friends.push(...addedFriend)
+    setAddedFriend([]);
+    setShow(props.hide);
+  }
   return (
-    <Modal show={props.show} onHide={props.hide}>
+    <Modal show={props.show} onHide={closeModal}>
       <Modal.Header closeButton>
-        <Modal.Title>Add an expense.</Modal.Title>
+        <Modal.Title>Create Group.</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <FormInput id="GroupName" text="Group Name" type="text" onChange={(e)=>{setGroupName(e)}}/>
+        <FormInput id="GroupName" text="Group Name" type="text" onChange={(e)=>{setGroupName(e.target.value)}}/>
         <FormInput
           id="GroupSearch"
           text="Search for Friends"
@@ -57,10 +68,10 @@ const CreateGroupModal = (props) => {
         />
         {searchTerm.length > 0 && props.friends
           ? props.friends.map((friend, index) => {
-              return friend.name.search(searchTerm) > -1 ||
-                friend.email.search(searchTerm) > -1 ? (
+              return friend.Fname.search(searchTerm) > -1 ||
+                friend.username.search(searchTerm) > -1 ? (
                 <div className="mt-4" key={index}>
-                  {friend.name} ({friend.email}){" "}
+                  {friend.Fname} ({friend.username}){" "}
                   <Button
                     className="float-right"
                     data-id={friend.userId}
@@ -76,7 +87,7 @@ const CreateGroupModal = (props) => {
           : ""}
         {addedFriend&&addedFriend.length > 0
           ? addedFriend.map((confirmed, index) => <div className="mt-4" key={index}>
-          {confirmed.name} ({confirmed.email}){" "}
+          {confirmed.Fname} ({confirmed.username}){" "}
           <Button
             variant="danger"
             className="float-right"
@@ -89,10 +100,10 @@ const CreateGroupModal = (props) => {
           : ""}
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.hide}>
+        <Button variant="secondary" onClick={closeModal}>
           Close
         </Button>
-        <Button variant="success" onClick={randomFunction}>
+        <Button variant="success" onClick={createGroupFunction}>
           Create Group
         </Button>
       </Modal.Footer>

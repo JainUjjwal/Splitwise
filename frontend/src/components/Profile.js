@@ -8,19 +8,12 @@ import {Redirect} from "react-router-dom";
 // import { Link } from "react-router-dom";
 
 const Profile = () => {
-  let data = {
-    username: "a@a.com",
-    firstName: "Ujjwal",
-    phoneNumber: "4085496787",
-    currency: "USD",
-    language: "English",
-    timezone: "PST",
-  };
+  let redux_user = useSelector(state=>state.user)
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
   useEffect(() => {
-    axios.get("http://localhost:3001/profile").then((res)=>{
-      setUserInfo(res.data.userInformation);
+    axios.get("http://localhost:3001/profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{
+      setUserInfo(res.data.userInformation[0]);
     })
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,9 +26,9 @@ const Profile = () => {
   const saveEdit = () => {
     const updatedData = {
       username: document.getElementById("newEmail").value,
-      firstName: document.getElementById("newName").value,
+      Fname: document.getElementById("newName").value,
       phoneNumber: document.getElementById("newNumber").value,
-      language: document.getElementById('newLanguage').value,
+      lang: document.getElementById('newLanguage').value,
       currency: document.getElementById('newcurrency').value,
       timezone: document.getElementById('newtimezone').value
     };
@@ -97,10 +90,10 @@ const Profile = () => {
                         <input
                           type="name"
                           id="newName"
-                          defaultValue={userInfo ? userInfo.firstName : ""}
+                          defaultValue={userInfo ? userInfo.Fname : ""}
                         />
                       ) : userInfo ? (
-                        userInfo.firstName
+                        userInfo.Fname
                       ) : (
                         ""
                       )}
@@ -128,14 +121,14 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newLanguage"
-                          defaultValue={userInfo ? userInfo.language : ""}
+                          defaultValue={userInfo ? userInfo.lang : ""}
                         >
                           <option>English</option>
                           <option>Spanish</option>
                           <option>Hindi</option>
                         </select>
                       ) : userInfo ? (
-                        userInfo.language
+                        userInfo.lang
                       ) : (
                         ""
                       )}

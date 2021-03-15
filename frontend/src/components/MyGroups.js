@@ -11,8 +11,11 @@ const MyGroups = () => {
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     axios.post("http://localhost:3001/mygroups").then((res)=>{
-       setInviteList(res.data.inviteGroup);
+       
        setGroupList(res.data.myGroups);
+    })
+    axios.get("http://localhost:3001/mygroups").then((res)=>{
+      setInviteList(res.data.inviteGroup);
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -20,19 +23,31 @@ const MyGroups = () => {
   const acceptHandler = (e) => {
     // Updating group List
     let newGroupList = [...groupList];
-    newGroupList.push(inviteList[e.target.dataset.id]);
+    let acceptedGroup = inviteList[e.target.dataset.id]
+    newGroupList.push(acceptedGroup);
     setGroupList(newGroupList);
     // Updating Invite List
     let newInviteList = [...inviteList];
     newInviteList.splice(e.target.dataset.id, 1);
     setInviteList(newInviteList);
+
+    // Sending invite status to backend 
+    axios.post("http://localhost:3001/accInvStatus",{acceptedGroup}).then((res)=>{
+       
+    })
+
   };
 
   const rejectHandler = (e) => {
     // Updating Invite List
+    const rejectedGroup = inviteList[e.target.dataset.id] 
     let newInviteList = [...inviteList];
     newInviteList.splice(e.target.dataset.id, 1);
     setInviteList(newInviteList);
+    // Sending invite status to backend 
+    axios.post("http://localhost:3001/rejInvStatus",{rejectedGroup}).then((res)=>{
+       
+    })
   };
 
   const searchTermHandler = (e) => {

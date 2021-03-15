@@ -65,6 +65,10 @@ app.use(HistoryPageRoute);
 const ProfileRoute = require('./routes/ProfileRoute');
 app.use(ProfileRoute);
 
+//Create Group Route
+const CreateGroupRoute = require('./routes/CreateGroupRoute');
+app.use(CreateGroupRoute);
+
 //starting server on port 3001
 app.listen(3001);
 console.log("Server Listening on port 3001");
