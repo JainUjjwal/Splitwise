@@ -2,7 +2,6 @@ const db = require("../dbconnection");
 
 const createGroup = (req, res) => {
   groupName = req.body.groupName;
-  console.log(req.session.user.userId);
   currentUserId = req.session.user.userId;
   db.query(
     "INSERT INTO groupTable (groupName) VALUES (?)",

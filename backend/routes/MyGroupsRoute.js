@@ -9,4 +9,5 @@ router.get('/mygroups', myGroupsController.getInvites )
 
 router.post('/accInvStatus', inviteController.accept)
 router.post('/rejInvStatus', inviteController.reject)
+
 module.exports = router;

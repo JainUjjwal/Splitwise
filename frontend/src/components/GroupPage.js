@@ -2,31 +2,26 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
-import {useSelector} from "react-redux";
-import {Redirect} from "react-router-dom";
-const GroupPage = () => {
-  let transactionList = [
-    { discription: "Rent", amount: 2000, typeClass: true },
-    { discription: "Trip", amount: 1000, typeClass: false },
-    { discription: "Food", amount: 15, typeClass: true },
-    { discription: "Drinks", amount: 15, typeClass: false },
-  ];
-  const memberList = [
-    { name: "Ujjwal", amount: 1000, status: true },
-    { name: "Pavan", amount: 500, status: false },
-    { name: "Shubham", amount: 500, status: false },
-  ];
-  let dummyInfo = { groupName: "House", members: memberList };
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router-dom";
+const GroupPage = (param) => {
   let [groupInfo, setGroupInfo] = useState();
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [data, setData] = useState();
+  var searchParams = new URLSearchParams(param.location.search);
   useEffect(() => {
     //axios call for setting total balance and balance list
-    axios.post("http://localhost:3001/groupPage").then((res)=>{
-      setGroupInfo(res.data.dummyInfo);
-      setData(res.data.transactionList);
-    })
-    
+    // axios.post("http://localhost:3001/groupPage").then((res)=>{
+    // })
+    console.log(searchParams.get("id"));
+    axios
+      .post("http://localhost:3001/groupPage", {
+        groupID: searchParams.get("id"),
+      })
+      .then((response) => {
+        setGroupInfo(response.data.dummyInfo);
+        setData(response.data.transactionList);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -45,15 +40,20 @@ const GroupPage = () => {
     });
     setData(newdata);
     dialogClose();
-    // TRASHY FRONTEND LOGIC FOR UPDATING GROUP MEMBER BALANCE 
-    // PLEASE UPDATE THIS 
+    // TRASHY FRONTEND LOGIC FOR UPDATING GROUP MEMBER BALANCE
+    // PLEASE UPDATE THIS
     // let perPerson = parseFloat((newAmount/memberList.length).toFixed(2))
     // let members = groupInfo.members;
     // members[1].amount = members[1].amount + perPerson;
 
     // console.log(groupInfo.members[1].amount + perPerson);
-    
-
+    axios
+      .post("http://localhost:3001/addBill", {
+        amount: newAmount,
+        discription: newDiscription,
+        groupId: searchParams.get('id')
+      })
+      .then((response) => {console.log('sent transaction data to backend')});
   };
   const user = useSelector((state) => state.user);
   const isLoggedIn = user ? user.isLogged : false;
@@ -69,19 +69,28 @@ const GroupPage = () => {
         {/* DISPLAYING AMOUNT FOR EACH GROUP MEMBER */}
         {/* ######################### */}
         <div className="col mt-3">
-          {groupInfo?groupInfo.members.map((member,index)=>(
-             <div className='my-4' key={index}>
-             {member.name} : <span  style={
-                        member.status ? { color: "green" } : { color: "red" }
-                      }>${member.amount}</span><br />
-           </div>  
-          )):''}
+          {groupInfo
+            ? groupInfo.members.map((member, index) => (
+                <div className="my-4" key={index}>
+                  {member.name} :{" "}
+                  <span
+                    style={
+                      member.status ? { color: "green" } : { color: "red" }
+                    }
+                  >
+                    ${member.amount}
+                  </span>
+                  <br />
+                </div>
+              ))
+            : ""}
         </div>
         <div className="col-lg-9">
           <AddBillModal
             show={openBillDialog}
             hide={dialogClose}
             onBillSubmit={addBill}
+            groupID={searchParams.get("id")}
           />
           <div className="my-4">
             <h2>{groupInfo ? groupInfo.groupName : ""}</h2>

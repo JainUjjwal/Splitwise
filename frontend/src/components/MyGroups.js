@@ -1,57 +1,77 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col } from "react-bootstrap";
-import { Link, Redirect } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import FormInput from "./FormInput";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import axios from "axios";
 const MyGroups = () => {
-
+  const history = useHistory();
   const [inviteList, setInviteList] = useState();
   const [groupList, setGroupList] = useState();
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
-    axios.post("http://localhost:3001/mygroups").then((res)=>{
-       
-       setGroupList(res.data.myGroups);
-    })
-    axios.get("http://localhost:3001/mygroups").then((res)=>{
+    axios.post("http://localhost:3001/mygroups").then((res) => {
+      setGroupList(res.data.myGroups);
+    });
+    axios.get("http://localhost:3001/mygroups").then((res) => {
       setInviteList(res.data.inviteGroup);
-    })
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  const acceptHandler = (e) => {
+
+  const acceptHandler = async (e) => {
     // Updating group List
-    let newGroupList = [...groupList];
-    let acceptedGroup = inviteList[e.target.dataset.id]
-    newGroupList.push(acceptedGroup);
-    setGroupList(newGroupList);
-    // Updating Invite List
-    let newInviteList = [...inviteList];
-    newInviteList.splice(e.target.dataset.id, 1);
-    setInviteList(newInviteList);
+    let newGroupList = [];
+    if (groupList) {
+      newGroupList = [...groupList];
+    }
+    let acceptedGroup = inviteList[e.target.dataset.id];
 
-    // Sending invite status to backend 
-    axios.post("http://localhost:3001/accInvStatus",{acceptedGroup}).then((res)=>{
-       
-    })
-
+    // Sending invite status to backend
+    await axios
+      .post("http://localhost:3001/accInvStatus", { acceptedGroup })
+      .then((response) => {
+        if (response.status === 269) {
+          newGroupList.push(acceptedGroup);
+          setGroupList(newGroupList);
+          // Updating Invite List
+          let newInviteList = [...inviteList];
+          newInviteList.splice(e.target.dataset.id, 1);
+          setInviteList(newInviteList);
+        }
+      });
   };
 
-  const rejectHandler = (e) => {
+  const rejectHandler = async (e) => {
     // Updating Invite List
-    const rejectedGroup = inviteList[e.target.dataset.id] 
-    let newInviteList = [...inviteList];
-    newInviteList.splice(e.target.dataset.id, 1);
-    setInviteList(newInviteList);
-    // Sending invite status to backend 
-    axios.post("http://localhost:3001/rejInvStatus",{rejectedGroup}).then((res)=>{
-       
-    })
+    const rejectedGroup = inviteList[e.target.dataset.id];
+    // Sending invite status to backend
+    await axios
+      .post("http://localhost:3001/rejInvStatus", { rejectedGroup })
+      .then((response) => {
+        if (response.status === 269) {
+          let newInviteList = [...inviteList];
+          newInviteList.splice(e.target.dataset.id, 1);
+          setInviteList(newInviteList);
+        }
+      });
   };
 
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const testing = async (e) => {
+    // let data = {}
+    history.push('/groupPage?id='+e.target.dataset.id)
+    // await axios
+    //   .post("http://localhost:3001/backgroupPage",{groupID : e.target.dataset.id}).then((response)=>{
+    //     if(response){
+    //       data = response.data;
+    //     }
+    //   }).then(()=>{
+    //     // axios.get("http://localhost:3001/groupPage",{params:{data}})
+    //   })
   };
 
   const renderInviteList = () => {
@@ -59,7 +79,7 @@ const MyGroups = () => {
       ? inviteList.map((group, index) => (
           <Row className="pt-4" key={index}>
             <Col xs={9} className="border-right">
-              <Link to="/groupPage">{group.name}</Link>
+              <span>{group.name}</span>
             </Col>
             <Col>
               <div className="btn-group mx2 ml-4">
@@ -120,14 +140,11 @@ const MyGroups = () => {
                 group.name.toLowerCase().search(searchTerm) > -1 ? (
                 <Row className="pt-4" key={index}>
                   <Col xs={9} className="border-right">
-                    <Link to="/groupPage">{group.name}</Link>
+                    <p>{group.name}</p>
                   </Col>
                   <Col>
                     <div className="btn-group mx2 ml-5">
-                      <Link to="/groupPage" className="btn btn-outline-primary">
-                        {" "}
-                        View Group
-                      </Link>
+                      <Button data-id={group.id} onClick = {testing}>View Group</Button>
                     </div>
                   </Col>
                 </Row>
