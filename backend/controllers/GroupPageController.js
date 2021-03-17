@@ -21,39 +21,6 @@ const groupInfopost = (req, res) => {
 
 const getGroupInfo = (req, res) => {
   console.log("checking");
-  // db.query(
-  //   "SELECT * from groupTable INNER JOIN userGroup ON groupTable.groupId = userGroup.groupId INNER JOIN users ON userGroup.userId = users.userId where groupTable.groupId = (?);",
-  //   [req.body.groupID],
-  //   (err, result) => {
-  //     if (err) {
-  //       console.log(err);
-  //     } else {
-  //       if (result.length > 0) {
-  //         let memberList2 = [];
-  //         for (i=0;i<result.length;i++){
-  //           memberList2.push({ name: result[i].Fname , amount: 1000, status: true },)
-  //         }
-  //         memberList = [
-  //             { name: "Ujjwal", amount: 1000, status: true },
-  //             { name: "Pavan", amount: 500, status: false },
-  //             { name: "Shubham", amount: 500, status: false },
-  //           ]
-  //         let dummyInfo = { groupName: result[0].groupName, members: memberList2 };
-
-  //         res.send({transactionList: [
-  //           { discription: "Rent", amount: 2000, typeClass: true },
-  //           { discription: "Trip", amount: 1000, typeClass: false },
-  //           { discription: "Food", amount: 15, typeClass: true },
-  //           { discription: "Drinks", amount: 15, typeClass: false },
-  //         ],
-  //         dummyInfo})
-
-  //         console.log(dummyInfo)
-  //       }
-  //     }
-  //   }
-  // );
-
   // Getting transactions in the group
   currentUser = req.session.user.userId;
   db.query(

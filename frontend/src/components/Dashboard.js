@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import axios from 'axios';
+import axios from "axios";
 import CreateGroupModal from "./CreateGroupModal";
 // import Navbar from './Nav2';
 // import {selectUser} from "../features/userSlice";
@@ -17,36 +17,41 @@ const Dashboard = () => {
   let [total, setTotal] = useState();
   var [data, setData] = useState();
   var [userList, setUserList] = useState();
+  let [settleState, setSettleState] = useState();
   // var userInfo;
   useEffect(() => {
-      
     let credit = 0;
     let debt = 0;
     if (data) {
-      data.forEach((element) => {
+      Object.values(data).forEach((element) => {
         element.typeClass
           ? (credit += element.amount)
           : (debt += element.amount);
       });
     }
-    setTotal({ ...total, credit: credit, debt: debt });
+    setTotal({ ...total, credit: credit, debt: Math.abs(debt) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+  
+  let test = async () => {
+    await axios
+      .get("http://localhost:3001/dashboard", {
+        params: { username: username },
+      })
+      .then((res) => {
+        //Getting list of users to pass to create group modal
+        if (res.data.message === "User Info not found") {
+          console.log("no users in the database");
+        } else {
+          setUserList(res.data.userList);
+          setData(res.data.dataBlock);
+        }
+      });
+  };
   useEffect(() => {
-    //axios call for setting total balance and balance list
-    // setData(dataBlock);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     //axios call for updating total balance and settling balance list changes
-    axios.get("http://localhost:3001/dashboard", {params: {username:username}}).then((res)=>{
-      //Getting list of users to pass to create group modal
-      if (res.data.message === 'User Info not found'){
-        console.log('no users in the database')
-      }else{
-        setUserList(res.data.userList);
-        setData(res.data.dataBlock);
-      }
-      
-    })
+    test();
   }, []);
   const openDialog = () => {
     setOpenGroupDialog(true);
@@ -54,14 +59,24 @@ const Dashboard = () => {
 
   const dialogClose = () => {
     setOpenGroupDialog(false);
-    
   };
   const settleHandler = (e) => {
-    let newData = [...data];
-    newData.splice(e.target.dataset.id, 1);
-    setData(newData);
-  };
+    // let newData = {...data};
+    let deletionId = e.target.dataset.id;
+    // console.log(deletionId);
+    // delete newData[deletionId];
 
+    // // newData.splice(e.target.dataset.id, 1);
+    // setData(newData);
+    axios
+      .post("http://localhost:3001/settle", { user2: deletionId })
+      .then((res) => {
+        if (res.status === 200) {
+          setSettleState(true);
+          test();
+        }
+      });
+  };
   let redirectVar = null;
   if (!isLoggedIn) {
     redirectVar = <Redirect to="/login" />;
@@ -71,7 +86,11 @@ const Dashboard = () => {
       {redirectVar}
       <div className="mt-3 mx-auto">
         <h3 className="container">Welcome {username}</h3>
-        <CreateGroupModal show={openGroupDialog} hide={dialogClose} friends={userList}/>
+        <CreateGroupModal
+          show={openGroupDialog}
+          hide={dialogClose}
+          friends={userList}
+        />
         <Container className="mt-5">
           <div
             className="row"
@@ -126,6 +145,11 @@ const Dashboard = () => {
           </div>
         </Container>
         <Container id="user-holder" className="mt-5 pt-4">
+          {settleState ? (
+            <div className="alert alert-success"> Settled Up! </div>
+          ) : (
+            ""
+          )}
           <div id="table-title" className="pb-4">
             <Row className="text-center">
               <Col id="name">
@@ -141,8 +165,8 @@ const Dashboard = () => {
           {/* Rendering individual friend balanceList */}
 
           {data
-            ? data.map((friend, index) => (
-                <div id={friend.id} className="pb-4" key={friend.id}>
+            ? Object.entries(data).map(([id, friend], index) => (
+                <div id={id} className="pb-4" key={id}>
                   <Row className="text-center">
                     <Col id="name">{friend.Fname}</Col>
                     <Col
@@ -152,13 +176,15 @@ const Dashboard = () => {
                         friend.typeClass ? { color: "green" } : { color: "red" }
                       }
                     >
-                      ${friend.amount}
+                      ${Math.abs(friend.amount)}
                     </Col>
+
                     <Col id="settleButton">
                       <Button
                         variant="success"
                         onClick={settleHandler}
-                        data-id={index}
+                        data-id={id}
+                        disabled={Math.abs(friend.amount) === 0 ? true : false}
                       >
                         Settle up!
                       </Button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col } from "react-bootstrap";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import FormInput from "./FormInput";
 import { useSelector } from "react-redux";
 import axios from "axios";

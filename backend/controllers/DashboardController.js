@@ -17,22 +17,43 @@ const userInfopost = (req, res) => {
 };
 
 const getUserList = (req, res) => {
+  const currentUser = req.session.user.userId;
   const username = req.query.username;
   db.query(
-    "SELECT * FROM users WHERE username != ?",
-    username,
+    "SELECT * FROM users WHERE username != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
+    [username, currentUser],
     (err, result) => {
       if (err) {
         res.send({ err: err });
       }
-      if (result.length > 0) {
-        res.send({userList: result, dataBlock: dataBlock})
+      if (result[1].length > 0) {
+        let newDataBlock = {};
+        result[1].forEach((element) => {
+          if (element.user2 in newDataBlock) {
+            let updatedBalance =
+              newDataBlock[element.user2].amount + element.balance;
+            newDataBlock[element.user2].amount = updatedBalance;
+          } else {
+            newDataBlock[element.user2] = {
+              Fname: element.Fname,
+              amount: element.balance,
+              typeClass: element.balance > 0 ? true : false,
+            };
+          }
+        });
+
+        res.send({ userList: result[0], dataBlock: newDataBlock });
       } else {
-        res
-          .status(252)
-          .send({ message: "User Info not found" });
+        res.status(252).send({ message: "User Info not found" });
       }
     }
   );
-}
-module.exports = {userInfopost, getUserList};
+};
+
+// [
+//   { user2: "2", Fname: "", balance: 2.333 },
+//   { user2: "2", Fname: "", balance: 4 },
+//   { user2: "3", Fname: "", balance: -5.33 },
+// ]
+
+module.exports = { userInfopost, getUserList };

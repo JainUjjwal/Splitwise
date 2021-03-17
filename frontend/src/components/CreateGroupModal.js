@@ -12,6 +12,7 @@ const CreateGroupModal = (props) => {
   };
   let removeKey = -1
   const addFriend = (e) => {
+    if(show){}//just removing eslint warning for no-unused-vars
     let key = parseInt(e.target.dataset.id);
     props.friends.forEach((element, index) => {
       if (element.userId === key) {
@@ -44,8 +45,8 @@ const CreateGroupModal = (props) => {
   const createGroupFunction = () => {
     axios.post("http://localhost:3001/createGroup",{addedFriend, groupName}).then((res,req)=>{
       //ADD CONFIRMATION ON GROUP CREATION
+      alert('Group created!')
     })
-    console.log('xyz');
     setShow(props.hide);
   };
   const closeModal = () =>{

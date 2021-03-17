@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
-import axios from "axios";
+import { Route, Switch } from "react-router-dom";
 import LoginForm from "./LoginForm";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
@@ -10,7 +9,7 @@ import GroupPage from "./GroupPage";
 import Profile from "./Profile";
 import Landing from "./Landing";
 import History from "./History";
-import PrivateRoute from "./privateRoute";
+// import PrivateRoute from "./privateRoute";
 import userAuth from "./UserAuth";
 //Create a Main Component
 class Main extends Component {

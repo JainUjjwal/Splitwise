@@ -1,9 +1,7 @@
 import React from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers";
-import { propTypes } from "react-bootstrap/esm/Image";
-import {createBrowserHistory} from 'history';
 //create the Navbar Component
 const Navbar = (props) => {
   //handle logout to destroy the cookie
