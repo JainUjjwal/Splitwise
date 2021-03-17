@@ -1,33 +1,46 @@
 import React, { useEffect, useState } from "react";
-import {useSelector} from "react-redux";
-import {Redirect} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 const History = () => {
-  const groupList = ["House", "Trip", "xyz"];
   let [transactionHistory, setTransactionHistory] = useState();
   let [filteredHistory, setFilteredHistory] = useState();
   let [groups, setGroups] = useState();
-  
+
   useEffect(() => {
-    axios.post("http://localhost:3001/history").then((res)=>{
-      setTransactionHistory(res.data.store);
-      setFilteredHistory(res.data.store)
-      setGroups(res.data.groupList)
-    })
-    
+    axios.post("http://localhost:3001/history").then((res) => {
+      setTransactionHistory(res.data.newStore);
+      setFilteredHistory(res.data.newStore);
+      setGroups(res.data.groupList);
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let filteredData;
+  let sortData;
+  const timeFilter = () => {
+    let sortBy = document.getElementById("SortBy").value;
+    console.log(sortBy);
+    if (sortBy === "Oldest First") {
+      sortData = Object.assign([],transactionHistory);
+      sortData.reverse();
+      setFilteredHistory(sortData);
+    } 
+    if (sortBy === "Latest First") {
+      setFilteredHistory(transactionHistory);
+      console.log(filteredHistory);
+    }
+  };
   const groupFilter = () => {
     let filterTerm = document.getElementById("groupSelector").value;
     if (filterTerm === "All Groups") {
       filteredData = transactionHistory;
-      setFilteredHistory(filteredData)
-    //   setTransactionHistory(filteredData);
+      setFilteredHistory(filteredData);
     } else {
-      filteredData = transactionHistory.filter((element) => element.group === filterTerm);
-    //   setTransactionHistory(filteredData);
-    setFilteredHistory(filteredData)
+      filteredData = transactionHistory.filter(
+        (element) => element.group === filterTerm
+      );
+      setFilteredHistory(filteredData);
     }
   };
   const user = useSelector((state) => state.user);
@@ -43,7 +56,7 @@ const History = () => {
         <h2>Transaction History</h2>
       </div>
       <div className="my-4 col">
-        <select>
+        <select onChange={timeFilter} id="SortBy">
           <option>Latest First</option>
           <option>Oldest First</option>
         </select>{" "}
@@ -64,7 +77,7 @@ const History = () => {
               <div key={index} className="row pt-4">
                 <div className="col">
                   {transaction.payer} added <b>"{transaction.discription}"</b>{" "}
-                  in <b>"{transaction.group}"</b>
+                  in <b>"{transaction.group}"</b> at {transaction.timeStamp}
                 </div>
                 {transaction.status ? (
                   <div style={{ color: "green" }}>
