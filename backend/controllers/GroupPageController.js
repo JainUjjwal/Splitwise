@@ -1,24 +1,5 @@
 const db = require("../dbconnection");
 
-const groupInfopost = (req, res) => {
-  console.log(req.body);
-  const memberList = [
-    { name: "Ujjwal", amount: 1000, status: true },
-    { name: "Pavan", amount: 500, status: false },
-    { name: "Shubham", amount: 500, status: false },
-  ];
-  let dummyInfo = { groupName: "House", members: memberList };
-  res.send({
-    transactionList: [
-      { discription: "Rent", amount: 2000, typeClass: true },
-      { discription: "Trip", amount: 1000, typeClass: false },
-      { discription: "Food", amount: 15, typeClass: true },
-      { discription: "Drinks", amount: 15, typeClass: false },
-    ],
-    dummyInfo,
-  });
-};
-
 const getGroupInfo = (req, res) => {
   console.log("checking");
   // Getting transactions in the group
@@ -56,11 +37,6 @@ const getGroupInfo = (req, res) => {
           }
         });
         // Setting List of Members in the group and their balance with respect to Current User.
-        const memberList = [
-          { name: "Ujjwal", amount: 1000, status: true },
-          { name: "Pavan", amount: 500, status: false },
-          { name: "Shubham", amount: 500, status: false },
-        ];
         let newMemberList = []
         result[1].forEach(element=>{
           if(element.balance>0){
@@ -73,7 +49,7 @@ const getGroupInfo = (req, res) => {
         })
         console.log(result[1]);
         let dummyInfo = { groupName: result[1][0].groupName, members: newMemberList };
-        res.send({
+        res.json({
           transactionList: newTransactionList,
           dummyInfo,
         });
@@ -83,4 +59,4 @@ const getGroupInfo = (req, res) => {
   
 };
 
-module.exports = { groupInfopost, getGroupInfo };
+module.exports = { getGroupInfo };

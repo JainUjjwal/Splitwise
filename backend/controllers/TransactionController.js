@@ -1,16 +1,36 @@
 const db = require("../dbconnection");
 
-const addBill = (req, res) => {
+const updateMaster = (valueArray,res,flag) => {
+
+  db.query(
+    "UPDATE masterTable SET balance = ? WHERE user1 = ? AND groupID = ? AND user2 = ?;",
+    [valueArray[0], valueArray[1], valueArray[2], valueArray[3]],
+    (err, result) => {
+      if (err) {
+        // console.log("IT BROKE");
+        console.log(err);
+        return;
+      } else {
+        flag = true;
+        return;
+        console.log("HOLY SHIT IT WORKED. I AM A GENIUS!");
+      }
+    }
+  );
+};
+
+const addBill = async (req, res) => {
   const amount = req.body.amount;
   const discription = req.body.discription;
   const groupId = req.body.groupId;
   const currentUser = req.session.user.userId;
-  db.query(
+  await db.query(
     "INSERT INTO transactionTable (groupId, discription, amount) VALUES (?,?,?);",
     [groupId, discription, amount],
     (err, result) => {
       if (err) {
         console.log(err);
+        return;
       }
     }
   );
@@ -20,62 +40,62 @@ const addBill = (req, res) => {
     (err, result) => {
       if (err) {
         console.log(err);
+        return;
       } else {
         console.log(result[1][result[1].length - 1].transactionId);
         let transactionId = result[1][result[1].length - 1].transactionId;
-        amountPerPerson = amount / (result.length + 1);
-        for (i = 0; i < result[0].length; i++) {
-          if (currentUser != result[0][i].userId) {
-            db.query(
-              "INSERT INTO userTransaction (user1, user2, transactionId, amountPerPerson) VALUES (?,?,?,?);",
-              [
+        let amountPerPerson = amount / result[0].length;
+        // SENDING MUTIPLE VALUES IN ONE QUERY
+        let values = [];
+        result[0].forEach((element) => {
+          currentUser != element.userId
+            ? values.push([
                 currentUser,
-                result[0][i].userId,
+                element.userId,
                 transactionId,
                 amountPerPerson,
-              ],
-              (err, result) => {
-                if (err) {
-                  console.log(err);
-                }
-              }
-            );
+              ])
+            : "";
+        });
+        console.log(values);
+        db.query(
+          "INSERT INTO userTransaction (user1, user2, transactionId, amountPerPerson) VALUES ?;",
+          [values],
+          (err, result) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
           }
-        }
+        );
+
         db.query(
           "SELECT * from masterTable WHERE user1 = (?) AND groupID=(?);",
           [currentUser, groupId],
           (err, result) => {
             if (err) {
               console.log(err);
+              return;
             } else {
-              if (result.length > 0) {
-                for (i = 0; i < result.length; i++) {
-                  let newBalance = result[i].balance + amountPerPerson;
-                  let negativeBalance = 0 - newBalance;
-                  db.query(
-                    "UPDATE masterTable SET balance = (?) WHERE user1 = (?) AND groupID = (?) AND user2 = (?); UPDATE masterTable SET balance = (?) WHERE user1 = (?) AND groupID=(?) AND user2 = (?)",
-                    [
-                      newBalance,
-                      currentUser,
-                      groupId,
-                      result[i].user2,
-                      negativeBalance,
-                      result[i].user2,
-                      groupId,
-                      currentUser,
-                    ],
-                    (err, result) => {
-                      if (err) {
-                        console.log("IT BROKE");
-                        console.log(err);
-                      } else {
-                        console.log("HOLY SHIT IT WORKED. I AM A GENIUS!");
-                      }
-                    }
-                  );
-                }
-              }
+              result.forEach((element) => {
+                let newBalance = element.balance + amountPerPerson;
+                let negativeBalance = 0 - newBalance;
+                let positiveUpdate = [
+                  newBalance,
+                  currentUser,
+                  groupId,
+                  element.user2,
+                ];
+                updateMaster(positiveUpdate,res);
+                let negativeUpdate = [
+                  negativeBalance,
+                  element.user2,
+                  groupId,
+                  currentUser,
+                ];
+                updateMaster(negativeUpdate,res);
+              });
+              res.status(201).json({ message: "Transaction Added" });
             }
           }
         );

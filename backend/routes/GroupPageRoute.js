@@ -3,9 +3,10 @@ const router = express.Router();
  
 const GroupPageController = require("../controllers/GroupPageController");
 const TransactionController = require("../controllers/TransactionController")
+const LeaveGroupController = require("../controllers/LeaveGroupController")
 
 router.post('/groupPage', GroupPageController.getGroupInfo )
-// router.get('/groupPage', GroupPageController.getGroupInfo)
 router.post('/addBill',TransactionController.addBill)
+router.post('/leaveGroup',LeaveGroupController.leave)
 
 module.exports = router;
