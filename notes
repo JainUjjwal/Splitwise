@@ -1,0 +1,72 @@
+TO-DO
+
+#Login/Sign up - 8th march
+Implement checks for existing username during registration.
+Implement checks for password strength.
+
+#MyGroups - Finish when adding API to this page
+Implement search function                                       #Done
+
+#GroupPage - 8th march
+Implement page update on new transaction                        #DONE
+Add individual group member names and balances                  #DONE
+Implement updating group member data
+ 
+#Profile - 8th march
+Implement edit functionality in backend (post request)                                    
+
+#Create Group Model
+Add confirmation on group creation and error on failure
+
+\\\\\\
+
+
+usertransaction table (user1, user2, FK groupid, FK transactionid, amount)
+masterTable table(user1, user 2, groupID, amount)
+
+\\\\\\
+
+groupPage -> all transactions on that group
+          -> Show individual user balances
+dashboard -> show balance with each user
+history   -> show all transactions in that user's group
+
+groupID: 1
+number of member:3
+total amount: 60
+
+
+
+transaction table (PK transactionid, discription, amount, groupID) ##Group page
+
+userTransactions ## History page
+user1, user2, FK transactionid, AmountPerPerson
+
+
+
+masterTable  ## Dashboard and groupPage
+user1, user 2, groupID, balance
+ 1       2       1        6
+ 1       3       1        6 
+ 2       1       1       -6
+ 3       1       1       -6
+
+SELECT * from masterTable WHERE user1 = 1 AND groupID=1;
+newBalance = result[i].balance + amountPerPerson;
+negativeBalance = 0 - newBalance
+UPDATE masterTable SET balance = newBalance WHERE user1 = 1 AND groupID = 1 AND user2 = result[i].user2;
+UPDATE masterTable SET balance = newBalance WHERE user1 = result[i].user2 AND groupID=1 AND user2 = 1
+
+SELECT FROM masterTable -> result -> updatedResult -> INSERT INTO masterTable values (xyz) where 
+SELECT * FROM masterTable where user1=currentUser; result = green values;
+
+
+Check bug in amount per person split and owe vs owed on main page   #DONE
+Update user balance in group on adding transactions                 #DONE
+Settle up.                                                          #DONE
+Leave Group.
+
+
+
+Jmeter ----
+jdbc:mysql://splitwise.cdastitva5m4.us-east-2.rds.amazonaws.com:3306/split

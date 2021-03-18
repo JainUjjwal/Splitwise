@@ -21,7 +21,6 @@ const History = () => {
   let sortData;
   const timeFilter = () => {
     let sortBy = document.getElementById("SortBy").value;
-    console.log(sortBy);
     if (sortBy === "Oldest First") {
       sortData = Object.assign([],transactionHistory);
       sortData.reverse();
@@ -29,7 +28,6 @@ const History = () => {
     } 
     if (sortBy === "Latest First") {
       setFilteredHistory(transactionHistory);
-      console.log(filteredHistory);
     }
   };
   const groupFilter = () => {

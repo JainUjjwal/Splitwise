@@ -4,7 +4,7 @@ import SubmitButton from "./SubmitButton";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../reducers";
 import { Redirect } from "react-router-dom";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   // Declaring Hooks
@@ -13,16 +13,16 @@ const Register = () => {
   let [Fname, setFname] = useState("");
   let [num, setNum] = useState("");
   let [err, setErr] = useState("");
+  let [image,setImage] = useState();
   const dispatch = useDispatch();
-  const user = useSelector(state=>state.user)
+  const user = useSelector((state) => state.user);
   // Phone Number change handler
   const numHandler = (e) => {
-    if(e.target.value.length===10){
+    if (e.target.value.length === 10) {
       setNum(e.target.value);
       setErr(null);
-    }
-    else{
-     setErr('Phone Number must consist of 10 digits.')
+    } else {
+      setErr("Phone Number must consist of 10 digits.");
     }
   };
 
@@ -30,47 +30,61 @@ const Register = () => {
   const FnameHandler = (e) => {
     setFname(e.target.value);
   };
-  
+
   //username change handler to update state variable
   const usernameChangeHandler = (e) => {
     setUsername(e.target.value);
   };
-   
+
   //password change handler to update state variable
   const passwordChangeHandler = (e) => {
     let reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-    if((e.target.value).match(reg)){
+    if (e.target.value.match(reg)) {
       setPassword(e.target.value);
       setErr(null);
-    }else{
-      setErr('Password must be between 6 to 20 characters and contain at least one numeric digit, one uppercase and one lowercase letter')
+    } else {
+      setErr(
+        "Password must be between 6 to 20 characters and contain at least one numeric digit, one uppercase and one lowercase letter"
+      );
     }
-    
   };
 
   const submitRegister = (e) => {
     e.preventDefault();
+    console.log(image);
     dispatch(
       register({
         username: username,
         password: password,
         Fname: Fname,
         phoneNumber: num,
+        image: image
       })
     );
   };
+
+  const uploadImage = (e) =>{
+    e.preventDefault();
+    setImage(e.target.files[0])
+  }
   let redirectVar = null;
+
   if (user ? user.isLogged : false) {
     redirectVar = <Redirect to="/dashboard" />;
   }
+
   return (
     <div>
       {redirectVar}
-      
+
       <div className="resgisterForm container mt-5">
-      {user && user.regError?<div className="alert alert-danger"> {user.regError} </div>: ""}
-      {err?(<div className="alert alert-danger"> {err} </div>):''}
-        <form onSubmit={submitRegister}>
+        {user && user.regError ? (
+          <div className="alert alert-danger"> {user.regError} </div>
+        ) : (
+          ""
+        )}
+        {err ? <div className="alert alert-danger"> {err} </div> : ""}
+        <form onSubmit={submitRegister} encType="multipart/form-data">
           <FormInput
             text="Email"
             id="username"
@@ -95,7 +109,7 @@ const Register = () => {
             required={true}
             style={user && user.regError ? true : false}
           />
-          
+
           <FormInput
             text="Phone Number"
             id="num"
@@ -104,8 +118,20 @@ const Register = () => {
             required={true}
             style={user && user.regError ? true : false}
           />
-          <SubmitButton text="Register" type="submit" disabled={err?true:false}/>
-          <Link to="/login" className="btn btn-primary ml-3">Existing User?</Link>
+          <div className="form-group col-sm">
+            <input type="file" className="custom-file-input form-comtrol" name = "profieImage" id="profileImage" accept='image/*' onChange={uploadImage} style={{display:'inline-block', width: '90%'}} />
+            <label className="custom-file-label" htmlFor="profileImage">
+              Upload Image
+            </label>
+          </div>
+          <SubmitButton
+            text="Register"
+            type="submit"
+            disabled={err ? true : false}
+          />
+          <Link to="/login" className="btn btn-primary ml-3">
+            Existing User?
+          </Link>
         </form>
       </div>
     </div>

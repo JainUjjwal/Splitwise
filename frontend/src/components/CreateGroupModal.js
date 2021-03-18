@@ -43,8 +43,8 @@ const CreateGroupModal = (props) => {
     newList.splice(removeKey, 1);
     setAddedFriend(newList);
   };
-  const createGroupFunction = () => {
-    axios
+  const createGroupFunction = async () => {
+    await axios
       .post("/createGroup", { addedFriend, groupName })
       .then((response) => {
         //ADD CONFIRMATION ON GROUP CREATION

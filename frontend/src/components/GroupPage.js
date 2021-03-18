@@ -22,7 +22,6 @@ const GroupPage = (param) => {
       });
   };
   useEffect(() => {
-    console.log(searchParams.get("id"));
     dataSetter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

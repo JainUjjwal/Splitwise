@@ -59,6 +59,10 @@ export const login = (payload) => async (dispatch, getState) => {
 };
 
 export const register = (payload) => async (dispatch, getState) => {
+  const headers = {
+    'Content-Type':'Application/JSON',
+  }
+  console.log(typeof(payload.image)); 
   axios.defaults.withCredentials = true;
   await axios
     .post(" /register", {
@@ -66,7 +70,10 @@ export const register = (payload) => async (dispatch, getState) => {
       password: payload.password,
       Fname: payload.Fname,
       phoneNumber: payload.phoneNumber,
-    })
+      image: payload.image.name
+    }, {headers: {
+      'Content-Type': 'multipart/form-data'
+    }})
     .then((response) => {
       if (response.status === 202) {
         console.log("success");

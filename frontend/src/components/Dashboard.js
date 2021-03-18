@@ -33,7 +33,7 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   
-  let test = async () => {
+  let getDashboardData = async () => {
     await axios
       .get("/dashboard", {
         params: { username: username },
@@ -51,8 +51,8 @@ const Dashboard = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     //axios call for updating total balance and settling balance list changes
-    test();
-  }, []);
+    getDashboardData();
+  },[]);
   const openDialog = () => {
     setOpenGroupDialog(true);
   };
@@ -60,7 +60,7 @@ const Dashboard = () => {
   const dialogClose = () => {
     setOpenGroupDialog(false);
   };
-  const settleHandler = (e) => {
+  const settleHandler = async (e) => {
     // let newData = {...data};
     let deletionId = e.target.dataset.id;
     // console.log(deletionId);
@@ -68,7 +68,7 @@ const Dashboard = () => {
 
     // // newData.splice(e.target.dataset.id, 1);
     // setData(newData);
-    axios
+    await axios
       .post("/settle", { user2: deletionId })
       .then((res) => {
         if (res.status === 200) {

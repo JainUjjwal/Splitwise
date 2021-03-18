@@ -5,6 +5,7 @@ const session = require("express-session");
 // const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const fileUpload = require('express-fileupload');
 const db = require('./dbconnection');
 // app.set("view engine", "ejs");
 
@@ -18,6 +19,8 @@ app.use(
   })
 );
 
+app.use(fileUpload());
+
 //app.use(cookieParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
@@ -30,6 +33,7 @@ app.use(
     activeDuration: 60 * 60 * 100,
   })
 );
+
 app.use(express.json());
 
 app.get("/", function (req, res) {

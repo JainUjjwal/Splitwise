@@ -11,12 +11,13 @@ const Profile = () => {
   let redux_user = useSelector(state=>state.user)
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
+  const getData = async () =>{
+    axios.get(" /profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{ 
+      setUserInfo(res.data.userInformation[0]);
+      })
+  }
   useEffect(() => {
-    axios.get(" /profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{
-    console.log(res.data);  
-    setUserInfo(res.data.userInformation[0]);
-    })
-    
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -24,7 +25,7 @@ const Profile = () => {
     setEditStatus(true);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     const updatedData = {
       username: document.getElementById("newEmail").value,
       Fname: document.getElementById("newName").value,
@@ -35,7 +36,7 @@ const Profile = () => {
     };
     setUserInfo(updatedData);
     setEditStatus(false);
-    axios.post(" /profile", updatedData).then((res,req)=>{
+    await axios.post(" /profile", updatedData).then((res,req)=>{
       console.log('updated Data sent.')
       console.log(res.data.message)
     })
