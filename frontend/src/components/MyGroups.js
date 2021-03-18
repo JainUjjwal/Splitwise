@@ -10,12 +10,12 @@ const MyGroups = () => {
   const [groupList, setGroupList] = useState();
   const [searchTerm, setSearchTerm] = useState("");
   const getData = async () =>{
-    await axios.post("http://localhost:3001/mygroups").then((res) => {
+    await axios.post("/mygroups").then((res) => {
       if (res.status === 201) {
         setGroupList(res.data.myGroups);
       }
     });
-    await axios.get("http://localhost:3001/mygroups").then((res) => {
+    await axios.get("/mygroups").then((res) => {
       if (res.status === 201) {
         setInviteList(res.data.inviteGroup);
       }
@@ -39,7 +39,7 @@ const MyGroups = () => {
 
     // Sending invite status to backend
     await axios
-      .post("http://localhost:3001/accInvStatus", { acceptedGroup })
+      .post("/accInvStatus", { acceptedGroup })
       .then((response) => {
         if (response.status === 269) {
           newGroupList.push(acceptedGroup);
@@ -57,7 +57,7 @@ const MyGroups = () => {
     const rejectedGroup = inviteList[e.target.dataset.id];
     // Sending invite status to backend
     await axios
-      .post("http://localhost:3001/rejInvStatus", { rejectedGroup })
+      .post("/rejInvStatus", { rejectedGroup })
       .then((response) => {
         if (response.status === 269) {
           let newInviteList = [...inviteList];

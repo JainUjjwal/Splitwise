@@ -7,7 +7,7 @@ const History = () => {
   let [filteredHistory, setFilteredHistory] = useState();
   let [groups, setGroups] = useState();
   const getData = async () =>{
-    await axios.post("http://localhost:3001/history").then((res) => {
+    await axios.post("/history").then((res) => {
       setTransactionHistory(res.data.newStore);
       setFilteredHistory(res.data.newStore);
       setGroups(res.data.groupList);

@@ -37,7 +37,7 @@ const userReducer = (state = initialState, action) => {
 export const login = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
   await axios
-    .post("http://localhost:3001/login", {
+    .post(" /login", {
       username: payload.username,
       password: payload.password,
     })
@@ -61,7 +61,7 @@ export const login = (payload) => async (dispatch, getState) => {
 export const register = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
   await axios
-    .post("http://localhost:3001/register", {
+    .post(" /register", {
       username: payload.username,
       password: payload.password,
       Fname: payload.Fname,
@@ -85,7 +85,7 @@ export const register = (payload) => async (dispatch, getState) => {
 };
 export const logout = (payload) => async (dispatch, getState) =>{
   await axios
-    .post("http://localhost:3001/logout")
+    .post(" /logout")
     .then((response) => {
       if (response.status === 204) {
         dispatch(setLogout({...payload, isLogged:false}));

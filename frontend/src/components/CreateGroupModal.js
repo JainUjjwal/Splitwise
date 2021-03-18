@@ -45,7 +45,7 @@ const CreateGroupModal = (props) => {
   };
   const createGroupFunction = () => {
     axios
-      .post("http://localhost:3001/createGroup", { addedFriend, groupName })
+      .post("/createGroup", { addedFriend, groupName })
       .then((response) => {
         //ADD CONFIRMATION ON GROUP CREATION
         if (response.status === 202) {

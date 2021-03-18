@@ -35,7 +35,7 @@ const Dashboard = () => {
   
   let test = async () => {
     await axios
-      .get("http://localhost:3001/dashboard", {
+      .get("/dashboard", {
         params: { username: username },
       })
       .then((res) => {
@@ -69,7 +69,7 @@ const Dashboard = () => {
     // // newData.splice(e.target.dataset.id, 1);
     // setData(newData);
     axios
-      .post("http://localhost:3001/settle", { user2: deletionId })
+      .post("/settle", { user2: deletionId })
       .then((res) => {
         if (res.status === 200) {
           setSettleState(true);

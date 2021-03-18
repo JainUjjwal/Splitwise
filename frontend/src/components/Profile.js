@@ -12,7 +12,7 @@ const Profile = () => {
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
   useEffect(() => {
-    axios.get("http://localhost:3001/profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{
+    axios.get(" /profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{
     console.log(res.data);  
     setUserInfo(res.data.userInformation[0]);
     })
@@ -35,7 +35,7 @@ const Profile = () => {
     };
     setUserInfo(updatedData);
     setEditStatus(false);
-    axios.post("http://localhost:3001/profile", updatedData).then((res,req)=>{
+    axios.post(" /profile", updatedData).then((res,req)=>{
       console.log('updated Data sent.')
       console.log(res.data.message)
     })
