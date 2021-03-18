@@ -13,7 +13,8 @@ const Profile = () => {
   let [editStatus, setEditStatus] = useState(false);
   useEffect(() => {
     axios.get("http://localhost:3001/profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{
-      setUserInfo(res.data.userInformation[0]);
+    console.log(res.data);  
+    setUserInfo(res.data.userInformation[0]);
     })
     
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -12,11 +12,18 @@ const Register = () => {
   let [password, setPassword] = useState("");
   let [Fname, setFname] = useState("");
   let [num, setNum] = useState("");
+  let [err, setErr] = useState("");
   const dispatch = useDispatch();
   const user = useSelector(state=>state.user)
   // Phone Number change handler
   const numHandler = (e) => {
-    setNum(e.target.value);
+    if(e.target.value.length===10){
+      setNum(e.target.value);
+      setErr(null);
+    }
+    else{
+     setErr('Phone Number must consist of 10 digits.')
+    }
   };
 
   // First Name change handler to update state variable
@@ -28,10 +35,17 @@ const Register = () => {
   const usernameChangeHandler = (e) => {
     setUsername(e.target.value);
   };
-
+   
   //password change handler to update state variable
   const passwordChangeHandler = (e) => {
-    setPassword(e.target.value);
+    let reg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+    if((e.target.value).match(reg)){
+      setPassword(e.target.value);
+      setErr(null);
+    }else{
+      setErr('Password must be between 6 to 20 characters and contain at least one numeric digit, one uppercase and one lowercase letter')
+    }
+    
   };
 
   const submitRegister = (e) => {
@@ -52,34 +66,45 @@ const Register = () => {
   return (
     <div>
       {redirectVar}
-      {user && user.regError?<div className="alert alert-danger"> {user.regError} </div>: ""}
+      
       <div className="resgisterForm container mt-5">
+      {user && user.regError?<div className="alert alert-danger"> {user.regError} </div>: ""}
+      {err?(<div className="alert alert-danger"> {err} </div>):''}
         <form onSubmit={submitRegister}>
           <FormInput
             text="Email"
             id="username"
             type="email"
             onChange={usernameChangeHandler}
+            required={true}
+            style={user && user.regError ? true : false}
           />
           <FormInput
             text="Password"
             id="password"
             type="password"
             onChange={passwordChangeHandler}
+            required={true}
+            style={user && user.regError ? true : false}
           />
           <FormInput
             text="First Name"
             id="Fname"
             type="text"
             onChange={FnameHandler}
+            required={true}
+            style={user && user.regError ? true : false}
           />
+          
           <FormInput
             text="Phone Number"
             id="num"
             type="number"
             onChange={numHandler}
+            required={true}
+            style={user && user.regError ? true : false}
           />
-          <SubmitButton text="Register" type="submit" />
+          <SubmitButton text="Register" type="submit" disabled={err?true:false}/>
           <Link to="/login" className="btn btn-primary ml-3">Existing User?</Link>
         </form>
       </div>

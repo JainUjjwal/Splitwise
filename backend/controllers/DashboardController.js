@@ -37,7 +37,7 @@ const getUserList = (req, res) => {
             newDataBlock[element.user2] = {
               Fname: element.Fname,
               amount: element.balance,
-              typeClass: element.balance > 0 ? true : false,
+              typeClass: element.balance >= 0 ? true : false,
             };
           }
         });

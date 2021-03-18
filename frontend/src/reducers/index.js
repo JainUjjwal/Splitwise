@@ -71,7 +71,12 @@ export const register = (payload) => async (dispatch, getState) => {
       if (response.status === 202) {
         console.log("success");
         dispatch(setRegister({...payload, isLogged:true}));
-      } else {
+      } 
+      if(response.status === 203){
+        console.log(response.data);
+        dispatch(setRegister({err: "User Already Exists", isLogged:false}));
+      }
+      else {
         console.log("Error on registation");
         console.log(response.data.err)
         dispatch(setRegister({err: "Registration Error", isLogged:false}));

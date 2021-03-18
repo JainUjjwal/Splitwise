@@ -9,13 +9,23 @@ const MyGroups = () => {
   const [inviteList, setInviteList] = useState();
   const [groupList, setGroupList] = useState();
   const [searchTerm, setSearchTerm] = useState("");
+  const getData = async () =>{
+    await axios.post("http://localhost:3001/mygroups").then((res) => {
+      if (res.status === 201) {
+        setGroupList(res.data.myGroups);
+      }
+    });
+    await axios.get("http://localhost:3001/mygroups").then((res) => {
+      if (res.status === 201) {
+        setInviteList(res.data.inviteGroup);
+      }
+      if (res.status === 101) {
+
+      }
+    });
+  }
   useEffect(() => {
-    axios.post("http://localhost:3001/mygroups").then((res) => {
-      setGroupList(res.data.myGroups);
-    });
-    axios.get("http://localhost:3001/mygroups").then((res) => {
-      setInviteList(res.data.inviteGroup);
-    });
+    getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -61,17 +71,8 @@ const MyGroups = () => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const testing = async (e) => {
-    // let data = {}
-    history.push('/groupPage?id='+e.target.dataset.id)
-    // await axios
-    //   .post("http://localhost:3001/backgroupPage",{groupID : e.target.dataset.id}).then((response)=>{
-    //     if(response){
-    //       data = response.data;
-    //     }
-    //   }).then(()=>{
-    //     // axios.get("http://localhost:3001/groupPage",{params:{data}})
-    //   })
+  const groupRedirection = async (e) => {
+    history.push("/groupPage?id=" + e.target.dataset.id);
   };
 
   const renderInviteList = () => {
@@ -144,7 +145,9 @@ const MyGroups = () => {
                   </Col>
                   <Col>
                     <div className="btn-group mx2 ml-5">
-                      <Button data-id={group.id} onClick = {testing}>View Group</Button>
+                      <Button data-id={group.id} onClick={groupRedirection}>
+                        View Group
+                      </Button>
                     </div>
                   </Col>
                 </Row>

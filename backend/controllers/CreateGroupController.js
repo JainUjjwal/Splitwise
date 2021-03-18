@@ -3,6 +3,7 @@ const db = require("../dbconnection");
 const createGroup = (req, res) => {
   groupName = req.body.groupName;
   currentUserId = req.session.user.userId;
+  
   db.query(
     "INSERT INTO groupTable (groupName) VALUES (?)",
     groupName,

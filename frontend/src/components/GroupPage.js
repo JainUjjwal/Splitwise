@@ -8,6 +8,7 @@ const GroupPage = (param) => {
   const history = useHistory();
   let [groupInfo, setGroupInfo] = useState();
   let [openBillDialog, setOpenBillDialog] = useState(false);
+  let [editStatus, setEditStatus] = useState(false);
   let [data, setData] = useState();
   var searchParams = new URLSearchParams(param.location.search);
   const dataSetter = async () => {
@@ -77,13 +78,34 @@ const GroupPage = (param) => {
       });
   };
 
+  const saveGroupName = async () => {
+    const groupId = searchParams.get("id");
+    const groupName = document.getElementById("newGroupName").value;
+    await axios
+      .post("http://localhost:3001/updateGroup", {
+        groupId: groupId,
+        groupName: groupName,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          setEditStatus(false);
+          dataSetter();
+        }
+      });
+  };
+
+  const editGroup = () => {
+    setEditStatus(true);
+  };
+
   return (
     <div className="container-fluid">
       {redirectVar}
       <div className="row">
         {/* DISPLAYING AMOUNT FOR EACH GROUP MEMBER */}
         {/* ######################### */}
-        <div className="col mt-3">
+        <div className="col mt-4">
+          <h3 className="">User Balance</h3>
           {groupInfo
             ? groupInfo.members.map((member, index) => (
                 <div className="my-4" key={index}>
@@ -108,12 +130,37 @@ const GroupPage = (param) => {
             groupID={searchParams.get("id")}
           />
           <div className="my-4">
-            <h2>{groupInfo ? groupInfo.groupName : ""}</h2>
+            {editStatus ? (
+              <div>
+                <input
+                  type="text"
+                  id="newGroupName"
+                  defaultValue={groupInfo ? groupInfo.groupName : ""}
+                ></input>
+              </div>
+            ) : (
+              <div>
+                <h2>{groupInfo ? groupInfo.groupName : ""}</h2>
+              </div>
+            )}
+            {/* <h2>{groupInfo ? groupInfo.groupName : ""}</h2> */}
           </div>
           <div className="btn-group mx2">
             <Button variant="success" onClick={BillDialogOpen}>
               Add Expense
             </Button>
+            {editStatus ? (
+              <span className="btn-group mx2">
+                <Button onClick={saveGroupName} type="submit">
+                  Save Edit
+                </Button>
+                <Button onClick={() => setEditStatus(false)}>
+                  Discard Edit
+                </Button>
+              </span>
+            ) : (
+              <Button onClick={editGroup}>Edit Group</Button>
+            )}
             <Button variant="danger" onClick={LeaveGroupHandler}>
               Leave Group
             </Button>
@@ -123,7 +170,7 @@ const GroupPage = (param) => {
               <Col xs={9} className="border-right">
                 <b>Description</b>
               </Col>
-              <Col>amount</Col>
+              <Col>Total Amount</Col>
             </Row>
           </div>
           {data
@@ -131,7 +178,7 @@ const GroupPage = (param) => {
                 <div className="pt-4" key={index}>
                   <Row>
                     <Col xs={9} className="border-right">
-                      {friend.discription}
+                      <b>{friend.discription}</b> paid by <b><i>{friend.Fname}</i></b> at <span style={{color:'grey'}}>{friend.ts}</span>
                     </Col>
                     <Col
                       style={

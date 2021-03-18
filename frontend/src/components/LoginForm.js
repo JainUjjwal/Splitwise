@@ -46,6 +46,7 @@ const LoginForm = () => {
           type="email"
           onChange={usernameChangeHandler}
           style={user && user.error ? true : false}
+          required={true}
         />
         <FormInput
           text="Password"
@@ -53,6 +54,7 @@ const LoginForm = () => {
           type="password"
           onChange={passwordChangeHandler}
           style={user && user.error ? true : false}
+          required={true}
         />
         <SubmitButton text="Log In" type="submit" />
         <Link to="/register" className="btn btn-primary ml-3">

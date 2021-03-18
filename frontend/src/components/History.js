@@ -6,14 +6,15 @@ const History = () => {
   let [transactionHistory, setTransactionHistory] = useState();
   let [filteredHistory, setFilteredHistory] = useState();
   let [groups, setGroups] = useState();
-
-  useEffect(() => {
-    axios.post("http://localhost:3001/history").then((res) => {
+  const getData = async () =>{
+    await axios.post("http://localhost:3001/history").then((res) => {
       setTransactionHistory(res.data.newStore);
       setFilteredHistory(res.data.newStore);
       setGroups(res.data.groupList);
     });
-
+  }
+  useEffect(() => {
+    getData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   let filteredData;

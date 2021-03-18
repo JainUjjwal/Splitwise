@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 import FormInput from "./FormInput";
 const CreateGroupModal = (props) => {
-  const [groupName, setGroupName]=useState("");
+  const [groupName, setGroupName] = useState("");
   const [addedFriend, setAddedFriend] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(props.show);
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
-  let removeKey = -1
+  let removeKey = -1;
   const addFriend = (e) => {
-    if(show){}//just removing eslint warning for no-unused-vars
+    if (show) {
+    } //just removing eslint warning for no-unused-vars
     let key = parseInt(e.target.dataset.id);
     props.friends.forEach((element, index) => {
       if (element.userId === key) {
@@ -23,8 +24,8 @@ const CreateGroupModal = (props) => {
             username: element.username,
             Fname: element.Fname,
           },
-        ]) ;
-        removeKey=index;
+        ]);
+        removeKey = index;
       }
     });
     props.friends.splice(removeKey, 1);
@@ -32,35 +33,49 @@ const CreateGroupModal = (props) => {
 
   const removeFriend = (e) => {
     let key = parseInt(e.target.dataset.id);
-    addedFriend.forEach((element,index)=>{
-      if (element.userId === key){
+    addedFriend.forEach((element, index) => {
+      if (element.userId === key) {
         props.friends.push(element);
         removeKey = index;
       }
-    })
-    let newList = [...addedFriend]
+    });
+    let newList = [...addedFriend];
     newList.splice(removeKey, 1);
     setAddedFriend(newList);
   };
   const createGroupFunction = () => {
-    axios.post("http://localhost:3001/createGroup",{addedFriend, groupName}).then((res,req)=>{
-      //ADD CONFIRMATION ON GROUP CREATION
-      alert('Group created!')
-    })
+    axios
+      .post("http://localhost:3001/createGroup", { addedFriend, groupName })
+      .then((response) => {
+        //ADD CONFIRMATION ON GROUP CREATION
+        if (response.status === 202) {
+          alert(response.data.err);
+        }
+        if (response.status === 251) {
+          alert("Group created!");
+        }
+      });
     setShow(props.hide);
   };
-  const closeModal = () =>{
-    props.friends.push(...addedFriend)
+  const closeModal = () => {
+    props.friends.push(...addedFriend);
     setAddedFriend([]);
     setShow(props.hide);
-  }
+  };
   return (
     <Modal show={props.show} onHide={closeModal}>
       <Modal.Header closeButton>
         <Modal.Title>Create Group.</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <FormInput id="GroupName" text="Group Name" type="text" onChange={(e)=>{setGroupName(e.target.value)}}/>
+        <FormInput
+          id="GroupName"
+          text="Group Name"
+          type="text"
+          onChange={(e) => {
+            setGroupName(e.target.value);
+          }}
+        />
         <FormInput
           id="GroupSearch"
           text="Search for Friends"
@@ -86,18 +101,20 @@ const CreateGroupModal = (props) => {
               );
             })
           : ""}
-        {addedFriend&&addedFriend.length > 0
-          ? addedFriend.map((confirmed, index) => <div className="mt-4" key={index}>
-          {confirmed.Fname} ({confirmed.username}){" "}
-          <Button
-            variant="danger"
-            className="float-right"
-            data-id={confirmed.userId}
-            onClick={removeFriend}
-          >
-            Remove
-          </Button>
-        </div>)
+        {addedFriend && addedFriend.length > 0
+          ? addedFriend.map((confirmed, index) => (
+              <div className="mt-4" key={index}>
+                {confirmed.Fname} ({confirmed.username}){" "}
+                <Button
+                  variant="danger"
+                  className="float-right"
+                  data-id={confirmed.userId}
+                  onClick={removeFriend}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))
           : ""}
       </Modal.Body>
       <Modal.Footer>

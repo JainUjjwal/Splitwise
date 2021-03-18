@@ -10,12 +10,13 @@ const groupList = (req, res) => {
       if (err) {
         //   res.send({ err: err });
         console.log(err);
+        res.status(101).send({ err: "User is currently in no groups." });
       } else {
         if (result.length > 0) {
           for (i = 0; i < result.length; i++) {
             myGroups.push({ id: result[i].groupId, name: result[i].groupName });
           }
-          res.send({
+          res.status(201).send({
             myGroups: myGroups,
           });
         }
@@ -28,11 +29,11 @@ const getInvites = (req, res) => {
   const inviteGroup = [];
   db.query(
     " select * from groupTable Inner join invites on groupTable.groupId = invites.groupId where userId = (?) AND invStatus = (?);",
-    [userId,0],
+    [userId, 0],
     (err, result) => {
       if (err) {
-        //   res.send({ err: err });
         console.log(err);
+        res.status(101).send({ err: "User is currently in no groups." });
       } else {
         if (result.length > 0) {
           for (i = 0; i < result.length; i++) {
@@ -42,7 +43,7 @@ const getInvites = (req, res) => {
               invStatus: result[i].invStatus,
             });
           }
-          res.send({
+          res.status(201).send({
             inviteGroup: inviteGroup,
           });
         }
