@@ -48,14 +48,14 @@ const CreateGroupModal = (props) => {
       .post("http://18.144.25.88:3001/createGroup", { addedFriend, groupName })
       .then((response) => {
         //ADD CONFIRMATION ON GROUP CREATION
-        if (response.status === 202) {
-          alert(response.data.err);
-        }
         if (response.status === 251) {
           alert("Group created!");
+          closeModal();
         }
+        
       });
-    setShow(props.hide);
+      
+    
   };
   const closeModal = () => {
     props.friends.push(...addedFriend);

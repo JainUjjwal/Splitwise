@@ -35,8 +35,9 @@ const createGroup = (req, res) => {
                 // res.send({ err: err });
                 console.log(err);
               } else {
-                // res.status(251).send({ message: "Group Invites sent" })
+                res.status(251).end()
                 console.log("Group Invites sent");
+                return;
               }
             }
           );
@@ -55,7 +56,7 @@ const createGroup = (req, res) => {
             }
           );
       } else {
-        res.status(252).send({ message: "Failed to create group" });
+        // res.status(252).send({ message: "Failed to create group" });
       }
     }
   );
