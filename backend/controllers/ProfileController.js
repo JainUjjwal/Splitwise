@@ -27,21 +27,27 @@ const post_userInfo = (req, res) => {
   const lang = req.body.lang;
   const currency = req.body.currency;
   const timezone = req.body.timezone;
-  
-  if(req.files){
-  const image = req.files.image;
-  uploadPath =
-    __dirname + "/../../frontend/public/userImages/" + username + ".jpg";
-  image.mv(uploadPath, function (err) {
-    if (err) return res.status(500).send(err);
-  });}
+
   db.query(
     "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=? WHERE userId = ?",
     [username, Fname, phoneNumber, lang, timezone, currency, currentUser],
-    (err,result)=>{
-      if(err){
+    (err, result) => {
+      if (err) {
         console.log(err);
-      }else{
+      } else {
+        if (req.files) {
+          const image = req.files.image;
+          uploadPath =
+            __dirname +
+            "/../../frontend/public/userImages/" +
+            username +
+            ".jpg";
+          fs.unlink(uploadPath).then(()=>{
+            image.mv(uploadPath, function (err) {
+              if (err) return res.status(500).send(err);
+            });
+          });
+        }
         res.status(201).send({ message: "updated information recieved" });
       }
     }
