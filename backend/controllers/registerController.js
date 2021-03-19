@@ -10,8 +10,7 @@ const register = (req, res) => {
   const num = req.body.phoneNumber;
   console.log(num);
   const image = req.files.image;
-  uploadPath =
-    __dirname + "/../../frontend/public/userImages/" + username + ".jpg";
+  uploadPath ="/userImages/" + username + ".jpg";
   image.mv(uploadPath, function (err) {
     if (err) return res.status(500).send(err);
   });

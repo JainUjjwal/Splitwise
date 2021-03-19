@@ -95,7 +95,7 @@ const Profile = () => {
               <div className="col">
                 <Image
                   src={
-                    "userImages/" +
+                    "/userImages/" +
                     (userInfo ? userInfo.username : "default") +
                     ".jpg"
                   }
