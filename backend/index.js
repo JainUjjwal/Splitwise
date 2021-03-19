@@ -13,7 +13,7 @@ const db = require('./dbconnection');
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://18.144.25.88",
     credentials: true,
     method: ["GET", "POST"],
   })
