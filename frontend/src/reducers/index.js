@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setLogin, setRegister, setLogout } from "../actions";
+const FormData = require('form-data');
 const initialState = null;
 
 const userReducer = (state = initialState, action) => {
@@ -7,6 +8,7 @@ const userReducer = (state = initialState, action) => {
     case "setLogin":
       return {
         ...state,
+        userId: action.payload.userId,
         username: action.payload.username,
         password: action.payload.password,
         Fname: null,
@@ -37,7 +39,7 @@ const userReducer = (state = initialState, action) => {
 export const login = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
   await axios
-    .post(" /login", {
+    .post("http://18.144.25.88:3001/login", {
       username: payload.username,
       password: payload.password,
     })
@@ -45,7 +47,7 @@ export const login = (payload) => async (dispatch, getState) => {
       console.log("Status Code : ", response.status);
       if (response.status === 200) {
         // <Redirect to="/dashboard" />
-        dispatch(setLogin({...payload, isLogged:true}));
+        dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId}));
       } else {
           dispatch(setLogin({err: response.data.message, isLogged:false}))
         // return {err: response.data.message}
@@ -59,19 +61,15 @@ export const login = (payload) => async (dispatch, getState) => {
 };
 
 export const register = (payload) => async (dispatch, getState) => {
-  const headers = {
-    'Content-Type':'Application/JSON',
-  }
-  console.log(typeof(payload.image)); 
+  const formData  = new FormData();
+  formData.append("image",payload.image);
+  formData.append("username",payload.username);
+  formData.append("password",payload.password);
+  formData.append("Fname",payload.Fname);
+  formData.append("phoneNumber",payload.phoneNumber);
   axios.defaults.withCredentials = true;
   await axios
-    .post(" /register", {
-      username: payload.username,
-      password: payload.password,
-      Fname: payload.Fname,
-      phoneNumber: payload.phoneNumber,
-      image: payload.image.name
-    }, {headers: {
+    .post("http://18.144.25.88:3001/register", formData, {headers: {
       'Content-Type': 'multipart/form-data'
     }})
     .then((response) => {
@@ -92,7 +90,7 @@ export const register = (payload) => async (dispatch, getState) => {
 };
 export const logout = (payload) => async (dispatch, getState) =>{
   await axios
-    .post(" /logout")
+    .post("http://18.144.25.88:3001/logout")
     .then((response) => {
       if (response.status === 204) {
         dispatch(setLogout({...payload, isLogged:false}));

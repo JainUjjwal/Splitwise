@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
-import axios from 'axios';
+import axios from "axios";
 import "./profile.css";
 import img from "../constants/image1.jpg";
-import {useSelector} from "react-redux";
-import {Redirect} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Redirect } from "react-router-dom";
+const FormData = require("form-data");
 // import { Link } from "react-router-dom";
 
 const Profile = () => {
-  let redux_user = useSelector(state=>state.user)
+  let redux_user = useSelector((state) => state.user);
+  const redux_userId = redux_user?redux_user.userId:false;
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
-  const getData = async () =>{
-    axios.get(" /profile", {params: {username:redux_user?redux_user.username:''}}).then((res)=>{ 
-      setUserInfo(res.data.userInformation[0]);
+  let [image, setImage] = useState();
+  const getData = async () => {
+    axios
+      .get(" /profile", {
+        params: { username: redux_user ? redux_user.username : "" },
       })
-  }
+      .then((res) => {
+        setUserInfo(res.data[0]);
+      });
+  };
   useEffect(() => {
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,22 +31,44 @@ const Profile = () => {
   const editHandler = () => {
     setEditStatus(true);
   };
-
+  const uploadImage = (e) => {
+    e.preventDefault();
+    setImage(e.target.files[0]);
+  };
   const saveEdit = async () => {
+    ///////////////////////
+    console.log(image);
+    const formData = new FormData();
+
     const updatedData = {
       username: document.getElementById("newEmail").value,
       Fname: document.getElementById("newName").value,
       phoneNumber: document.getElementById("newNumber").value,
-      lang: document.getElementById('newLanguage').value,
-      currency: document.getElementById('newcurrency').value,
-      timezone: document.getElementById('newtimezone').value
+      lang: document.getElementById("newLanguage").value,
+      currency: document.getElementById("newcurrency").value,
+      timezone: document.getElementById("newtimezone").value,
+      image: image,
     };
-    setUserInfo(updatedData);
-    setEditStatus(false);
-    await axios.post(" /profile", updatedData).then((res,req)=>{
-      console.log('updated Data sent.')
-      console.log(res.data.message)
-    })
+    formData.append("image", image);
+    formData.append("username", updatedData.username);
+    formData.append("Fname", updatedData.Fname);
+    formData.append("phoneNumber", updatedData.phoneNumber);
+    formData.append("lang", updatedData.lang);
+    formData.append("currency", updatedData.currency);
+    formData.append("timezone", updatedData.timezone);
+    await axios
+      .post(" /profile", {userId: redux_userId, formData:formData}, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res, req) => {
+        if (res.status === 201) {
+          console.log(res.data.message);
+          setUserInfo(updatedData);
+          setEditStatus(false);
+        }
+      });
   };
 
   const closeEdit = () => {
@@ -51,7 +80,6 @@ const Profile = () => {
   if (!isLoggedIn) {
     redirectVar = <Redirect to="/login" />;
   }
-
   return (
     <div>
       {redirectVar}
@@ -65,7 +93,20 @@ const Profile = () => {
           <Card.Body>
             <div className="row">
               <div className="col">
-                <Image src={img} roundedCircle></Image>
+                <Image
+                  src={
+                    "userImages/" +
+                    (userInfo ? userInfo.username : "default") +
+                    ".jpg"
+                  }
+                  alt="not found"
+                  style={{
+                    height: "100%",
+                    maxHeight: "300px",
+                    width: "100%",
+                    maxWidth: "400px",
+                  }}
+                ></Image>
               </div>
               <div className="col">
                 <div className="my-5">
@@ -177,6 +218,20 @@ const Profile = () => {
                         ""
                       )}
                     </h5>
+                    {editStatus ? (
+                      <div>
+                        <input
+                          type="file"
+                          name="profieImage"
+                          id="profileImage"
+                          accept="image/*"
+                          onChange={uploadImage}
+                          style={{ display: "inline-block", width: "90%" }}
+                        />
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
 
                   <div className="mt-4 row">
@@ -188,8 +243,7 @@ const Profile = () => {
                             onClick={saveEdit}
                           >
                             Save Changes
-                          </Button>
-                          {" "}
+                          </Button>{" "}
                           <Button
                             className="btn btn-danger"
                             onClick={closeEdit}

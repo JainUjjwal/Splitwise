@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
 const GroupPage = (param) => {
   const history = useHistory();
+  const user = useSelector((state) => state.user);
+  const currentUser = user?user.userId:false;
   let [groupInfo, setGroupInfo] = useState();
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
@@ -13,8 +15,9 @@ const GroupPage = (param) => {
   var searchParams = new URLSearchParams(param.location.search);
   const dataSetter = async () => {
     await axios
-      .post("/groupPage", {
+      .post("http://18.144.25.88:3001/groupPage", {
         groupID: searchParams.get("id"),
+        userId: currentUser
       })
       .then((response) => {
         setGroupInfo(response.data.dummyInfo);
@@ -34,10 +37,11 @@ const GroupPage = (param) => {
   };
   const addBill = async (newDiscription, newAmount) => {
     await axios
-      .post("/addBill", {
+      .post("http://18.144.25.88:3001/addBill", {
         amount: newAmount,
         discription: newDiscription,
         groupId: searchParams.get("id"),
+        userId: currentUser
       })
       .then((response) => {
         console.log(response);
@@ -54,7 +58,7 @@ const GroupPage = (param) => {
   };
 
   //Redirection to login if redux state not set
-  const user = useSelector((state) => state.user);
+  
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
   if (!isLoggedIn) {
@@ -64,7 +68,7 @@ const GroupPage = (param) => {
   const LeaveGroupHandler = async () => {
     const groupId = searchParams.get("id");
     await axios
-      .post("/leaveGroup", { groupId: groupId })
+      .post("http://18.144.25.88:3001/leaveGroup", { groupId: groupId, userId: currentUser })
       .then((response) => {
         if (response.status === 201) {
           console.log(response);
@@ -81,9 +85,10 @@ const GroupPage = (param) => {
     const groupId = searchParams.get("id");
     const groupName = document.getElementById("newGroupName").value;
     await axios
-      .post("/updateGroup", {
+      .post("http://18.144.25.88:3001/updateGroup", {
         groupId: groupId,
         groupName: groupName,
+        userId: currentUser
       })
       .then((response) => {
         if (response.status === 201) {

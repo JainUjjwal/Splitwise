@@ -3,11 +3,13 @@ import { useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 const History = () => {
+  const user = useSelector((state) => state.user);
+  const redux_userId = user?user.userId:false;
   let [transactionHistory, setTransactionHistory] = useState();
   let [filteredHistory, setFilteredHistory] = useState();
   let [groups, setGroups] = useState();
   const getData = async () =>{
-    await axios.post("/history").then((res) => {
+    await  axios.post("http://18.144.25.88:3001/history",{userId:redux_userId}).then((res) => {
       setTransactionHistory(res.data.newStore);
       setFilteredHistory(res.data.newStore);
       setGroups(res.data.groupList);
@@ -42,7 +44,7 @@ const History = () => {
       setFilteredHistory(filteredData);
     }
   };
-  const user = useSelector((state) => state.user);
+  
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
   if (!isLoggedIn) {

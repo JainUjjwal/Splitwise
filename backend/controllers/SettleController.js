@@ -3,7 +3,7 @@ const db = require("../dbconnection");
 const settle = (req, res) => {
   
   const user2 = req.body.user2;
-  const currentUser = req.session.user.userId;
+  const currentUser = req.body.userId;
   console.log(user2);
   console.log(currentUser);
   db.query(

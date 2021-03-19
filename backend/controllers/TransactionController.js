@@ -23,7 +23,7 @@ const addBill = async (req, res) => {
   const amount = req.body.amount;
   const discription = req.body.discription;
   const groupId = req.body.groupId;
-  const currentUser = req.session.user.userId;
+  const currentUser = req.body.userId;
   await db.query(
     "INSERT INTO transactionTable (groupId, discription, amount) VALUES (?,?,?);",
     [groupId, discription, amount],

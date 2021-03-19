@@ -11,6 +11,7 @@ import { Redirect } from "react-router";
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
+  const userId = user ? user.userId : false;
   const isLoggedIn = user ? user.isLogged : false;
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
@@ -32,11 +33,11 @@ const Dashboard = () => {
     setTotal({ ...total, credit: credit, debt: Math.abs(debt) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-  
+
   let getDashboardData = async () => {
     await axios
       .get("/dashboard", {
-        params: { username: username },
+        params: { username: username, userId:userId },
       })
       .then((res) => {
         //Getting list of users to pass to create group modal
@@ -52,7 +53,7 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     //axios call for updating total balance and settling balance list changes
     getDashboardData();
-  },[]);
+  }, []);
   const openDialog = () => {
     setOpenGroupDialog(true);
   };
@@ -68,14 +69,12 @@ const Dashboard = () => {
 
     // // newData.splice(e.target.dataset.id, 1);
     // setData(newData);
-    await axios
-      .post("/settle", { user2: deletionId })
-      .then((res) => {
-        if (res.status === 200) {
-          setSettleState(true);
-          test();
-        }
-      });
+    await  axios.post("http://18.144.25.88:3001/settle", { userId:userId, user2: deletionId }).then((res) => {
+      if (res.status === 200) {
+        setSettleState(true);
+        test();
+      }
+    });
   };
   let redirectVar = null;
   if (!isLoggedIn) {

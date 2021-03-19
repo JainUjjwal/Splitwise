@@ -16,10 +16,12 @@ const login_user_post = (req, res) => {
         bcrypt.compare(password, result[0].pass, (error, response) => {
           if (response) {
             req.session.user = result[0];
-            res.writeHead(200, {
-              "Content-Type": "text/plain",
-            });
-            res.end("Successful Login");
+            // res.writeHead(200, {
+            //   "Content-Type": "text/plain",
+            // })
+            res.send({userId: result[0].userId,message:"Successful Login"});
+            res.end("Login Successful");
+            
           } else {
             res.status(250).send({
               message: "Username and Password combination incorrect.",

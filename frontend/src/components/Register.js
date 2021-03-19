@@ -12,7 +12,7 @@ const Register = () => {
   let [password, setPassword] = useState("");
   let [Fname, setFname] = useState("");
   let [num, setNum] = useState("");
-  let [err, setErr] = useState("");
+  let [err, setErr] = useState(null);
   let [image,setImage] = useState();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -51,7 +51,7 @@ const Register = () => {
 
   const submitRegister = (e) => {
     e.preventDefault();
-    console.log(image);
+    console.log(num);
     dispatch(
       register({
         username: username,
@@ -119,7 +119,7 @@ const Register = () => {
             style={user && user.regError ? true : false}
           />
           <div className="form-group col-sm">
-            <input type="file" className="custom-file-input form-comtrol" name = "profieImage" id="profileImage" accept='image/*' onChange={uploadImage} style={{display:'inline-block', width: '90%'}} />
+            <input type="file" className="custom-file-input form-comtrol" name = "profieImage" id="profileImage" accept='image/*' onChange={uploadImage} style={{display:'inline-block', width: '90%'}} required />
             <label className="custom-file-label" htmlFor="profileImage">
               Upload Image
             </label>

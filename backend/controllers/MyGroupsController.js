@@ -1,7 +1,7 @@
 const db = require("../dbconnection");
 
 const groupList = (req, res) => {
-  const userId = req.session.user.userId;
+  const userId = req.body.userId;
   const myGroups = [];
   db.query(
     " select * from userGroup inner join groupTable on userGroup.groupId = groupTable.groupId where userId = (?)",
@@ -25,7 +25,7 @@ const groupList = (req, res) => {
   );
 };
 const getInvites = (req, res) => {
-  const userId = req.session.user.userId;
+  const userId = req.query.userId;
   const inviteGroup = [];
   db.query(
     " select * from groupTable Inner join invites on groupTable.groupId = invites.groupId where userId = (?) AND invStatus = (?);",

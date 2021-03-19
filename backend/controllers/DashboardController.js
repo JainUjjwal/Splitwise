@@ -17,7 +17,7 @@ const userInfopost = (req, res) => {
 };
 
 const getUserList = (req, res) => {
-  const currentUser = req.session.user.userId;
+  const currentUser = req.query.userId;
   const username = req.query.username;
   db.query(
     "SELECT * FROM users WHERE username != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
@@ -26,8 +26,9 @@ const getUserList = (req, res) => {
       if (err) {
         res.send({ err: err });
       }
-      if (result[1].length > 0) {
+      if (result[0].length > 0) {
         let newDataBlock = {};
+        if(result[1].length>0){
         result[1].forEach((element) => {
           if (element.user2 in newDataBlock) {
             let updatedBalance =
@@ -41,8 +42,8 @@ const getUserList = (req, res) => {
             };
           }
         });
-
-        res.send({ userList: result[0], dataBlock: newDataBlock });
+      }
+        res.send({ userList: result[0], dataBlock: newDataBlock});
       } else {
         res.status(252).send({ message: "User Info not found" });
       }

@@ -5,27 +5,33 @@ import FormInput from "./FormInput";
 import { useSelector } from "react-redux";
 import axios from "axios";
 const MyGroups = () => {
+  const user = useSelector((state) => state.user);
+  const redux_userId = user?user.userId:false;
   const history = useHistory();
   const [inviteList, setInviteList] = useState();
   const [groupList, setGroupList] = useState();
   const [searchTerm, setSearchTerm] = useState("");
-  const getData = async () =>{
-    await axios.post("/mygroups").then((res) => {
-      if (res.status === 201) {
-        setGroupList(res.data.myGroups);
-      }
-    });
-    await axios.get("/mygroups").then((res) => {
+  // Getting data from the backend and storing them in react states.
+  const getInviteData = async () => {
+    await  axios.get("http://18.144.25.88:3001/mygroups",{params:{userId:redux_userId}}).then((res) => {
       if (res.status === 201) {
         setInviteList(res.data.inviteGroup);
       }
       if (res.status === 101) {
-
+        console.log("oh no");
+      }
+    });
+  };
+  const getGroupData = async () =>{
+    await  axios.post("http://18.144.25.88:3001/mygroups",{userId:redux_userId}).then((res) => {
+      if (res.status === 201) {
+        setGroupList(res.data.myGroups);
       }
     });
   }
   useEffect(() => {
-    getData();
+    getInviteData();
+    getGroupData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -38,37 +44,34 @@ const MyGroups = () => {
     let acceptedGroup = inviteList[e.target.dataset.id];
 
     // Sending invite status to backend
-    await axios
-      .post("/accInvStatus", { acceptedGroup })
-      .then((response) => {
-        if (response.status === 269) {
-          newGroupList.push(acceptedGroup);
-          setGroupList(newGroupList);
-          // Updating Invite List
-          let newInviteList = [...inviteList];
-          newInviteList.splice(e.target.dataset.id, 1);
-          setInviteList(newInviteList);
-        }
-      });
+    await  axios.post("http://18.144.25.88:3001/accInvStatus", { acceptedGroup }).then((response) => {
+      if (response.status === 269) {
+        newGroupList.push(acceptedGroup);
+        setGroupList(newGroupList);
+        // Updating Invite List
+        let newInviteList = [...inviteList];
+        newInviteList.splice(e.target.dataset.id, 1);
+        setInviteList(newInviteList);
+      }
+    });
   };
 
   const rejectHandler = async (e) => {
     // Updating Invite List
     const rejectedGroup = inviteList[e.target.dataset.id];
     // Sending invite status to backend
-    await axios
-      .post("/rejInvStatus", { rejectedGroup })
-      .then((response) => {
-        if (response.status === 269) {
-          let newInviteList = [...inviteList];
-          newInviteList.splice(e.target.dataset.id, 1);
-          setInviteList(newInviteList);
-        }
-      });
+    await  axios.post("http://18.144.25.88:3001/rejInvStatus", { rejectedGroup }).then((response) => {
+      if (response.status === 269) {
+        let newInviteList = [...inviteList];
+        newInviteList.splice(e.target.dataset.id, 1);
+        setInviteList(newInviteList);
+      }
+    });
   };
 
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
+    console.log(inviteList);
   };
 
   const groupRedirection = async (e) => {
@@ -104,7 +107,7 @@ const MyGroups = () => {
         ))
       : "";
   };
-  const user = useSelector((state) => state.user);
+  
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
   if (!isLoggedIn) {
