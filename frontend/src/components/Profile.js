@@ -13,6 +13,7 @@ const Profile = () => {
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
+  let [imageUrl, setImageUrl] = useState();
   const getData = async () => {
     await axios
       .get("http://18.144.25.88:3001/profile", {
@@ -20,6 +21,8 @@ const Profile = () => {
       })
       .then((res) => {
         setUserInfo(res.data[0]);
+	const url = res.data[0] && res.data[0].image && res.data[0].image.length>4 ? '/userImages/'+res.data[0].username+'.jpg':'/userImages/default.jpg';
+	setImageUrl(url);
       });
   };
   useEffect(() => {
@@ -94,11 +97,7 @@ const Profile = () => {
             <div className="row">
               <div className="col">
                 <Image
-                  src={
-                    "/userImages/" +
-                    (userInfo ? userInfo.username : "default") +
-                    ".jpg"
-                  }
+                  src={imageUrl}
                   alt="not found"
                   style={{
                     height: "100%",

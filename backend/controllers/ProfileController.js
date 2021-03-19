@@ -39,10 +39,10 @@ const post_userInfo = (req, res) => {
         if (req.files) {
           const image = req.files.image;
           uploadPath =
-            "/userImages/" +
+            "/var/www/html/userImages/" +
             username +
             ".jpg";
-          //fs.unlink(uploadPath, (err)=>{console.log(err)})
+          fs.unlink(uploadPath, (err)=>{console.log(err)})
           image.mv(uploadPath, function (err) {
             if (err) return res.status(500).send(err);
           });

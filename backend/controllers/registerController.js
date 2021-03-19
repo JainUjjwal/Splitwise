@@ -9,11 +9,13 @@ const register = (req, res) => {
   const Fname = req.body.Fname;
   const num = req.body.phoneNumber;
   console.log(num);
+  let uploadPath = '';
+  if(req.files){
   const image = req.files.image;
-  uploadPath ="/userImages/" + username + ".jpg";
+  uploadPath ="/var/www/html/userImages/" + username + ".jpg";
   image.mv(uploadPath, function (err) {
     if (err) return res.status(500).send(err);
-  });
+  });}
   db.query(
     "SELECT * FROM users WHERE username = ?",
     [username],
