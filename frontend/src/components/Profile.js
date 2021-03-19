@@ -20,9 +20,9 @@ const Profile = () => {
         params: { username: redux_user ? redux_user.username : "" },
       })
       .then((res) => {
-        setUserInfo(res.data[0]);
+        setUserInfo(res.data[0]);        
         const url =
-          res.data[0] && res.data[0].image && res.data[0].image.length > 4
+        res.data[0] && res.data[0].imgPath && res.data[0].imgPath.length > 4
             ? "/userImages/" + res.data[0].username + ".jpg"
             : "/userImages/default.jpg";
         setImageUrl(url);
