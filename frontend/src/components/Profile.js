@@ -9,7 +9,7 @@ const FormData = require("form-data");
 
 const Profile = () => {
   let redux_user = useSelector((state) => state.user);
-  const redux_userId = redux_user?redux_user.userId:false;
+  const redux_userId = redux_user ? redux_user.userId : false;
   let [userInfo, setUserInfo] = useState();
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
@@ -21,8 +21,11 @@ const Profile = () => {
       })
       .then((res) => {
         setUserInfo(res.data[0]);
-	const url = res.data[0] && res.data[0].image && res.data[0].image.length>4 ? '/userImages/'+res.data[0].username+'.jpg':'/userImages/default.jpg';
-	setImageUrl(url);
+        const url =
+          res.data[0] && res.data[0].image && res.data[0].image.length > 4
+            ? "/userImages/" + res.data[0].username + ".jpg"
+            : "/userImages/default.jpg";
+        setImageUrl(url);
       });
   };
   useEffect(() => {
@@ -51,7 +54,7 @@ const Profile = () => {
       timezone: document.getElementById("newtimezone").value,
       image: image,
     };
-    formData.append('userId', redux_userId);
+    formData.append("userId", redux_userId);
     formData.append("image", image);
     formData.append("username", updatedData.username);
     formData.append("Fname", updatedData.Fname);

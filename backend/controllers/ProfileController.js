@@ -1,5 +1,5 @@
 const db = require("../dbconnection");
-const fs = require('fs');
+const fs = require("fs");
 
 const get_userInfo = (req, res) => {
   const username = req.query.username;
@@ -28,29 +28,49 @@ const post_userInfo = (req, res) => {
   const lang = req.body.lang;
   const currency = req.body.currency;
   const timezone = req.body.timezone;
-
-  db.query(
-    "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=? WHERE userId = ?",
-    [username, Fname, phoneNumber, lang, timezone, currency, currentUser],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        if (req.files) {
-          const image = req.files.image;
-          uploadPath =
-            "/var/www/html/userImages/" +
-            username +
-            ".jpg";
-          fs.unlink(uploadPath, (err)=>{console.log(err)})
-          image.mv(uploadPath, function (err) {
-            if (err) return res.status(500).send(err);
-          });
-        }
-        res.status(201).send({ message: "updated information recieved" });
-      }
+  let uploadPath = "";
+  if (req.files) {
+    const image = req.files.image;
+    uploadPath = "/var/www/html/userImages/" + username + ".jpg";
+    fs.unlink(uploadPath, (err) => {
+      console.log(err);
+    });
+    image.mv(uploadPath, function (err) {
+      if (err) return res.status(500).send(err);
+    });
+  }
+  let valueArray = [
+    username,
+    Fname,
+    phoneNumber,
+    lang,
+    timezone,
+    currency,
+    currentUser,
+  ];
+  let query =
+    "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=? WHERE userId = ?";
+  if (uploadPath.length > 2) {
+    query =
+      "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=?, imgPath = ? WHERE userId = ?";
+    valueArray = [
+      username,
+      Fname,
+      phoneNumber,
+      lang,
+      timezone,
+      currency,
+      uploadPath,
+      currentUser,
+    ];
+  }
+  db.query(query, valueArray, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.status(201).send({ message: "updated information recieved" });
     }
-  );
+  });
 };
 
 module.exports = { get_userInfo, post_userInfo };
