@@ -21,12 +21,12 @@ const get_userInfo = (req, res) => {
 
 const post_userInfo = (req, res) => {
   const currentUser = req.body.userId;
-  const username = req.body.formData.username;
-  const Fname = req.body.formData.Fname;
-  const phoneNumber = req.body.formData.phoneNumber;
-  const lang = req.body.formData.lang;
-  const currency = req.body.formData.currency;
-  const timezone = req.body.formData.timezone;
+  const username = req.body.username;
+  const Fname = req.body.Fname;
+  const phoneNumber = req.body.phoneNumber;
+  const lang = req.body.lang;
+  const currency = req.body.currency;
+  const timezone = req.body.timezone;
   
   if(req.files){
   const image = req.files.image;

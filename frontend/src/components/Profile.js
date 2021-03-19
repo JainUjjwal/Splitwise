@@ -48,6 +48,7 @@ const Profile = () => {
       timezone: document.getElementById("newtimezone").value,
       image: image,
     };
+    formData.append('userId', redux_userId);
     formData.append("image", image);
     formData.append("username", updatedData.username);
     formData.append("Fname", updatedData.Fname);
@@ -56,7 +57,7 @@ const Profile = () => {
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timezone);
     await axios
-      .post("http://18.144.25.88:3001/profile", {userId: redux_userId, formData:formData}, {
+      .post("http://18.144.25.88:3001/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
