@@ -72,7 +72,7 @@ const Dashboard = () => {
     await  axios.post("http://18.144.25.88:3001/settle", { userId:userId, user2: deletionId }).then((res) => {
       if (res.status === 200) {
         setSettleState(true);
-        test();
+        getDashboardData();
       }
     });
   };

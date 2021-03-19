@@ -52,8 +52,8 @@ const getGroupInfo = (req, res) => {
           }
         })
         console.log(result[1]);
-        // let dummyInfo = { groupName: result[1][0].groupName, members: newMemberList };
-        let dummyInfo = { groupName: 'dummy', members: newMemberList };
+        let dummyInfo = { groupName: result[1][0].groupName, members: newMemberList };
+        // let dummyInfo = { groupName: 'dummy', members: newMemberList };
         res.json({
           transactionList: newTransactionList,
           dummyInfo,
