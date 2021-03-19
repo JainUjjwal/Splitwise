@@ -1,4 +1,5 @@
 const db = require("../dbconnection");
+const fs = require('fs');
 
 const get_userInfo = (req, res) => {
   const username = req.query.username;
