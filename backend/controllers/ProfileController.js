@@ -43,10 +43,9 @@ const post_userInfo = (req, res) => {
             "/../../frontend/public/userImages/" +
             username +
             ".jpg";
-          fs.unlink(uploadPath).then(()=>{
-            image.mv(uploadPath, function (err) {
-              if (err) return res.status(500).send(err);
-            });
+          fs.unlink(uploadPath, (err)=>{console.log(err)})
+          image.mv(uploadPath, function (err) {
+            if (err) return res.status(500).send(err);
           });
         }
         res.status(201).send({ message: "updated information recieved" });
