@@ -102,7 +102,7 @@ const Register = () => {
             style={user && user.regError ? true : false}
           />
           <FormInput
-            text="First Name"
+            text="Name"
             id="Fname"
             type="text"
             onChange={FnameHandler}
