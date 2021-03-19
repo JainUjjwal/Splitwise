@@ -73,6 +73,7 @@ const Profile = () => {
           console.log(res.data.message);
           setUserInfo(updatedData);
           setEditStatus(false);
+          setImageUrl('/userImages/'+updatedData.username+'.jpg');
         }
       });
   };
