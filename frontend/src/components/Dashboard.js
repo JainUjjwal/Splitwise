@@ -37,7 +37,7 @@ const Dashboard = () => {
   let getDashboardData = async () => {
     await axios
       .get("http://18.144.25.88:3001/dashboard", {
-        params: { username: username, userId:userId },
+        params: { username: username, userId: userId },
       })
       .then((res) => {
         //Getting list of users to pass to create group modal
@@ -69,12 +69,17 @@ const Dashboard = () => {
 
     // // newData.splice(e.target.dataset.id, 1);
     // setData(newData);
-    await  axios.post("http://18.144.25.88:3001/settle", { userId:userId, user2: deletionId }).then((res) => {
-      if (res.status === 200) {
-        setSettleState(true);
-        getDashboardData();
-      }
-    });
+    await axios
+      .post("http://18.144.25.88:3001/settle", {
+        userId: userId,
+        user2: deletionId,
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setSettleState(true);
+          getDashboardData();
+        }
+      });
   };
   let redirectVar = null;
   if (!isLoggedIn) {

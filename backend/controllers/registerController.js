@@ -8,14 +8,15 @@ const register = (req, res) => {
   const password = req.body.password;
   const Fname = req.body.Fname;
   const num = req.body.phoneNumber;
-  console.log(num);
-  let uploadPath = '';
-  if(req.files){
-  const image = req.files.image;
-  uploadPath ="/var/www/html/userImages/" + username + ".jpg";
-  image.mv(uploadPath, function (err) {
-    if (err) return res.status(500).send(err);
-  });}
+
+  let uploadPath = "";
+  if (req.files) {
+    const image = req.files.image;
+    uploadPath = "/var/www/html/userImages/" + username + ".jpg";
+    image.mv(uploadPath, function (err) {
+      if (err) return res.status(500).send(err);
+    });
+  }
   db.query(
     "SELECT * FROM users WHERE username = ?",
     [username],
@@ -30,16 +31,14 @@ const register = (req, res) => {
             if (err) {
               console.log(err);
             }
-            console.log("right before db query " + num);
+
             db.query(
               "INSERT INTO users (username, Fname, phoneNumber, imgPath) VALUES (?,?,?,?); INSERT INTO passwordTable(pass) VALUES (?)",
               [username, Fname, num, uploadPath, hash],
               (err, result) => {
                 if (err) {
-                  console.log('oops 1');
                   res.send({ err: err });
                 } else {
-                  console.log('yes 1')
                   res.status(202).send({ message: "Sign up successful" });
                 }
               }
@@ -49,7 +48,7 @@ const register = (req, res) => {
       }
     }
   );
-// Setting session variable
+  // Setting session variable
   db.query(
     "select * from users where username = ?",
     [username],

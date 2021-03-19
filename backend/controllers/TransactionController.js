@@ -7,13 +7,11 @@ const updateMaster = (valueArray,res,flag) => {
     [valueArray[0], valueArray[1], valueArray[2], valueArray[3]],
     (err, result) => {
       if (err) {
-        // console.log("IT BROKE");
         console.log(err);
         return;
       } else {
         flag = true;
         return;
-        console.log("HOLY SHIT IT WORKED. I AM A GENIUS!");
       }
     }
   );
@@ -42,7 +40,6 @@ const addBill = async (req, res) => {
         console.log(err);
         return;
       } else {
-        console.log(result[1][result[1].length - 1].transactionId);
         let transactionId = result[1][result[1].length - 1].transactionId;
         let amountPerPerson = amount / result[0].length;
         // SENDING MUTIPLE VALUES IN ONE QUERY
@@ -57,7 +54,6 @@ const addBill = async (req, res) => {
               ])
             : "";
         });
-        console.log(values);
         db.query(
           "INSERT INTO userTransaction (user1, user2, transactionId, amountPerPerson) VALUES ?;",
           [values],

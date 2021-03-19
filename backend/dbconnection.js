@@ -5,7 +5,8 @@ const dbconfig={
     user: "admin",
     password: "rootadmin",
     database: "split",
-    multipleStatements: true
+    multipleStatements: true,
+    connectionLimit: 5
   }
 
   const db = mysql.createConnection(dbconfig);
@@ -18,5 +19,20 @@ db.connect(function (err) {
   console.log("Connected to the MySQL server.");
 });
 
+var dbpool = mysql.createPool(
+  dbconfig
+);
 
-module.exports = db;
+// Attempt to catch disconnects 
+dbpool.on('connection', function (connection) {
+  console.log('DB Connection established');
+
+  connection.on('error', function (err) {
+    console.error(new Date(), 'MySQL error', err.code);
+  });
+  connection.on('close', function (err) {
+    console.error(new Date(), 'MySQL close', err);
+  });
+
+});
+module.exports = dbpool;

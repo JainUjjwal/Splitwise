@@ -24,7 +24,7 @@ const createGroup = (req, res) => {
         console.log(err);
       }
       if (result.length > 0) {
-        console.log(result);
+        // console.log(result);
         for (i = 0; i < req.body.addedFriend.length; i++) {
           const userId = req.body.addedFriend[i].userId;
           db.query(

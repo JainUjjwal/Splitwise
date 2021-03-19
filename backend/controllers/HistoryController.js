@@ -1,5 +1,5 @@
 const db = require("../dbconnection");
-
+// const dbpool = require('../dbconnection');
 const transactionList = (req, res) => {  
   const currentUser = req.body.userId
   // Database calls

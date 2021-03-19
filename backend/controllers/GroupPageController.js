@@ -1,7 +1,7 @@
 const db = require("../dbconnection");
 
 const getGroupInfo = (req, res) => {
-  console.log("checking");
+  // console.log("checking");
   // Getting transactions in the group
   currentUser = req.body.userId;
   db.query(
@@ -51,7 +51,7 @@ const getGroupInfo = (req, res) => {
             newMemberList.push(member)
           }
         })
-        console.log(result[1]);
+        // console.log(result[1]);
         let dummyInfo = { groupName: result[1][0].groupName, members: newMemberList };
         // let dummyInfo = { groupName: 'dummy', members: newMemberList };
         res.json({
@@ -65,7 +65,7 @@ const getGroupInfo = (req, res) => {
 };
 
 const updateGroupInfo = (req, res) =>{
-  console.log(req.body);
+  // console.log(req.body);
   const query = "UPDATE groupTable SET groupName = ? WHERE groupId = ?"
   db.query(query, [req.body.groupName, req.body.groupId], (err, result)=>{
     if(err){

@@ -7,7 +7,7 @@ import { Redirect, useHistory } from "react-router-dom";
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
-  const currentUser = user?user.userId:false;
+  const currentUser = user ? user.userId : false;
   let [groupInfo, setGroupInfo] = useState();
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
@@ -17,7 +17,7 @@ const GroupPage = (param) => {
     await axios
       .post("http://18.144.25.88:3001/groupPage", {
         groupID: searchParams.get("id"),
-        userId: currentUser
+        userId: currentUser,
       })
       .then((response) => {
         setGroupInfo(response.data.dummyInfo);
@@ -41,24 +41,25 @@ const GroupPage = (param) => {
         amount: newAmount,
         discription: newDiscription,
         groupId: searchParams.get("id"),
-        userId: currentUser
+        userId: currentUser,
       })
       .then((response) => {
-        console.log(response);
+        if (response.status === 201) {
+          let newdata = [...data];
+          newdata.push({
+            discription: newDiscription,
+            amount: newAmount,
+            typeClass: true,
+          });
+          setData(newdata);
+          dialogClose();
+          dataSetter();
+        }
       });
-    let newdata = [...data];
-    newdata.push({
-      discription: newDiscription,
-      amount: newAmount,
-      typeClass: true,
-    });
-    setData(newdata);
-    dialogClose();
-    dataSetter();
   };
 
   //Redirection to login if redux state not set
-  
+
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
   if (!isLoggedIn) {
@@ -68,7 +69,10 @@ const GroupPage = (param) => {
   const LeaveGroupHandler = async () => {
     const groupId = searchParams.get("id");
     await axios
-      .post("http://18.144.25.88:3001/leaveGroup", { groupId: groupId, userId: currentUser })
+      .post("http://18.144.25.88:3001/leaveGroup", {
+        groupId: groupId,
+        userId: currentUser,
+      })
       .then((response) => {
         if (response.status === 201) {
           console.log(response);
@@ -88,7 +92,7 @@ const GroupPage = (param) => {
       .post("http://18.144.25.88:3001/updateGroup", {
         groupId: groupId,
         groupName: groupName,
-        userId: currentUser
+        userId: currentUser,
       })
       .then((response) => {
         if (response.status === 201) {
@@ -182,7 +186,11 @@ const GroupPage = (param) => {
                 <div className="pt-4" key={index}>
                   <Row>
                     <Col xs={9} className="border-right">
-                      <b>{friend.discription}</b> paid by <b><i>{friend.Fname}</i></b> at <span style={{color:'grey'}}>{friend.ts}</span>
+                      <b>{friend.discription}</b> paid by{" "}
+                      <b>
+                        <i>{friend.Fname}</i>
+                      </b>{" "}
+                      at <span style={{ color: "grey" }}>{friend.ts}</span>
                     </Col>
                     <Col
                       style={
