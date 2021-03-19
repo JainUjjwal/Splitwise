@@ -3,7 +3,7 @@ const db = require("../dbconnection");
 const leave = (req, res) => {
   console.log(req.body.groupId);
   const groupId = req.body.groupId;
-  const currentUser = req.session.user.userId;
+  const currentUser = req.body.userId;
   //check master table on groupId for any balance. if not 0. send fail.
   //else...... remove entry from userGroup, masterTable,
   db.query(

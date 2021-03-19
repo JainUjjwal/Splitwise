@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   let getDashboardData = async () => {
     await axios
-      .get("/dashboard", {
+      .get("http://18.144.25.88:3001/dashboard", {
         params: { username: username, userId:userId },
       })
       .then((res) => {

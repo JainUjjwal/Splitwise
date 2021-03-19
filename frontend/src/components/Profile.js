@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
 import axios from "axios";
 import "./profile.css";
-import img from "../constants/image1.jpg";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router-dom";
 const FormData = require("form-data");
@@ -15,8 +14,8 @@ const Profile = () => {
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
   const getData = async () => {
-    axios
-      .get(" /profile", {
+    await axios
+      .get("http://18.144.25.88:3001/profile", {
         params: { username: redux_user ? redux_user.username : "" },
       })
       .then((res) => {
@@ -57,7 +56,7 @@ const Profile = () => {
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timezone);
     await axios
-      .post(" /profile", {userId: redux_userId, formData:formData}, {
+      .post("http://18.144.25.88:3001/profile", {userId: redux_userId, formData:formData}, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
