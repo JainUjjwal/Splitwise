@@ -12,7 +12,7 @@ const get_userInfo = (req, res) => {
       }
       if (result.length > 0) {
         console.log(result);
-        res.send(result);
+        res.status(200).send(result);
       } else {
         res.status(252).send({ message: "User Info not found" });
       }

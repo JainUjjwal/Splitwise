@@ -28,7 +28,7 @@ const transactionList = (req, res) => {
             groupList.push(element.group);
           }
         });
-        res.send({ newStore, groupList });
+        res.status(200).send({ newStore, groupList });
         // console.log(newStore);
         console.log('sent transaction history');
       }
