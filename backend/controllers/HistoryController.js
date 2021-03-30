@@ -1,6 +1,6 @@
 const db = require("../dbconnection");
 // const dbpool = require('../dbconnection');
-const transactionList = (req, res) => {  
+const transactionList = async (req, res) => {  
   const currentUser = req.body.userId
   // Database calls
   db.query(

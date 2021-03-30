@@ -6,7 +6,7 @@ const dbconfig={
     password: "rootadmin",
     database: "split",
     multipleStatements: true,
-    connectionLimit: 5
+    connectionLimit: 10
   }
 
   const db = mysql.createConnection(dbconfig);
@@ -35,4 +35,4 @@ dbpool.on('connection', function (connection) {
   });
 
 });
-module.exports = dbpool;
+module.exports = db;

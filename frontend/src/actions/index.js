@@ -6,7 +6,6 @@ const setLogin = (payload) => {
     
 };
 
-
 const setLogout = (payload) => {
   return {
     type: "setLogout",
@@ -21,4 +20,11 @@ const setRegister = (payload) => {
   };
 };
 
-export { setLogin, setLogout, setRegister };
+const setHistory = (payload) => {
+  return {
+    type: "setHistory",
+    payload: payload,
+  };
+}
+
+export { setLogin, setLogout, setRegister, setHistory };

@@ -15,7 +15,7 @@ const GroupPage = (param) => {
   var searchParams = new URLSearchParams(param.location.search);
   const dataSetter = async () => {
     await axios
-      .post("http://18.144.25.88:3001/groupPage", {
+      .post("http://localhost:3001/groupPage", {
         groupID: searchParams.get("id"),
         userId: currentUser,
       })
@@ -37,7 +37,7 @@ const GroupPage = (param) => {
   };
   const addBill = async (newDiscription, newAmount) => {
     await axios
-      .post("http://18.144.25.88:3001/addBill", {
+      .post("http://localhost:3001/addBill", {
         amount: newAmount,
         discription: newDiscription,
         groupId: searchParams.get("id"),
@@ -69,7 +69,7 @@ const GroupPage = (param) => {
   const LeaveGroupHandler = async () => {
     const groupId = searchParams.get("id");
     await axios
-      .post("http://18.144.25.88:3001/leaveGroup", {
+      .post("http://localhost:3001/leaveGroup", {
         groupId: groupId,
         userId: currentUser,
       })
@@ -89,7 +89,7 @@ const GroupPage = (param) => {
     const groupId = searchParams.get("id");
     const groupName = document.getElementById("newGroupName").value;
     await axios
-      .post("http://18.144.25.88:3001/updateGroup", {
+      .post("http://localhost:3001/updateGroup", {
         groupId: groupId,
         groupName: groupName,
         userId: currentUser,

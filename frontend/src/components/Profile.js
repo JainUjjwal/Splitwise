@@ -16,7 +16,7 @@ const Profile = () => {
   let [imageUrl, setImageUrl] = useState();
   const getData = async () => {
     await axios
-      .get("http://18.144.25.88:3001/profile", {
+      .get("http://localhost:3001/profile", {
         params: { username: redux_user ? redux_user.username : "" },
       })
       .then((res) => {
@@ -63,7 +63,7 @@ const Profile = () => {
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timezone);
     await axios
-      .post("http://18.144.25.88:3001/profile", formData, {
+      .post("http://localhost:3001/profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

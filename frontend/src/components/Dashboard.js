@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   let getDashboardData = async () => {
     await axios
-      .get("http://18.144.25.88:3001/dashboard", {
+      .get("http://localhost:3001/dashboard", {
         params: { username: username, userId: userId },
       })
       .then((res) => {
@@ -70,7 +70,7 @@ const Dashboard = () => {
     // // newData.splice(e.target.dataset.id, 1);
     // setData(newData);
     await axios
-      .post("http://18.144.25.88:3001/settle", {
+      .post("http://localhost:3001/settle", {
         userId: userId,
         user2: deletionId,
       })

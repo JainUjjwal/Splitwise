@@ -13,7 +13,7 @@ const MyGroups = () => {
   const [searchTerm, setSearchTerm] = useState("");
   // Getting data from the backend and storing them in react states.
   const getInviteData = async () => {
-    await  axios.get("http://18.144.25.88:3001/mygroups",{params:{userId:redux_userId}}).then((res) => {
+    await  axios.get("http://localhost:3001/mygroups",{params:{userId:redux_userId}}).then((res) => {
       if (res.status === 201) {
         setInviteList(res.data.inviteGroup);
       }
@@ -23,7 +23,7 @@ const MyGroups = () => {
     });
   };
   const getGroupData = async () =>{
-    await  axios.post("http://18.144.25.88:3001/mygroups",{userId:redux_userId}).then((res) => {
+    await  axios.post("http://localhost:3001/mygroups",{userId:redux_userId}).then((res) => {
       if (res.status === 201) {
         setGroupList(res.data.myGroups);
       }
@@ -44,7 +44,7 @@ const MyGroups = () => {
     let acceptedGroup = inviteList[e.target.dataset.id];
 
     // Sending invite status to backend
-    await  axios.post("http://18.144.25.88:3001/accInvStatus", { acceptedGroup }).then((response) => {
+    await  axios.post("http://localhost:3001/accInvStatus", { acceptedGroup }).then((response) => {
       if (response.status === 269) {
         newGroupList.push(acceptedGroup);
         setGroupList(newGroupList);
@@ -60,7 +60,7 @@ const MyGroups = () => {
     // Updating Invite List
     const rejectedGroup = inviteList[e.target.dataset.id];
     // Sending invite status to backend
-    await  axios.post("http://18.144.25.88:3001/rejInvStatus", { rejectedGroup }).then((response) => {
+    await  axios.post("http://localhost:3001/rejInvStatus", { rejectedGroup }).then((response) => {
       if (response.status === 269) {
         let newInviteList = [...inviteList];
         newInviteList.splice(e.target.dataset.id, 1);
