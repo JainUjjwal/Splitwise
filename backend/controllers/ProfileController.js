@@ -2,10 +2,10 @@ const db = require("../dbconnection");
 const fs = require("fs");
 
 const get_userInfo = (req, res) => {
-  const username = req.query.username;
+  const userId = req.query.userId;
   db.query(
-    "SELECT * FROM users WHERE username = ?",
-    username,
+    "SELECT * FROM users WHERE userId = ?",
+    userId,
     (err, result) => {
       if (err) {
         res.send({ err: err });

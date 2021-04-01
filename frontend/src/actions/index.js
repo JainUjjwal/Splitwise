@@ -27,4 +27,10 @@ const setHistory = (payload) => {
   };
 }
 
-export { setLogin, setLogout, setRegister, setHistory };
+const setProfile = (payload) => {
+  return {
+    type: "setProfile",
+    payload: payload
+  }
+}
+export { setLogin, setLogout, setRegister, setHistory, setProfile };

@@ -2,34 +2,41 @@ import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
 import axios from "axios";
 import "./profile.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
+import {getProfile, updateProfile} from "../reducers/ProfileReducer"
 const FormData = require("form-data");
 // import { Link } from "react-router-dom";
 
 const Profile = () => {
-  let redux_user = useSelector((state) => state.user);
+  const redux_user = useSelector((state) => state.user);
   const redux_userId = redux_user ? redux_user.userId : false;
-  let [userInfo, setUserInfo] = useState();
+  const redux_userInfo = useSelector((state)=>state.profile);
+  let redux_profile = redux_userInfo ? redux_userInfo.info : false;
+  let [userInfo, setUserInfo] = useState(redux_profile);
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
   let [imageUrl, setImageUrl] = useState();
-  const getData = async () => {
-    await axios
-      .get("http://localhost:3001/profile", {
-        params: { username: redux_user ? redux_user.username : "" },
-      })
-      .then((res) => {
-        setUserInfo(res.data[0]);        
-        const url =
-        res.data[0] && res.data[0].imgPath && res.data[0].imgPath.length > 4
-            ? "/userImages/" + res.data[0].username + ".jpg"
-            : "/userImages/default.jpg";
-        setImageUrl(url);
-      });
-  };
+  const dispatch = useDispatch()
+  // const getData = async () => {
+    
+  //   await axios
+  //     .get("http://localhost:3001/profile", {
+  //       params: { username: redux_user ? redux_user.username : "" },
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data[0]);
+  //       setUserInfo(res.data[0]);        
+  //       const url =
+  //       res.data[0] && res.data[0].imgPath && res.data[0].imgPath.length > 4
+  //           ? "/userImages/" + res.data[0].username + ".jpg"
+  //           : "/userImages/default.jpg";
+  //       setImageUrl(url);
+  //     });
+  // };
   useEffect(() => {
-    getData();
+    dispatch(getProfile({userId: redux_userId ? redux_userId : "" }))
+    // getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,20 +69,22 @@ const Profile = () => {
     formData.append("lang", updatedData.lang);
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timezone);
-    await axios
-      .post("http://localhost:3001/profile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res, req) => {
-        if (res.status === 201) {
-          console.log(res.data.message);
-          setUserInfo(updatedData);
-          setEditStatus(false);
-          setImageUrl('/userImages/'+updatedData.username+'.jpg');
-        }
-      });
+    dispatch(updateProfile({redux_userId: redux_userId,updatedData:updatedData}))
+    setEditStatus(false);
+    // await axios
+    //   .post("http://localhost:3001/profile", formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   .then((res, req) => {
+    //     if (res.status === 201) {
+    //       console.log(res.data.message);
+    //       setUserInfo(updatedData);
+    //       setEditStatus(false);
+    //       setImageUrl('/userImages/'+updatedData.username+'.jpg');
+    //     }
+    //   });
   };
 
   const closeEdit = () => {
@@ -120,10 +129,10 @@ const Profile = () => {
                         <input
                           type="email"
                           id="newEmail"
-                          defaultValue={userInfo ? userInfo.username : ""}
+                          defaultValue={redux_profile ? redux_profile.username : ""}
                         />
-                      ) : userInfo ? (
-                        userInfo.username
+                      ) : redux_profile ? (
+                        redux_profile.username
                       ) : (
                         ""
                       )}
@@ -136,10 +145,10 @@ const Profile = () => {
                         <input
                           type="name"
                           id="newName"
-                          defaultValue={userInfo ? userInfo.Fname : ""}
+                          defaultValue={redux_profile ? redux_profile.Fname : ""}
                         />
-                      ) : userInfo ? (
-                        userInfo.Fname
+                      ) : redux_profile ? (
+                        redux_profile.Fname
                       ) : (
                         ""
                       )}
@@ -152,10 +161,10 @@ const Profile = () => {
                         <input
                           type="number"
                           id="newNumber"
-                          defaultValue={userInfo ? userInfo.phoneNumber : ""}
+                          defaultValue={redux_profile ? redux_profile.phoneNumber : ""}
                         />
-                      ) : userInfo ? (
-                        userInfo.phoneNumber
+                      ) : redux_profile ? (
+                        redux_profile.phoneNumber
                       ) : (
                         ""
                       )}
@@ -167,14 +176,14 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newLanguage"
-                          defaultValue={userInfo ? userInfo.lang : ""}
+                          defaultValue={redux_profile ? redux_profile.lang : ""}
                         >
                           <option>English</option>
                           <option>Spanish</option>
                           <option>Hindi</option>
                         </select>
-                      ) : userInfo ? (
-                        userInfo.lang
+                      ) : redux_profile ? (
+                        redux_profile.lang
                       ) : (
                         ""
                       )}
@@ -186,7 +195,7 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newcurrency"
-                          defaultValue={userInfo ? userInfo.currency : ""}
+                          defaultValue={redux_profile ? redux_profile.currency : ""}
                         >
                           <option>USD</option>
                           <option>KWD</option>
@@ -194,8 +203,8 @@ const Profile = () => {
                           <option>EUR</option>
                           <option>CAD</option>
                         </select>
-                      ) : userInfo ? (
-                        userInfo.currency
+                      ) : redux_profile ? (
+                        redux_profile.currency
                       ) : (
                         ""
                       )}
@@ -207,7 +216,7 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newtimezone"
-                          defaultValue={userInfo ? userInfo.timezone : ""}
+                          defaultValue={redux_profile ? redux_profile.timezone : ""}
                         >
                           <option>PST</option>
                           <option>GMT</option>
@@ -215,8 +224,8 @@ const Profile = () => {
                           <option>MST</option>
                           <option>BST</option>
                         </select>
-                      ) : userInfo ? (
-                        userInfo.timezone
+                      ) : redux_profile ? (
+                        redux_profile.timezone
                       ) : (
                         ""
                       )}
