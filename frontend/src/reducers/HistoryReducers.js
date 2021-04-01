@@ -1,16 +1,14 @@
 import axios from "axios";
 import { setHistory } from "../actions";
-// const initialState = null;
+const initialState = { transactions: [{}], groups: [] };
 
-const HistoryReducers = (state, action) => {
+const HistoryReducers = (state = initialState, action) => {
   switch (action.type) {
     case "setHistory":
-      console.log('xyz')
       return {
-        transactions: "1234",
-        groups: "xyz group"
-        // transactions: action.payload.transactions,
-        // groups: action.payload.groups
+        ...state,
+        transactions: action.payload.transactions,
+        groups: action.payload.groups,
       };
     default:
       return state;
@@ -18,9 +16,8 @@ const HistoryReducers = (state, action) => {
 };
 
 export const history = (payload) => async (dispatch, getState) => {
-  console.log(payload)
   await axios
-    .post("http://localhost:3001/history", { userId: payload })
+    .post("http://localhost:3001/history", { userId: payload.redux_userId })
     .then((res) => {
       if (res.status === 200) {
         dispatch(
@@ -30,7 +27,6 @@ export const history = (payload) => async (dispatch, getState) => {
             groups: res.data.groupList,
           })
         );
-        return "test";
       } else {
         dispatch(setHistory({ err: res.data.message, transactions: false }));
       }

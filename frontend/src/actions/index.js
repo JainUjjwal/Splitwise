@@ -9,7 +9,7 @@ const setLogin = (payload) => {
 const setLogout = (payload) => {
   return {
     type: "setLogout",
-    payload: payload,
+    payload: {isLogged: false},
   };
 };
 

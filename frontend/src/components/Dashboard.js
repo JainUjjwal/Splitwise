@@ -11,6 +11,7 @@ import { Redirect } from "react-router";
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
+  const Fname = user ? user.Fname : false;
   const userId = user ? user.userId : false;
   const isLoggedIn = user ? user.isLogged : false;
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
@@ -89,7 +90,7 @@ const Dashboard = () => {
     <div>
       {redirectVar}
       <div className="mt-3 mx-auto">
-        <h3 className="container">Welcome {username}</h3>
+        <h3 className="container">Welcome {Fname}</h3>
         <CreateGroupModal
           show={openGroupDialog}
           hide={dialogClose}

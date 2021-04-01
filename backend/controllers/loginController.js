@@ -19,7 +19,7 @@ const login_user_post = (req, res) => {
             // res.writeHead(200, {
             //   "Content-Type": "text/plain",
             // })
-            res.status(200).send({userId: result[0].userId,message:"Successful Login"});
+            res.status(200).send({userId: result[0].userId, Fname:result[0].Fname,message:"Successful Login"});
             res.end("Login Successful");
             
           } else {

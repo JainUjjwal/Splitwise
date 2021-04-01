@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setLogin, setRegister, setLogout } from "../actions";
+import { setLogin, setRegister, setLogout, setHistory } from "../actions";
 const FormData = require('form-data');
 const initialState = null;
 
@@ -10,8 +10,7 @@ const userReducer = (state = initialState, action) => {
         ...state,
         userId: action.payload.userId,
         username: action.payload.username,
-        password: action.payload.password,
-        Fname: null,
+        Fname: action.payload.Fname,
         phoneNumber: null,
         isLogged: action.payload.isLogged,
         error: action.payload.err
@@ -47,7 +46,7 @@ export const login = (payload) => async (dispatch, getState) => {
       console.log("Status Code : ", response.status);
       if (response.status === 200) {
         // <Redirect to="/dashboard" />
-        dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId}));
+        dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId, Fname:response.data.Fname}));
       } else {
           dispatch(setLogin({err: response.data.message, isLogged:false}))
         // return {err: response.data.message}
@@ -93,7 +92,9 @@ export const logout = (payload) => async (dispatch, getState) =>{
     .post("http://localhost:3001/logout")
     .then((response) => {
       if (response.status === 204) {
+        dispatch(setHistory({ transactions: [{}], groups: [] }))
         dispatch(setLogout({...payload, isLogged:false}));
+        
       } else {
         console.log("Error on logout");
         console.log(response.data.err)
