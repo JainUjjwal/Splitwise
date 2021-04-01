@@ -13,10 +13,11 @@ const Profile = () => {
   const redux_userId = redux_user ? redux_user.userId : false;
   const redux_userInfo = useSelector((state)=>state.profile);
   let redux_profile = redux_userInfo ? redux_userInfo.info : false;
+  let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : false
   let [userInfo, setUserInfo] = useState(redux_profile);
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
-  let [imageUrl, setImageUrl] = useState();
+  let [imageUrl, setImageUrl] = useState(redux_userInfo);
   const dispatch = useDispatch()
   // const getData = async () => {
     
@@ -48,8 +49,7 @@ const Profile = () => {
     setImage(e.target.files[0]);
   };
   const saveEdit = async () => {
-    ///////////////////////
-    console.log(image);
+    
     const formData = new FormData();
 
     const updatedData = {
@@ -110,7 +110,7 @@ const Profile = () => {
             <div className="row">
               <div className="col">
                 <Image
-                  src={imageUrl}
+                  src={ imageUrl ? imageUrl : redux_imageURL }
                   alt="not found"
                   style={{
                     height: "100%",

@@ -17,7 +17,6 @@ const ProfileReducer = (state = initialState, action) => {
 }
 
 export const getProfile = (payload) => async (dispatch, getState) => { 
-    console.log(payload)
     await axios
       .get("http://localhost:3001/profile", {
         params: { userId: payload.userId},
@@ -32,7 +31,6 @@ export const getProfile = (payload) => async (dispatch, getState) => {
 }
 
 export const updateProfile = (payload) => async (dispatch, getState) =>{
-    console.log(payload.updatedData.username)
     const formData = new FormData();
     formData.append("userId", payload.redux_userId);
     formData.append("image", payload.updatedData.image);

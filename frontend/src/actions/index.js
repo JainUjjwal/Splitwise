@@ -33,4 +33,11 @@ const setProfile = (payload) => {
     payload: payload
   }
 }
-export { setLogin, setLogout, setRegister, setHistory, setProfile };
+
+const setDashboard =(payload) => {
+  return {
+    type: "setDashboard",
+    payload: payload
+  }
+}
+export { setLogin, setLogout, setRegister, setHistory, setProfile, setDashboard };

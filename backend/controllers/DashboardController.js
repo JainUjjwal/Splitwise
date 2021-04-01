@@ -18,10 +18,9 @@ const userInfopost = (req, res) => {
 
 const getUserList = (req, res) => {
   const currentUser = req.query.userId;
-  const username = req.query.username;
   db.query(
-    "SELECT * FROM users WHERE username != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
-    [username, currentUser],
+    "SELECT * FROM users WHERE userId != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
+    [currentUser, currentUser],
     (err, result) => {
       if (err) {
         res.send({ err: err });
