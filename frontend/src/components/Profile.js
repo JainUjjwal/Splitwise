@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Image, Button } from "react-bootstrap";
-import axios from "axios";
+
 import "./profile.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
@@ -14,10 +14,10 @@ const Profile = () => {
   const redux_userInfo = useSelector((state)=>state.profile);
   let redux_profile = redux_userInfo ? redux_userInfo.info : false;
   let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : false
-  let [userInfo, setUserInfo] = useState(redux_profile);
+  // let [userInfo, setUserInfo] = useState(redux_profile);
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
-  let [imageUrl, setImageUrl] = useState(redux_userInfo);
+  let [imageUrl, setImageUrl] = useState(redux_imageURL);
   const dispatch = useDispatch()
   // const getData = async () => {
     

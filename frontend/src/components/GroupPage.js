@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
+import {getGroupPageInfo} from "../reducers/GroupPageReducer" 
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
@@ -12,7 +13,9 @@ const GroupPage = (param) => {
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
   let [data, setData] = useState();
+  const dispatch = useDispatch();
   var searchParams = new URLSearchParams(param.location.search);
+  let URLgroupId = parseInt(searchParams.get("id"));
   const dataSetter = async () => {
     await axios
       .post("http://localhost:3001/groupPage", {
@@ -20,12 +23,15 @@ const GroupPage = (param) => {
         userId: currentUser,
       })
       .then((response) => {
+        console.log( typeof(searchParams.get("id")));
+        console.log(response.data)
         setGroupInfo(response.data.dummyInfo);
         setData(response.data.transactionList);
       });
   };
   useEffect(() => {
     dataSetter();
+    dispatch(getGroupPageInfo({userId: currentUser, groupId: URLgroupId, groupId2: searchParams.get("id")}))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

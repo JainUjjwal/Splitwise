@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import axios from "axios";
 import CreateGroupModal from "./CreateGroupModal";
 // import Navbar from './Nav2';
 // import {selectUser} from "../features/userSlice";

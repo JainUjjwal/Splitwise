@@ -39,7 +39,15 @@ const register = (req, res) => {
                 if (err) {
                   res.send({ err: err });
                 } else {
-                  res.status(202).send({ message: "Sign up successful" });
+                  db.query(
+                    "select userId from users where username = ?",
+                    [username],
+                    (err, result) => {
+                      console.log(result);
+                      res.status(202).send({ userId:result, message: "Sign up successful" });
+                    }
+                  );
+                  
                 }
               }
             );

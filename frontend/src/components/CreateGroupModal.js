@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 import FormInput from "./FormInput";
+import { useDispatch } from "react-redux";
+import {createGroup} from "../reducers/GroupReducer"
 const CreateGroupModal = (props) => {
   const [groupName, setGroupName] = useState("");
   const [addedFriend, setAddedFriend] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(props.show);
+  const dispatch = useDispatch();
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
@@ -44,18 +46,8 @@ const CreateGroupModal = (props) => {
     setAddedFriend(newList);
   };
   const createGroupFunction = async () => {
-    await axios
-      .post("http://localhost:3001/createGroup", { addedFriend, groupName })
-      .then((response) => {
-        //ADD CONFIRMATION ON GROUP CREATION
-        if (response.status === 251) {
-          alert("Group created!");
-          closeModal();
-        }
-        
-      });
-      
-    
+    dispatch(createGroup({addedFriend: addedFriend, groupName: groupName}))
+    setTimeout(closeModal(),2000);
   };
   const closeModal = () => {
     props.friends.push(...addedFriend);

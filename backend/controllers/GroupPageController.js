@@ -5,8 +5,8 @@ const getGroupInfo = (req, res) => {
   // Getting transactions in the group
   currentUser = req.body.userId;
   db.query(
-    "select transactionTable.transactionId, transactionTable.discription, transactionTable.amount, userTransaction.user1, users.Fname, ts from transactionTable right join userTransaction on transactionTable.transactionId = userTransaction.transactionId inner join users on users.userId = userTransaction.user1 where groupId = ? ORDER BY ts DESC;SELECT users.Fname, masterTable.balance, groupTable.groupName FROM masterTable inner join users on masterTable.user2 = users.userId inner join groupTable on groupTable.groupId = masterTable.groupId WHERE masterTable.groupId=(?) AND user1=(?);",
-    [req.body.groupID,req.body.groupID,currentUser],
+    "select transactionTable.transactionId, transactionTable.discription, transactionTable.amount, userTransaction.user1, users.Fname, ts from transactionTable right join userTransaction on transactionTable.transactionId = userTransaction.transactionId inner join users on users.userId = userTransaction.user1 where groupId = ? ORDER BY ts DESC;SELECT users.Fname, masterTable.balance, groupTable.groupName FROM masterTable inner join users on masterTable.user2 = users.userId inner join groupTable on groupTable.groupId = masterTable.groupId WHERE masterTable.groupId=(?) AND user1=(?); SELECT groupName from groupTable where groupId = ?;",
+    [req.body.groupID,req.body.groupID,currentUser, req.body.groupID],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -51,8 +51,8 @@ const getGroupInfo = (req, res) => {
             newMemberList.push(member)
           }
         })
-        // console.log(result[1]);
-        let dummyInfo = { groupName: result[1][0].groupName, members: newMemberList };
+        console.log(result[2][0].groupName);
+        let dummyInfo = { groupName: result[2][0]? result[2][0].groupName : result[1][0].groupName, members: newMemberList };
         // let dummyInfo = { groupName: 'dummy', members: newMemberList };
         res.json({
           transactionList: newTransactionList,

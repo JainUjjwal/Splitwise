@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setLogin, setRegister, setLogout, setHistory } from "../actions";
+import { setLogin, setRegister, setLogout, setHistory, setDashboard, setGroupList, setInviteList } from "../actions";
 const FormData = require('form-data');
 const initialState = null;
 
@@ -23,6 +23,7 @@ const userReducer = (state = initialState, action) => {
     case "setRegister":
       return {
         ...state,
+        userId: action.payload.userId,
         username: action.payload.username,
         password: action.payload.password,
         Fname: action.payload.Fname,
@@ -74,7 +75,7 @@ export const register = (payload) => async (dispatch, getState) => {
     .then((response) => {
       if (response.status === 202) {
         console.log("success");
-        dispatch(setRegister({...payload, isLogged:true}));
+        dispatch(setRegister({...payload, userId: response.data.userId[0].userId, isLogged:true}));
       } 
       else if(response.status === 203){
         console.log(response.data);
@@ -92,6 +93,9 @@ export const logout = (payload) => async (dispatch, getState) =>{
     .post("http://localhost:3001/logout")
     .then((response) => {
       if (response.status === 204) {
+        dispatch(setInviteList({...payload, invites: null}))
+        dispatch(setGroupList({...payload, groups: null}))
+        dispatch(setDashboard({...payload, balance: null, friendList: null}))
         dispatch(setHistory({ transactions: [{}], groups: [] }))
         dispatch(setLogout({...payload, isLogged:false}));
         

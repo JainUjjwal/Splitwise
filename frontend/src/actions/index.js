@@ -40,4 +40,25 @@ const setDashboard =(payload) => {
     payload: payload
   }
 }
-export { setLogin, setLogout, setRegister, setHistory, setProfile, setDashboard };
+
+const setInviteList = (payload) =>{
+  return {
+    type: 'setInviteList',
+    payload: payload
+  }
+}
+
+const setGroupList = (payload) => {
+  return {
+    type: "setGroupList",
+    payload:payload
+  }
+}
+
+const setGroupPage = (payload) => {
+  return {
+    type: "setGroupPage",
+    payload:payload
+  }
+}
+export { setLogin, setLogout, setRegister, setHistory, setProfile, setDashboard, setInviteList, setGroupList, setGroupPage };

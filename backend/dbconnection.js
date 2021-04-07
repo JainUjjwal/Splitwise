@@ -5,8 +5,7 @@ const dbconfig={
     user: "admin",
     password: "rootadmin",
     database: "split",
-    multipleStatements: true,
-    connectionLimit: 10
+    multipleStatements: true
   }
 
   const db = mysql.createConnection(dbconfig);
@@ -35,4 +34,4 @@ dbpool.on('connection', function (connection) {
   });
 
 });
-module.exports = db;
+module.exports = dbpool;

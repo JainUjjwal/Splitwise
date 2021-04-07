@@ -16,7 +16,6 @@ const DashboardReducer = (state=initialState ,action)=>{
 }
 
 export const getDashboard = (payload) => async (dispatch, getState) =>{
-    console.log(payload)
     await axios
       .get("http://localhost:3001/dashboard", {
         params: { userId: payload.userId },
