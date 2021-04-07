@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setLogin, setRegister, setLogout, setHistory, setDashboard, setGroupList, setInviteList } from "../actions";
+import { setLogin, setRegister, setLogout, setHistory, setDashboard, setGroupList, setInviteList, setGroupPage } from "../actions";
 const FormData = require('form-data');
 const initialState = null;
 
@@ -97,6 +97,7 @@ export const logout = (payload) => async (dispatch, getState) =>{
         dispatch(setGroupList({...payload, groups: null}))
         dispatch(setDashboard({...payload, balance: null, friendList: null}))
         dispatch(setHistory({ transactions: [{}], groups: [] }))
+        dispatch(setGroupPage({...payload, groupInfo:null, data: null}))
         dispatch(setLogout({...payload, isLogged:false}));
         
       } else {

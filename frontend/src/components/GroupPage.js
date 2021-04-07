@@ -4,34 +4,29 @@ import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
-import {getGroupPageInfo} from "../reducers/GroupPageReducer" 
+import {
+  editGroupName,
+  getGroupPageInfo,
+  addExpense,
+  leaveGroup,
+} from "../reducers/GroupPageReducer";
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
   const currentUser = user ? user.userId : false;
+  const redux_groupPage = useSelector((state) => state.groupPage);
+  const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
+  const redux_data = redux_groupPage ? redux_groupPage.data : false;
   let [groupInfo, setGroupInfo] = useState();
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
   let [data, setData] = useState();
   const dispatch = useDispatch();
   var searchParams = new URLSearchParams(param.location.search);
-  let URLgroupId = parseInt(searchParams.get("id"));
-  const dataSetter = async () => {
-    await axios
-      .post("http://localhost:3001/groupPage", {
-        groupID: searchParams.get("id"),
-        userId: currentUser,
-      })
-      .then((response) => {
-        console.log( typeof(searchParams.get("id")));
-        console.log(response.data)
-        setGroupInfo(response.data.dummyInfo);
-        setData(response.data.transactionList);
-      });
-  };
+  const groupId = searchParams.get("id");
   useEffect(() => {
-    dataSetter();
-    dispatch(getGroupPageInfo({userId: currentUser, groupId: URLgroupId, groupId2: searchParams.get("id")}))
+    // dataSetter();
+    dispatch(getGroupPageInfo({ userId: currentUser, groupID: groupId }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -42,76 +37,48 @@ const GroupPage = (param) => {
     setOpenBillDialog(false);
   };
   const addBill = async (newDiscription, newAmount) => {
-    await axios
-      .post("http://localhost:3001/addBill", {
-        amount: newAmount,
-        discription: newDiscription,
-        groupId: searchParams.get("id"),
-        userId: currentUser,
+    dispatch(
+      addExpense({
+        newAmount: newAmount,
+        newDiscription: newDiscription,
+        currentUser: currentUser,
+        groupId: groupId,
       })
-      .then((response) => {
-        if (response.status === 201) {
-          let newdata = [...data];
-          newdata.push({
-            discription: newDiscription,
-            amount: newAmount,
-            typeClass: true,
-          });
-          setData(newdata);
-          dialogClose();
-          dataSetter();
-        }
-      });
+    ).then(() => {
+      dialogClose();
+    });
   };
 
-  //Redirection to login if redux state not set
-
-  const isLoggedIn = user ? user.isLogged : false;
-  let redirectVar = null;
-  if (!isLoggedIn) {
-    redirectVar = <Redirect to="/login" />;
-  }
-
   const LeaveGroupHandler = async () => {
-    const groupId = searchParams.get("id");
-    await axios
-      .post("http://localhost:3001/leaveGroup", {
-        groupId: groupId,
-        userId: currentUser,
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          console.log(response);
-          history.push("/mygroups");
-          setGroupInfo("");
-        }
-        if (response.status === 202) {
-          alert(response.data.message);
-        }
-      });
+    dispatch(leaveGroup({ currentUser: currentUser, groupId: groupId })).then(
+      () => {
+        history.push("/mygroups");
+      }
+    );
   };
 
   const saveGroupName = async () => {
-    const groupId = searchParams.get("id");
     const groupName = document.getElementById("newGroupName").value;
-    await axios
-      .post("http://localhost:3001/updateGroup", {
-        groupId: groupId,
+    dispatch(
+      editGroupName({
+        currentUser: currentUser,
         groupName: groupName,
-        userId: currentUser,
+        groupId: groupId,
       })
-      .then((response) => {
-        if (response.status === 201) {
-          setEditStatus(false);
-          dataSetter();
-        }
-      });
+    ).then(() => {
+      setEditStatus(false);
+    });
   };
 
   const editGroup = () => {
     setEditStatus(true);
   };
-
+  //Redirection to login if redux state not set
+  const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!isLoggedIn) {
+    redirectVar = <Redirect to="/login" />;
+  }
   return (
     <div className="container-fluid">
       {redirectVar}
@@ -120,8 +87,8 @@ const GroupPage = (param) => {
         {/* ######################### */}
         <div className="col mt-4">
           <h3 className="">User Balance</h3>
-          {groupInfo
-            ? groupInfo.members.map((member, index) => (
+          {redux_groupInfo
+            ? redux_groupInfo.members.map((member, index) => (
                 <div className="my-4" key={index}>
                   {member.name} :{" "}
                   <span
@@ -141,7 +108,7 @@ const GroupPage = (param) => {
             show={openBillDialog}
             hide={dialogClose}
             onBillSubmit={addBill}
-            groupID={searchParams.get("id")}
+            groupID={groupId}
           />
           <div className="my-4">
             {editStatus ? (
@@ -149,18 +116,23 @@ const GroupPage = (param) => {
                 <input
                   type="text"
                   id="newGroupName"
-                  defaultValue={groupInfo ? groupInfo.groupName : ""}
+                  defaultValue={
+                    redux_groupInfo ? redux_groupInfo.groupName : ""
+                  }
                 ></input>
               </div>
             ) : (
               <div>
-                <h2>{groupInfo ? groupInfo.groupName : ""}</h2>
+                <h2>{redux_groupInfo ? redux_groupInfo.groupName : ""}</h2>
               </div>
             )}
-            {/* <h2>{groupInfo ? groupInfo.groupName : ""}</h2> */}
           </div>
           <div className="btn-group mx2">
-            <Button variant="success" onClick={BillDialogOpen}>
+            <Button
+              variant="success"
+              onClick={BillDialogOpen}
+              disabled={editStatus}
+            >
               Add Expense
             </Button>
             {editStatus ? (
@@ -175,7 +147,11 @@ const GroupPage = (param) => {
             ) : (
               <Button onClick={editGroup}>Edit Group</Button>
             )}
-            <Button variant="danger" onClick={LeaveGroupHandler}>
+            <Button
+              variant="danger"
+              onClick={LeaveGroupHandler}
+              disabled={editStatus}
+            >
               Leave Group
             </Button>
           </div>
@@ -187,8 +163,8 @@ const GroupPage = (param) => {
               <Col>Total Amount</Col>
             </Row>
           </div>
-          {data
-            ? data.map((friend, index) => (
+          {redux_data
+            ? redux_data.map((friend, index) => (
                 <div className="pt-4" key={index}>
                   <Row>
                     <Col xs={9} className="border-right">

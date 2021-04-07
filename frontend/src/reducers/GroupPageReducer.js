@@ -7,30 +7,27 @@ const GroupPageReducer = (state = initialState, action) => {
     case "setGroupPage":
       return {
         ...state,
-        groupName: action.payload.GroupInfo,
+        groupInfo: action.payload.GroupInfo,
         data: action.payload.transactions,
-        members: action.payload.members
       };
     default:
       return state;
   }
 };
 
-export const getGroupPageInfo = (payload) => async (dispatch, useState) => {
+export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
   console.log(payload);
   await axios
     .post("http://localhost:3001/groupPage", {
-      groupID: payload.groupId,
-      userId: payload.currentUser,
+      groupID: payload.groupID,
+      userId: payload.userId,
     })
     .then((response) => {
-        console.log(response.data)
       dispatch(
         setGroupPage({
           ...payload,
-          GroupInfo: response.data.dummyInfo.groupName,
+          GroupInfo: response.data.dummyInfo,
           transactions: response.data.transactionList,
-          members: response.data.dummyInfo.members
         })
       );
       // setGroupInfo(response.data.dummyInfo);
@@ -38,4 +35,65 @@ export const getGroupPageInfo = (payload) => async (dispatch, useState) => {
     });
 };
 
+export const editGroupName = (payload) => async (dispatch, getState) => {
+  await axios
+    .post("http://localhost:3001/updateGroup", {
+      groupId: payload.groupId,
+      groupName: payload.groupName,
+      userId: payload.currentUser,
+    })
+    .then((response) => {
+      if (response.status === 201) {
+        dispatch(
+          getGroupPageInfo({
+            userId: payload.currentUser,
+            groupID: payload.groupId,
+          })
+        );
+      }
+    });
+};
+export const addExpense = (payload) => async (dispatch, getState) => {
+  await axios
+    .post("http://localhost:3001/addBill", {
+      amount: payload.newAmount,
+      discription: payload.newDiscription,
+      groupId: payload.groupId,
+      userId: payload.currentUser,
+    })
+    .then((response) => {
+      if (response.status === 201) {
+        // let newdata = [...data];
+        // newdata.push({
+        //   discription: payload.newDiscription,
+        //   amount: payload.newAmount,
+        //   typeClass: true,
+        // });
+        // setData(newdata);
+        dispatch(
+          getGroupPageInfo({
+            userId: payload.currentUser,
+            groupID: payload.groupId,
+          })
+        );
+      }
+    });
+};
+
+export const leaveGroup = (payload) => async (dispatch, getState) => {
+  await axios
+      .post("http://localhost:3001/leaveGroup", {
+        groupId: payload.groupId,
+        userId: payload.currentUser,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          console.log(response);
+          dispatch(getGroupPageInfo(null))
+        }
+        if (response.status === 202) {
+          alert(response.data.message);
+        }
+      });
+};
 export default GroupPageReducer;

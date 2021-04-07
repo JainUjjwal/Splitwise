@@ -26,7 +26,7 @@ const GroupReducer = (state = initialState, action) => {
 // MIDDLEWARE FUNCTIONS
 
 // function to create group from dashboard createGroupModal
-export const createGroup = (payload) => async (dispatch, useState) => {
+export const createGroup = (payload) => async (dispatch, getState) => {
   const addedFriend = payload.addedFriend;
   const groupName = payload.groupName;
   await axios
@@ -40,7 +40,7 @@ export const createGroup = (payload) => async (dispatch, useState) => {
 };
 
 // Function to get data for my groups
-export const getInviteInfo = (payload) => async (dispatch, useState) => {
+export const getInviteInfo = (payload) => async (dispatch, getState) => {
   await axios
     .get("http://localhost:3001/mygroups", {
       params: { userId: payload.userId },
@@ -59,7 +59,7 @@ export const getInviteInfo = (payload) => async (dispatch, useState) => {
 
 };
 
-export const getGroupInfo = (payload) => async (dispatch, useState) => {
+export const getGroupInfo = (payload) => async (dispatch, getState) => {
   await axios
   .post("http://localhost:3001/mygroups", { userId: payload.userId })
   .then((res) => {
@@ -72,7 +72,7 @@ export const getGroupInfo = (payload) => async (dispatch, useState) => {
 }
 
 // functions to handle group rejection or accept request
-export const groupRejection = (payload) => async (dispatch, useState) =>{
+export const groupRejection = (payload) => async (dispatch, getState) =>{
   const rejectedGroup = payload.rejectedGroup
   console.log(payload)
   await  axios.post("http://localhost:3001/rejInvStatus", { rejectedGroup }).then((response) => {
@@ -83,7 +83,7 @@ export const groupRejection = (payload) => async (dispatch, useState) =>{
     });
 }
 
-export const groupAcception = (payload) => async (dispatch, useState) =>{
+export const groupAcception = (payload) => async (dispatch, getState) =>{
   const acceptedGroup = payload.acceptedGroup
   console.log('sending accept request')
   await  axios.post("http://localhost:3001/accInvStatus", { acceptedGroup }).then((response) => {
