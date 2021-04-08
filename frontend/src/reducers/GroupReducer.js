@@ -49,8 +49,6 @@ export const getInviteInfo = (payload) => async (dispatch, getState) => {
       if (res.status === 201) {
         console.log(res.data.inviteGroup)
         dispatch(setInviteList({ ...payload, invites: res.data.inviteGroup }));
-        // dispatch(setGroupList({ ...payload, groups: res.data.myGroups }));
-        // dispatch(setMyGroupsInfo({...payload, groups: res.data.myGroups, invites: res.data.inviteGroup}))
       }
       if (res.status === 101) {
         console.log("Error in getting group info");

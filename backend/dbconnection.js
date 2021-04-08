@@ -34,4 +34,4 @@ dbpool.on('connection', function (connection) {
   });
 
 });
-module.exports = dbpool;
+module.exports = {db};

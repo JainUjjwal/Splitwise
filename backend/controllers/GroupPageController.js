@@ -1,7 +1,6 @@
 const db = require("../dbconnection");
 
 const getGroupInfo = (req, res) => {
-  // console.log("checking");
   // Getting transactions in the group
   currentUser = req.body.userId;
   db.query(
@@ -53,7 +52,6 @@ const getGroupInfo = (req, res) => {
         })
         console.log(result[2][0].groupName);
         let dummyInfo = { groupName: result[2][0]? result[2][0].groupName : result[1][0].groupName, members: newMemberList };
-        // let dummyInfo = { groupName: 'dummy', members: newMemberList };
         res.json({
           transactionList: newTransactionList,
           dummyInfo,

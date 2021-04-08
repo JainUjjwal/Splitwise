@@ -19,25 +19,9 @@ const Profile = () => {
   let [image, setImage] = useState();
   let [imageUrl, setImageUrl] = useState(redux_imageURL);
   const dispatch = useDispatch()
-  // const getData = async () => {
-    
-  //   await axios
-  //     .get("http://localhost:3001/profile", {
-  //       params: { username: redux_user ? redux_user.username : "" },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data[0]);
-  //       setUserInfo(res.data[0]);        
-  //       const url =
-  //       res.data[0] && res.data[0].imgPath && res.data[0].imgPath.length > 4
-  //           ? "/userImages/" + res.data[0].username + ".jpg"
-  //           : "/userImages/default.jpg";
-  //       setImageUrl(url);
-  //     });
-  // };
+
   useEffect(() => {
     dispatch(getProfile({userId: redux_userId ? redux_userId : "" }))
-    // getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,20 +55,6 @@ const Profile = () => {
     formData.append("timezone", updatedData.timezone);
     dispatch(updateProfile({redux_userId: redux_userId,updatedData:updatedData}))
     setEditStatus(false);
-    // await axios
-    //   .post("http://localhost:3001/profile", formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   })
-    //   .then((res, req) => {
-    //     if (res.status === 201) {
-    //       console.log(res.data.message);
-    //       setUserInfo(updatedData);
-    //       setEditStatus(false);
-    //       setImageUrl('/userImages/'+updatedData.username+'.jpg');
-    //     }
-    //   });
   };
 
   const closeEdit = () => {

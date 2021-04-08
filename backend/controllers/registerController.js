@@ -1,69 +1,50 @@
-const db = require("../dbconnection");
+// const db = require("../dbconnection");
 const bcrypt = require("bcrypt");
+const users = require("../model/UsersModel");
+// const getDb = require("../mongoutil").getDb;
 // Bcrypt scrambler
 const saltRounds = 10;
 
 const register = (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const Fname = req.body.Fname;
-  const num = req.body.phoneNumber;
-
+  // const dbo = getDb();
   let uploadPath = "";
   if (req.files) {
     const image = req.files.image;
-    uploadPath = "/var/www/html/userImages/" + username + ".jpg";
+    uploadPath = "/var/www/html/userImages/" + req.body.username + ".jpg";
     image.mv(uploadPath, function (err) {
       if (err) return res.status(500).send(err);
     });
   }
-  db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
-    (err, result) => {
+  bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
+    if (err) {
+      console.log(err);
+    }
+    const data = {
+      username: req.body.username,
+      Fname: req.body.Fname,
+      phoneNumber: req.body.phoneNumber,
+      lang: "English",
+      currency: "USD",
+      password: hash,
+      imgPath: uploadPath,
+      timeZone: "PST",
+    };
+    await users.find({ username: req.body.username }, async (err, result)=>{
       if (err) {
         console.log(err);
-      } else {
-        if (result.length > 0) {
-          res.status(203).send({ err: "user already exists" });
-        } else {
-          bcrypt.hash(password, saltRounds, (err, hash) => {
-            if (err) {
-              console.log(err);
-            }
-
-            db.query(
-              "INSERT INTO users (username, Fname, phoneNumber, imgPath) VALUES (?,?,?,?); INSERT INTO passwordTable(pass) VALUES (?)",
-              [username, Fname, num, uploadPath, hash],
-              (err, result) => {
-                if (err) {
-                  res.send({ err: err });
-                } else {
-                  db.query(
-                    "select userId from users where username = ?",
-                    [username],
-                    (err, result) => {
-                      console.log(result);
-                      res.status(202).send({ userId:result, message: "Sign up successful" });
-                    }
-                  );
-                  
-                }
-              }
-            );
-          });
-        }
       }
-    }
-  );
-  // Setting session variable
-  db.query(
-    "select * from users where username = ?",
-    [username],
-    (err, result) => {
-      req.session.user = result;
-    }
-  );
+      // console.log(result);
+      if(result.length>0){
+        res.status(203).send({ err: "user already exists" });
+      }else{
+        let newUser = new users(data);
+        await newUser.save().then((result)=>{
+            req.session.user = newUser
+            res.status(202).send({ userId:result._id, message: "Sign up successful" });
+        });
+      }
+    })
+  });
 };
 
 module.exports = { register };

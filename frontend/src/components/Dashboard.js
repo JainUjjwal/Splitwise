@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-// import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import CreateGroupModal from "./CreateGroupModal";
-// import Navbar from './Nav2';
-// import {selectUser} from "../features/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { getDashboard, settle } from "../reducers/DashboardReducer";
@@ -23,8 +20,6 @@ const Dashboard = () => {
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
   let [total, setTotal] = useState();
-  // var [data, setData] = useState(redux_data);
-  // var [userList, setUserList] = useState(redux_userList);
   let [settleState, setSettleState] = useState();
   const dispatch = useDispatch();
   // var userInfo;

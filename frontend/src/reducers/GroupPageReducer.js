@@ -30,8 +30,6 @@ export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
           transactions: response.data.transactionList,
         })
       );
-      // setGroupInfo(response.data.dummyInfo);
-      // setData(response.data.transactionList);
     });
 };
 
@@ -63,13 +61,6 @@ export const addExpense = (payload) => async (dispatch, getState) => {
     })
     .then((response) => {
       if (response.status === 201) {
-        // let newdata = [...data];
-        // newdata.push({
-        //   discription: payload.newDiscription,
-        //   amount: payload.newAmount,
-        //   typeClass: true,
-        // });
-        // setData(newdata);
         dispatch(
           getGroupPageInfo({
             userId: payload.currentUser,

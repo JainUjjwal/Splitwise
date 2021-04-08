@@ -8,8 +8,12 @@ const bcrypt = require("bcrypt");
 const fileUpload = require('express-fileupload');
 const db = require('./dbconnection');
 // app.set("view engine", "ejs");
-
-
+const initDb = require("./mongoutil").initDb;
+const mongoose = require('mongoose');
+// const mongoDBO = require('./mongoCon');
+// console.log(
+//   mongoDBO
+// );
 
 app.use(
   cors({
@@ -35,6 +39,8 @@ app.use(
 );
 
 app.use(express.json());
+
+// initDb((err)=>{
 
 app.get("/", function (req, res) {
   //check if user session exits
@@ -75,5 +81,11 @@ app.use(CreateGroupRoute);
 
 
 //starting server on port 3001
-app.listen(3001);
+const uri = "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{ app.listen(3001);
 console.log("Server Listening on port 3001");
+})
+
+mongoose.set('useFindAndModify', false);
+// })

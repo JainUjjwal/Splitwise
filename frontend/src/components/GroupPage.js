@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,10 +16,9 @@ const GroupPage = (param) => {
   const redux_groupPage = useSelector((state) => state.groupPage);
   const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
   const redux_data = redux_groupPage ? redux_groupPage.data : false;
-  let [groupInfo, setGroupInfo] = useState();
+  
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
-  let [data, setData] = useState();
   const dispatch = useDispatch();
   var searchParams = new URLSearchParams(param.location.search);
   const groupId = searchParams.get("id");

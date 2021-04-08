@@ -25,7 +25,6 @@ const userReducer = (state = initialState, action) => {
         ...state,
         userId: action.payload.userId,
         username: action.payload.username,
-        password: action.payload.password,
         Fname: action.payload.Fname,
         phoneNumber: action.payload.phoneNumber,
         isLogged: action.payload.isLogged,
@@ -56,7 +55,6 @@ export const login = (payload) => async (dispatch, getState) => {
     .catch((error) => {
       const errorMessage = 'Oops! Something went wrong!' 
       dispatch(setLogin({err: errorMessage, isLogged:false}))
-      //   return {err: "Something went wrong"}
     });
 };
 
@@ -75,7 +73,7 @@ export const register = (payload) => async (dispatch, getState) => {
     .then((response) => {
       if (response.status === 202) {
         console.log("success");
-        dispatch(setRegister({...payload, userId: response.data.userId[0].userId, isLogged:true}));
+        dispatch(setRegister({...payload, userId: response.data.userId, isLogged:true}));
       } 
       else if(response.status === 203){
         console.log(response.data);
