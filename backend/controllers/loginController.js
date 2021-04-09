@@ -14,8 +14,9 @@ const login_user_post = async (req, res) => {
           // res.writeHead(200, {
           //   "Content-Type": "text/plain",
           // })
+          console.log(result)
           res.status(200).send({
-            userId: result[0].userId,
+            userId: result[0]._id,
             Fname: result[0].Fname,
             message: "Successful Login",
           });

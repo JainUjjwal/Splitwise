@@ -1,4 +1,5 @@
 const db = require("../dbconnection");
+const users = require("../model/UsersModel");
 
 var dataBlock = [
   { id: "1", Fname: "Ujjwal", amount: 2000, typeClass: true },
@@ -16,38 +17,44 @@ const userInfopost = (req, res) => {
   }
 };
 
-const getUserList = (req, res) => {
+const getUserList = async(req, res) => {
   const currentUser = req.query.userId;
-  db.query(
-    "SELECT * FROM users WHERE userId != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
-    [currentUser, currentUser],
-    (err, result) => {
-      if (err) {
-        res.send({ err: err });
-      }
-      if (result[0].length > 0) {
-        let newDataBlock = {};
-        if(result[1].length>0){
-        result[1].forEach((element) => {
-          if (element.user2 in newDataBlock) {
-            let updatedBalance =
-              newDataBlock[element.user2].amount + element.balance;
-            newDataBlock[element.user2].amount = updatedBalance;
-          } else {
-            newDataBlock[element.user2] = {
-              Fname: element.Fname,
-              amount: element.balance,
-              typeClass: element.balance >= 0 ? true : false,
-            };
-          }
-        });
-      }
-        res.send({ userList: result[0], dataBlock: newDataBlock});
-      } else {
-        res.status(252).send({ message: "User Info not found" });
-      }
-    }
-  );
+  let userList;
+  await users.find({_id:{$ne:req.query.userId}}, (err,result)=>{
+    // console.log(result)
+    userList = result;
+  })
+  res.send({ userList: userList, dataBlock: dataBlock})
+  // db.query(
+  //   "SELECT * FROM users WHERE userId != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
+  //   [currentUser, currentUser],
+  //   (err, result) => {
+  //     if (err) {
+  //       res.send({ err: err });
+  //     }
+  //     if (result[0].length > 0) {
+  //       let newDataBlock = {};
+  //       if(result[1].length>0){
+  //       result[1].forEach((element) => {
+  //         if (element.user2 in newDataBlock) {
+  //           let updatedBalance =
+  //             newDataBlock[element.user2].amount + element.balance;
+  //           newDataBlock[element.user2].amount = updatedBalance;
+  //         } else {
+  //           newDataBlock[element.user2] = {
+  //             Fname: element.Fname,
+  //             amount: element.balance,
+  //             typeClass: element.balance >= 0 ? true : false,
+  //           };
+  //         }
+  //       });
+  //     }
+  //       res.send({ userList: result[0], dataBlock: newDataBlock});
+  //     } else {
+  //       res.status(252).send({ message: "User Info not found" });
+  //     }
+  //   }
+  // );
 };
 
 // [

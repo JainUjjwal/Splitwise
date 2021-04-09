@@ -42,7 +42,7 @@ const Profile = () => {
       phoneNumber: document.getElementById("newNumber").value,
       lang: document.getElementById("newLanguage").value,
       currency: document.getElementById("newcurrency").value,
-      timezone: document.getElementById("newtimezone").value,
+      timeZone: document.getElementById("newtimezone").value,
       image: image,
     };
     formData.append("userId", redux_userId);
@@ -52,7 +52,7 @@ const Profile = () => {
     formData.append("phoneNumber", updatedData.phoneNumber);
     formData.append("lang", updatedData.lang);
     formData.append("currency", updatedData.currency);
-    formData.append("timezone", updatedData.timezone);
+    formData.append("timezone", updatedData.timeZone);
     dispatch(updateProfile({redux_userId: redux_userId,updatedData:updatedData}))
     setEditStatus(false);
   };
@@ -186,7 +186,7 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newtimezone"
-                          defaultValue={redux_profile ? redux_profile.timezone : ""}
+                          defaultValue={redux_profile ? redux_profile.timeZone : ""}
                         >
                           <option>PST</option>
                           <option>GMT</option>
@@ -195,7 +195,7 @@ const Profile = () => {
                           <option>BST</option>
                         </select>
                       ) : redux_profile ? (
-                        redux_profile.timezone
+                        redux_profile.timeZone
                       ) : (
                         ""
                       )}

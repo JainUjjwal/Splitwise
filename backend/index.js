@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const fileUpload = require('express-fileupload');
 const db = require('./dbconnection');
 // app.set("view engine", "ejs");
-const initDb = require("./mongoutil").initDb;
+// const initDb = require("./mongoutil").initDb;
 const mongoose = require('mongoose');
 // const mongoDBO = require('./mongoCon');
 // console.log(

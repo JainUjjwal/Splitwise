@@ -1,37 +1,26 @@
-const db = require("../dbconnection");
 const fs = require("fs");
+const users = require("../model/UsersModel");
 
-const get_userInfo = (req, res) => {
+const get_userInfo = async (req, res) => {
   const userId = req.query.userId;
-  db.query(
-    "SELECT * FROM users WHERE userId = ?",
-    userId,
-    (err, result) => {
-      if (err) {
-        res.send({ err: err });
-      }
-      if (result.length > 0) {
-        console.log(result);
-        res.status(200).send(result);
-      } else {
-        res.status(252).send({ message: "User Info not found" });
-      }
+  await users.findById(userId, (err, result) => {
+    if (err) {
+      res.send({ err: err });
     }
-  );
+    if (result) {
+      console.log(result);
+      res.status(200).send(result);
+    } else {
+      res.status(252).send({ message: "User Info not found" });
+    }
+  });
 };
 
-const post_userInfo = (req, res) => {
-  const currentUser = req.body.userId;
-  const username = req.body.username;
-  const Fname = req.body.Fname;
-  const phoneNumber = req.body.phoneNumber;
-  const lang = req.body.lang;
-  const currency = req.body.currency;
-  const timezone = req.body.timezone;
+const post_userInfo = async (req, res) => {
   let uploadPath = "";
   if (req.files) {
     const image = req.files.image;
-    uploadPath = "/var/www/html/userImages/" + username + ".jpg";
+    uploadPath = "/var/www/html/userImages/" + req.body.username + ".jpg";
     fs.unlink(uploadPath, (err) => {
       console.log(err);
     });
@@ -39,32 +28,28 @@ const post_userInfo = (req, res) => {
       if (err) return res.status(500).send(err);
     });
   }
-  let valueArray = [
-    username,
-    Fname,
-    phoneNumber,
-    lang,
-    timezone,
-    currency,
-    currentUser,
-  ];
-  let query =
-    "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=? WHERE userId = ?";
+
+  let data = {
+    username: req.body.username,
+    Fname: req.body.Fname,
+    phoneNumber: req.body.phoneNumber,
+    lang: req.body.lang,
+    timeZone: req.body.timezone,
+    currency: req.body.currency
+  };
   if (uploadPath.length > 2) {
-    query =
-      "UPDATE users SET username = ?, Fname = ?, phoneNumber = ?, lang = ?, timezone = ?, currency=?, imgPath = ? WHERE userId = ?";
-    valueArray = [
-      username,
-      Fname,
-      phoneNumber,
-      lang,
-      timezone,
-      currency,
-      uploadPath,
-      currentUser,
-    ];
+    data = {
+      username: req.body.username,
+      Fname: req.body.Fname,
+      phoneNumber: req.body.phoneNumber,
+      lang: req.body.lang,
+      timeZone: req.body.timezone,
+      currency: req.body.currency,
+      imgPath: uploadPath
+    };
   }
-  db.query(query, valueArray, (err, result) => {
+
+  await users.findByIdAndUpdate(req.body.userId, data, (err, result) => {
     if (err) {
       console.log(err);
     } else {

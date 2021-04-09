@@ -1,54 +1,42 @@
-const db = require("../dbconnection");
+const groups = require("../model/GroupModel");
 
-const groupList = (req, res) => {
+const groupList = async (req, res) => {
   const userId = req.body.userId;
   const myGroups = [];
-  db.query(
-    " select * from userGroup inner join groupTable on userGroup.groupId = groupTable.groupId where userId = (?)",
-    userId,
+  await groups.find(
+    { groupMembers: { $elemMatch: { userId: userId, inviteStatus: 1 } } },
     (err, result) => {
-      if (err) {
-        //   res.send({ err: err });
-        console.log(err);
-        res.status(101).send({ err: "User is currently in no groups." });
-      } else {
-        if (result.length > 0) {
-          for (i = 0; i < result.length; i++) {
-            myGroups.push({ id: result[i].groupId, name: result[i].groupName });
-          }
-          res.status(201).send({
-            myGroups: myGroups,
-          });
-        }
+      result.forEach(group => {
+        console.log("group info ///////////////" + group)
+        myGroups.push({ id: group._id, name: group.groupName })
+      });
+
+      if (result.length > 0) {
+        res.status(201).send({
+          myGroups: myGroups,
+        });
       }
     }
   );
 };
-const getInvites = (req, res) => {
+const getInvites = async (req, res) => {
   const userId = req.query.userId;
   const inviteGroup = [];
-  db.query(
-    " select * from groupTable Inner join invites on groupTable.groupId = invites.groupId where userId = (?) AND invStatus = (?);",
-    [userId, 0],
+  await groups.find(
+    { groupMembers: { $elemMatch: { userId: userId, inviteStatus: 0 } } },
     (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(101).send({ err: "User is currently in no groups." });
-      } else {
-        if (result.length > 0) {
-          for (i = 0; i < result.length; i++) {
-            inviteGroup.push({
-              id: result[i].groupId,
-              name: result[i].groupName,
-              invStatus: result[i].invStatus,
-            });
-          }
-          res.status(201).send({
-            inviteGroup: inviteGroup,
-          });
-        }
+      result.forEach(group => {
+        console.log("group info ///////////////" + group)
+        inviteGroup.push({ id: group._id, name: group.groupName })
+      });
+
+      if (result.length > 0) {
+        res.status(201).send({
+          inviteGroup: inviteGroup,
+        });
       }
     }
   );
 };
+
 module.exports = { groupList, getInvites };

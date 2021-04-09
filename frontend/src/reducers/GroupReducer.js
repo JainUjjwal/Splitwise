@@ -29,8 +29,9 @@ const GroupReducer = (state = initialState, action) => {
 export const createGroup = (payload) => async (dispatch, getState) => {
   const addedFriend = payload.addedFriend;
   const groupName = payload.groupName;
+  const currentUser = payload.currentUser
   await axios
-    .post("http://localhost:3001/createGroup", { addedFriend, groupName })
+    .post("http://localhost:3001/createGroup", { addedFriend, groupName, currentUser })
     .then((response) => {
       //ADD CONFIRMATION ON GROUP CREATION
       if (response.status === 251) {

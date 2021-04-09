@@ -46,6 +46,7 @@ export const login = (payload) => async (dispatch, getState) => {
       console.log("Status Code : ", response.status);
       if (response.status === 200) {
         // <Redirect to="/dashboard" />
+        console.log(response.data)
         dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId, Fname:response.data.Fname}));
       } else {
           dispatch(setLogin({err: response.data.message, isLogged:false}))

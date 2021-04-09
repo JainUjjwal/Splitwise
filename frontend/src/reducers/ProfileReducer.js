@@ -22,11 +22,12 @@ export const getProfile = (payload) => async (dispatch, getState) => {
         params: { userId: payload.userId},
       })
       .then((res) => {  
+        console.log(res.data)
         const url =
-        res.data[0] && res.data[0].imgPath && res.data[0].imgPath.length > 4
-            ? "/userImages/" + res.data[0].username + ".jpg"
+        res.data && res.data.imgPath && res.data.imgPath.length > 4
+            ? "/userImages/" + res.data.username + ".jpg"
             : "/userImages/default.jpg";
-        dispatch(setProfile({userInfo: res.data[0], imageUrl: url}))
+        dispatch(setProfile({userInfo: res.data, imageUrl: url}))
       });
 }
 
