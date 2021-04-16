@@ -9,4 +9,5 @@ router.post('/groupPage', GroupPageController.getGroupInfo )
 router.post('/addBill',TransactionController.addBill)
 router.post('/leaveGroup',LeaveGroupController.leave)
 router.post('/updateGroup', GroupPageController.updateGroupInfo)
+router.post('/newComment', TransactionController.newComment)
 module.exports = router;

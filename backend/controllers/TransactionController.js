@@ -58,5 +58,16 @@ const addBill = async (req, res) => {
     });
   });
 };
+const newComment = (req, res) =>{
+  console.log(req.body)
 
-module.exports = { addBill };
+  let newCommentObj = {commentText: req.body.commentText, Fname: req.body.Fname, userId: req.body.userId}
+  transactions.updateOne({_id:req.body.transactionID}, { $push: { comments: newCommentObj } } ,(err, result)=>{
+    if (err) {
+      console.log(err);
+    }
+  }).then(()=>{
+    res.status(201).send({message: "success"})
+  })
+}
+module.exports = { addBill, newComment };

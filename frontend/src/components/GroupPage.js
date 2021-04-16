@@ -9,6 +9,7 @@ import {
   addExpense,
   leaveGroup,
 } from "../reducers/GroupPageReducer";
+import CommentModal from "./CommentModal";
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
@@ -17,9 +18,11 @@ const GroupPage = (param) => {
   const redux_groupPage = useSelector((state) => state.groupPage);
   const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
   const redux_data = redux_groupPage ? redux_groupPage.data : false;
-  
+  let [commentState, setCommentState] = useState(false);
+  let [transactionID, setTransactionID] = useState('');
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
+  let [commentData, setCommentData] = useState({commentText:"failed to load information"});
   const dispatch = useDispatch();
   var searchParams = new URLSearchParams(param.location.search);
   const groupId = searchParams.get("id");
@@ -34,6 +37,8 @@ const GroupPage = (param) => {
   };
   const dialogClose = () => {
     setOpenBillDialog(false);
+    setCommentState(false);
+    setCommentData({commentText:"failed to load information"})
   };
   const addBill = async (newDiscription, newAmount) => {
     dispatch(
@@ -73,6 +78,17 @@ const GroupPage = (param) => {
   const editGroup = () => {
     setEditStatus(true);
   };
+
+  const OpenCommentModal = (e) =>{
+    console.log(e.target.dataset)
+    setCommentState(true)
+    setTransactionID( e.target.dataset.id);
+    redux_data.forEach(element=>{
+      if(element.id === e.target.dataset.id){
+        setCommentData(element.comments)
+      }
+    })
+  }
   //Redirection to login if redux state not set
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
@@ -160,7 +176,8 @@ const GroupPage = (param) => {
               <Col xs={9} className="border-right">
                 <b>Description</b>
               </Col>
-              <Col>Total Amount</Col>
+              <Col className="border-right">Total Amount</Col>
+              <Col>Comments</Col>
             </Row>
           </div>
           {redux_data
@@ -175,16 +192,24 @@ const GroupPage = (param) => {
                       at <span style={{ color: "grey" }}>{friend.ts}</span>
                     </Col>
                     <Col
+                      className="border-right"
                       style={
                         friend.typeClass ? { color: "green" } : { color: "red" }
                       }
                     >
                       ${friend.amount}
                     </Col>
+                    <Col>
+                      <button type="button" className="btn btn-secondary" onClick = {OpenCommentModal} data-id = {friend.id} data-comments = {friend.comments}>
+                      <i className="bi bi-chat-left-quote"></i>
+                      </button>
+                      {/* {console.log("checking")} {console.log(friend.comments)} */}
+                    </Col>
                   </Row>
                 </div>
               ))
             : ""}
+            <CommentModal show={commentState} hide= {dialogClose} userId = {currentUser} Fname = {userFname} id= {transactionID} groupId = {groupId} comments={commentData} />
         </div>
       </div>
     </div>

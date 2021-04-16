@@ -52,14 +52,14 @@ export const editGroupName = (payload) => async (dispatch, getState) => {
     });
 };
 export const addExpense = (payload) => async (dispatch, getState) => {
-  console.log(payload)
+  console.log(payload);
   await axios
     .post("http://localhost:3001/addBill", {
       amount: payload.newAmount,
       discription: payload.newDiscription,
       groupId: payload.groupId,
       userId: payload.currentUser,
-      Fname: payload.Fname
+      Fname: payload.Fname,
     })
     .then((response) => {
       if (response.status === 201) {
@@ -72,21 +72,37 @@ export const addExpense = (payload) => async (dispatch, getState) => {
       }
     });
 };
-
+export const sendComment = (payload) => async (dispatch, getState) => {
+  await axios.post("http://localhost:3001/newComment", {
+    commentText: payload.comment,
+    Fname: payload.Fname,
+    userId: payload.currentUser,
+    transactionID: payload.transactionID
+  }).then((response) => {
+    if (response.status === 201) {
+      dispatch(
+        getGroupPageInfo({
+          userId: payload.currentUser,
+          groupID: payload.groupId,
+        })
+      );
+    }
+  });
+};
 export const leaveGroup = (payload) => async (dispatch, getState) => {
   await axios
-      .post("http://localhost:3001/leaveGroup", {
-        groupId: payload.groupId,
-        userId: payload.currentUser,
-      })
-      .then((response) => {
-        if (response.status === 201) {
-          console.log(response);
-          dispatch(getGroupPageInfo(null))
-        }
-        if (response.status === 202) {
-          alert(response.data.message);
-        }
-      });
+    .post("http://localhost:3001/leaveGroup", {
+      groupId: payload.groupId,
+      userId: payload.currentUser,
+    })
+    .then((response) => {
+      if (response.status === 201) {
+        console.log(response);
+        dispatch(getGroupPageInfo(null));
+      }
+      if (response.status === 202) {
+        alert(response.data.message);
+      }
+    });
 };
 export default GroupPageReducer;

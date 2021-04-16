@@ -28,20 +28,24 @@ const getTransactionInfo = async (groupId, currentUser) => {
     trans.forEach((element) => {
       if (element.userId == currentUser) {
         let transaction = {
+          id: element._id,
           discription: element.discription,
           amount: element.amount,
           typeClass: true,
           Fname: element.Fname,
           ts: element.createdAt,
+          comments: element.comments.length>0?element.comments:false
         };
         newTransactionList.push(transaction);
       } else {
         let transaction = {
+          id: element._id,
           discription: element.discription,
           amount: element.amount,
           typeClass: false,
           Fname: element.Fname,
           ts: element.createdAt,
+          comments: element.comments.length>0?element.comments:false
         };
         newTransactionList.push(transaction);
       }
@@ -78,10 +82,6 @@ const getGroupInfo = async (req, res) => {
       }
     );
   });
-  const callbackToSend = (newMemberList1, result) => {
-    let dummyInfo = { groupName: result.groupName, members: newMemberList1 };
-    sendResponse(dummyInfo);
-  };
   const sendResponse = (dummyInfo, newTransactionList) => {
     res.json({
       transactionList: newTransactionList,

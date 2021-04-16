@@ -9,7 +9,10 @@ const TransactionSchema = mongoose.Schema(
     discription: String,
     comments: [
       {
+        userId: String,
+        Fname: String,
         commentText: String,
+        timeposted: {type: Date, default: Date.now()}
       },
     ],
   },
