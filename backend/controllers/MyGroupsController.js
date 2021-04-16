@@ -7,7 +7,6 @@ const groupList = async (req, res) => {
     { groupMembers: { $elemMatch: { userId: userId, inviteStatus: 1 } } },
     (err, result) => {
       result.forEach(group => {
-        console.log("group info ///////////////" + group)
         myGroups.push({ id: group._id, name: group.groupName })
       });
 
@@ -26,7 +25,6 @@ const getInvites = async (req, res) => {
     { groupMembers: { $elemMatch: { userId: userId, inviteStatus: 0 } } },
     (err, result) => {
       result.forEach(group => {
-        console.log("group info ///////////////" + group)
         inviteGroup.push({ id: group._id, name: group.groupName })
       });
 

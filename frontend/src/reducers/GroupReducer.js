@@ -73,8 +73,9 @@ export const getGroupInfo = (payload) => async (dispatch, getState) => {
 // functions to handle group rejection or accept request
 export const groupRejection = (payload) => async (dispatch, getState) =>{
   const rejectedGroup = payload.rejectedGroup
+  const userId = payload.userId
   console.log(payload)
-  await  axios.post("http://localhost:3001/rejInvStatus", { rejectedGroup }).then((response) => {
+  await  axios.post("http://localhost:3001/rejInvStatus", { rejectedGroup,userId }).then((response) => {
       if (response.status === 269) {
         dispatch(getGroupInfo({userId:payload.userId}));
         dispatch(getInviteInfo({userId: payload.userId}))
@@ -84,8 +85,9 @@ export const groupRejection = (payload) => async (dispatch, getState) =>{
 
 export const groupAcception = (payload) => async (dispatch, getState) =>{
   const acceptedGroup = payload.acceptedGroup
+  const userId = payload.userId
   console.log('sending accept request')
-  await  axios.post("http://localhost:3001/accInvStatus", { acceptedGroup }).then((response) => {
+  await  axios.post("http://localhost:3001/accInvStatus", { acceptedGroup,userId }).then((response) => {
       if (response.status === 269) {
         console.log('accept request serviced')
         dispatch(getInviteInfo({ userId: payload.userId }));

@@ -82,6 +82,8 @@ users{
     imgPath: string
 }
 
+
+
 userInteraction{
      user 1: [
         {
@@ -93,11 +95,6 @@ userInteraction{
             userId: string
             balance: float
             groupId: 
-        }
-    ]
-    user 2: [
-        {
-
         }
     ]
 }

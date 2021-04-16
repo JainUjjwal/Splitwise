@@ -52,12 +52,14 @@ export const editGroupName = (payload) => async (dispatch, getState) => {
     });
 };
 export const addExpense = (payload) => async (dispatch, getState) => {
+  console.log(payload)
   await axios
     .post("http://localhost:3001/addBill", {
       amount: payload.newAmount,
       discription: payload.newDiscription,
       groupId: payload.groupId,
       userId: payload.currentUser,
+      Fname: payload.Fname
     })
     .then((response) => {
       if (response.status === 201) {

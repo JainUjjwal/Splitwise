@@ -13,6 +13,7 @@ const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
   const currentUser = user ? user.userId : false;
+  const userFname = user ? user.Fname : false;
   const redux_groupPage = useSelector((state) => state.groupPage);
   const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
   const redux_data = redux_groupPage ? redux_groupPage.data : false;
@@ -37,6 +38,7 @@ const GroupPage = (param) => {
   const addBill = async (newDiscription, newAmount) => {
     dispatch(
       addExpense({
+        Fname: userFname,
         newAmount: newAmount,
         newDiscription: newDiscription,
         currentUser: currentUser,
