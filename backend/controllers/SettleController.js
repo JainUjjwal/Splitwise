@@ -1,21 +1,23 @@
-const db = require("../dbconnection");
-
+const userRelation = require("../model/UserRelationModel");
 const settle = (req, res) => {
-  
   const user2 = req.body.user2;
   const currentUser = req.body.userId;
-  
-  db.query(
-    "UPDATE masterTable SET balance = 0 WHERE user1 = ? AND user2 = ? OR user1 = ? AND user2 = ?;",
-    [currentUser, user2, user2, currentUser],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      }else{
-          res.status(200).send({message:'Settled Up!'});
+  userRelation
+    .updateMany(
+      ({ user1: user2, user2: currentUser } && {
+        user1: currentUser,
+        user2: user2,
+      }),
+      { balance: 0 },
+      (err, docs) => {
+        if(err){console.log(err)}
+        console.log(docs);
       }
-    }
-  );
+    )
+    .then(() => {
+      console.log("done");
+      res.status(200).send({ message: "Settled Up!" });
+    });
 };
 
 module.exports = { settle };

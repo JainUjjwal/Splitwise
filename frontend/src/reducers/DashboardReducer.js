@@ -27,6 +27,7 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
         } else {
         //   setUserList(res.data.userList);
         //   setData(res.data.dataBlock);
+        console.log(res.data)
         dispatch(setDashboard({userList: res.data.userList, data: res.data.dataBlock}))
         }
       });

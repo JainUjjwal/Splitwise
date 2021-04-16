@@ -1,6 +1,6 @@
 const db = require("../dbconnection");
 const users = require("../model/UsersModel");
-
+const userRelation = require("../model/UserRelationModel");
 var dataBlock = [
   { id: "1", Fname: "Ujjwal", amount: 2000, typeClass: true },
   { id: "2", Fname: "Mohit", amount: 1000, typeClass: false },
@@ -17,14 +17,40 @@ const userInfopost = (req, res) => {
   }
 };
 
-const getUserList = async(req, res) => {
+const getUserList = async (req, res) => {
   const currentUser = req.query.userId;
   let userList;
-  await users.find({_id:{$ne:req.query.userId}}, (err,result)=>{
+  let newDataBlock = {};
+  await users.find({ _id: { $ne: req.query.userId } }, (err, result) => {
     // console.log(result)
     userList = result;
-  })
-  res.send({ userList: userList, dataBlock: dataBlock})
+  });
+  await userRelation.find({ user1: req.query.userId }, async (err, result) => {
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].user2 in newDataBlock) {
+        let updatedBalance =
+          newDataBlock[result[i].user2].amount + result[i].balance;
+        newDataBlock[result[i].user2].amount = updatedBalance;
+        if (updatedBalance >= 0) {
+          newDataBlock[result[i].user2].typeClass = true;
+        } else {
+          newDataBlock[result[i].user2].typeClass = false;
+        }
+      } else {
+        let userinfo = await users.findOne({_id:result[i].user2}).exec()
+        console.log()
+        newDataBlock[result[i].user2] = {
+          id: result[i].user2,
+          Fname: userinfo.Fname,
+          amount: result[i].balance,
+          typeClass: result[i].balance >= 0 ? true : false,
+        };
+      }
+    }
+    // console.log(newDataBlock);
+    await res.send({ userList: userList, dataBlock: newDataBlock });
+  });
+
   // db.query(
   //   "SELECT * FROM users WHERE userId != ?; SELECT user2, balance, Fname FROM masterTable AS a INNER JOIN users AS b on a.user2 = b.userId where user1 = ?",
   //   [currentUser, currentUser],
