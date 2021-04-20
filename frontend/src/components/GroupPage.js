@@ -8,6 +8,7 @@ import {
   getGroupPageInfo,
   addExpense,
   leaveGroup,
+  sendComment,
 } from "../reducers/GroupPageReducer";
 import CommentModal from "./CommentModal";
 const GroupPage = (param) => {
@@ -53,7 +54,19 @@ const GroupPage = (param) => {
       dialogClose();
     });
   };
-
+  const addComment = (comment, id) =>{
+    dispatch(
+      sendComment({
+        groupId: groupId,
+        transactionID: id,
+        currentUser: currentUser,
+        Fname: userFname,
+        comment: comment,
+      })
+    ).then(()=>{
+      dialogClose();
+    });
+  }
   const LeaveGroupHandler = async () => {
     dispatch(leaveGroup({ currentUser: currentUser, groupId: groupId })).then(
       () => {
@@ -209,7 +222,7 @@ const GroupPage = (param) => {
                 </div>
               ))
             : ""}
-            <CommentModal show={commentState} hide= {dialogClose} userId = {currentUser} Fname = {userFname} id= {transactionID} groupId = {groupId} comments={commentData} />
+            <CommentModal show={commentState} hide= {dialogClose} userId = {currentUser} Fname = {userFname} id= {transactionID} groupId = {groupId} comments={commentData} sendComment={addComment} />
         </div>
       </div>
     </div>

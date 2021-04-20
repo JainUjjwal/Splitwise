@@ -80,6 +80,7 @@ export const sendComment = (payload) => async (dispatch, getState) => {
     transactionID: payload.transactionID
   }).then((response) => {
     if (response.status === 201) {
+      console.log('check 2')
       dispatch(
         getGroupPageInfo({
           userId: payload.currentUser,

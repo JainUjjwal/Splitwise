@@ -18,18 +18,7 @@ const CommentModal = (props) => {
   };
   const addComment = () => {
     let comment = document.getElementById("comment").value;
-    dispatch(
-      sendComment({
-        groupId: props.groupId,
-        transactionID: props.id,
-        currentUser: props.userId,
-        Fname: props.Fname,
-        comment: comment,
-      })
-    );
-    console.log(comment);
-    setDone(!done)
-    return props.hide;
+    props.sendComment(comment,props.id);
   };
   return (
     <Modal show={props.show} onHide={props.hide}>
@@ -37,8 +26,6 @@ const CommentModal = (props) => {
         <Modal.Title>Comments</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {console.log(props.comments.length)}
-        {console.log(props.comments)}
 
         {props.comments.length > 0
           ? props.comments.map((commentInfo, index) => (

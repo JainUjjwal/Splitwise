@@ -58,16 +58,12 @@ const addBill = async (req, res) => {
     });
   });
 };
-const newComment = (req, res) =>{
-  console.log(req.body)
 
-  let newCommentObj = {commentText: req.body.commentText, Fname: req.body.Fname, userId: req.body.userId}
-  transactions.updateOne({_id:req.body.transactionID}, { $push: { comments: newCommentObj } } ,(err, result)=>{
-    if (err) {
-      console.log(err);
-    }
-  }).then(()=>{
+const newComment = async (req, res) =>{
+  let newCommentObj = {commentText: req.body.commentText, Fname: req.body.Fname, userId: req.body.userId} 
+  const action = await transactions.findOneAndUpdate({_id:req.body.transactionID}, { $push: { comments: newCommentObj } })
+  if(action){
     res.status(201).send({message: "success"})
-  })
+  }
 }
 module.exports = { addBill, newComment };
