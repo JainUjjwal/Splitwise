@@ -1,6 +1,8 @@
 import axios from "axios"
 import {setDashboard} from "../actions"
 const initialState = null;
+
+
 const DashboardReducer = (state=initialState ,action)=>{
     switch (action.type) {
         case "setDashboard":
@@ -16,9 +18,13 @@ const DashboardReducer = (state=initialState ,action)=>{
 }
 
 export const getDashboard = (payload) => async (dispatch, getState) =>{
+  const token = localStorage.getItem("id_token");
     await axios
       .get("http://localhost:3001/dashboard", {
         params: { userId: payload.userId },
+        headers: {
+          'Authorization': token,
+        }
       })
       .then((res) => {
         //Getting list of users to pass to create group modal
@@ -34,11 +40,14 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
 }
 
 export const settle = (payload) => async (dispatch, getState) =>{
+  const token = localStorage.getItem("id_token");
     await axios
       .post("http://localhost:3001/settle", {
         userId: payload.userId,
         user2: payload.deletionId,
-      })
+      },{headers: {
+        'Authorization': token,
+      }})
       .then((res) => {
         if (res.status === 200) {
         //   setSettleState(true);

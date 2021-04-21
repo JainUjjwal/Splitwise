@@ -6,10 +6,11 @@ const session = require("express-session");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const fileUpload = require('express-fileupload');
-const db = require('./dbconnection');
+// const db = require('./dbconnection');
 // app.set("view engine", "ejs");
 // const initDb = require("./mongoutil").initDb;
 const mongoose = require('mongoose');
+const passport = require('passport');
 // const mongoDBO = require('./mongoCon');
 // console.log(
 //   mongoDBO
@@ -26,7 +27,6 @@ app.use(
 app.use(fileUpload());
 
 //app.use(cookieParser);
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
     // key: "UserID",
@@ -50,6 +50,11 @@ app.get("/", function (req, res) {
     res.render("/dashboard");
   } else res.render("/login");
 });
+
+require('./passportconfig')(passport);
+
+// This will initialize the passport object on every request
+app.use(passport.initialize());
 
 // User Route
 const userRoute = require('./routes/UserRoutes'); 

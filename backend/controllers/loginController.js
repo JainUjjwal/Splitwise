@@ -1,6 +1,7 @@
 // const db = require("../dbconnection");
 const bcrypt = require("bcrypt");
 const users = require("../model/UsersModel");
+const utils = require("../lib/utils");
 
 const login_user_post = async (req, res) => {
   const username = req.body.username;
@@ -9,16 +10,20 @@ const login_user_post = async (req, res) => {
     if (result) {
       bcrypt.compare(password, result[0].password, (error, response) => {
         if (response) {
-          console.log("success")
+          console.log("success");
           req.session.user = result;
           // res.writeHead(200, {
           //   "Content-Type": "text/plain",
           // })
-          console.log(result)
+          console.log(result);
+          const tokenObject = utils.issueJWT(result[0]);
           res.status(200).send({
             userId: result[0]._id,
             Fname: result[0].Fname,
             message: "Successful Login",
+            success: true,
+            token: tokenObject.token,
+            expiresIn: tokenObject.expires,
           });
           res.end("Login Successful");
         } else {

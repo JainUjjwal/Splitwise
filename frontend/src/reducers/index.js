@@ -1,5 +1,6 @@
 import axios from "axios";
 import { setLogin, setRegister, setLogout, setHistory, setDashboard, setGroupList, setInviteList, setGroupPage } from "../actions";
+const util = require("./utilities");
 const FormData = require('form-data');
 const initialState = null;
 
@@ -44,9 +45,11 @@ export const login = (payload) => async (dispatch, getState) => {
     })
     .then((response) => {
       console.log("Status Code : ", response.status);
+      console.log(response)
       if (response.status === 200) {
         // <Redirect to="/dashboard" />
-        console.log(response.data)
+        console.log(response)
+        util.setLocalStorage(response.data);
         dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId, Fname:response.data.Fname}));
       } else {
           dispatch(setLogin({err: response.data.message, isLogged:false}))
@@ -74,6 +77,7 @@ export const register = (payload) => async (dispatch, getState) => {
     .then((response) => {
       if (response.status === 202) {
         console.log("success");
+        util.setLocalStorage(response);
         dispatch(setRegister({...payload, userId: response.data.userId, isLogged:true}));
       } 
       else if(response.status === 203){
@@ -92,13 +96,13 @@ export const logout = (payload) => async (dispatch, getState) =>{
     .post("http://localhost:3001/logout")
     .then((response) => {
       if (response.status === 204) {
+        util.logoutUtil();
         dispatch(setInviteList({...payload, invites: null}))
         dispatch(setGroupList({...payload, groups: null}))
         dispatch(setDashboard({...payload, balance: null, friendList: null}))
         dispatch(setHistory({ transactions: [{}], groups: [] }))
         dispatch(setGroupPage({...payload, groupInfo:null, data: null}))
         dispatch(setLogout({...payload, isLogged:false}));
-        
       } else {
         console.log("Error on logout");
         console.log(response.data.err)

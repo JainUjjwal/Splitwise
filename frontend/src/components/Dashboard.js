@@ -4,6 +4,7 @@ import CreateGroupModal from "./CreateGroupModal";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { getDashboard, settle } from "../reducers/DashboardReducer";
+const util = require("../reducers/utilities");
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
@@ -55,9 +56,10 @@ const Dashboard = () => {
     dispatch(settle({userId: userId, deletionId: deletionId}))
     setSettleState(true);
   };
-
+  let newIsLogged = util.isLoggedIn()
   let redirectVar = null;
-  if (!isLoggedIn) {
+  console.log(util.isLoggedIn());
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
 

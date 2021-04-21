@@ -2,6 +2,8 @@ import axios from "axios";
 import { setGroupPage } from "../actions";
 
 const initialState = null;
+
+
 const GroupPageReducer = (state = initialState, action) => {
   switch (action.type) {
     case "setGroupPage":
@@ -17,11 +19,20 @@ const GroupPageReducer = (state = initialState, action) => {
 
 export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
   console.log(payload);
+  const token = localStorage.getItem("id_token");
   await axios
-    .post("http://localhost:3001/groupPage", {
-      groupID: payload.groupID,
-      userId: payload.userId,
-    })
+    .post(
+      "http://localhost:3001/groupPage",
+      {
+        groupID: payload.groupID,
+        userId: payload.userId,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    )
     .then((response) => {
       dispatch(
         setGroupPage({
@@ -34,12 +45,21 @@ export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
 };
 
 export const editGroupName = (payload) => async (dispatch, getState) => {
+  const token = localStorage.getItem("id_token");
   await axios
-    .post("http://localhost:3001/updateGroup", {
-      groupId: payload.groupId,
-      groupName: payload.groupName,
-      userId: payload.currentUser,
-    })
+    .post(
+      "http://localhost:3001/updateGroup",
+      {
+        groupId: payload.groupId,
+        groupName: payload.groupName,
+        userId: payload.currentUser,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    )
     .then((response) => {
       if (response.status === 201) {
         dispatch(
@@ -52,6 +72,7 @@ export const editGroupName = (payload) => async (dispatch, getState) => {
     });
 };
 export const addExpense = (payload) => async (dispatch, getState) => {
+  const token = localStorage.getItem("id_token");
   console.log(payload);
   await axios
     .post("http://localhost:3001/addBill", {
@@ -60,6 +81,10 @@ export const addExpense = (payload) => async (dispatch, getState) => {
       groupId: payload.groupId,
       userId: payload.currentUser,
       Fname: payload.Fname,
+    }, {
+      headers: {
+        'Authorization': token,
+      }
     })
     .then((response) => {
       if (response.status === 201) {
@@ -73,28 +98,40 @@ export const addExpense = (payload) => async (dispatch, getState) => {
     });
 };
 export const sendComment = (payload) => async (dispatch, getState) => {
-  await axios.post("http://localhost:3001/newComment", {
-    commentText: payload.comment,
-    Fname: payload.Fname,
-    userId: payload.currentUser,
-    transactionID: payload.transactionID
-  }).then((response) => {
-    if (response.status === 201) {
-      console.log('check 2')
-      dispatch(
-        getGroupPageInfo({
-          userId: payload.currentUser,
-          groupID: payload.groupId,
-        })
-      );
-    }
-  });
+  const token = localStorage.getItem("id_token");
+  await axios
+    .post("http://localhost:3001/newComment", {
+      commentText: payload.comment,
+      Fname: payload.Fname,
+      userId: payload.currentUser,
+      transactionID: payload.transactionID,
+    }, {
+      headers: {
+        'Authorization': token,
+      }
+    })
+    .then((response) => {
+      if (response.status === 201) {
+        console.log("check 2");
+        dispatch(
+          getGroupPageInfo({
+            userId: payload.currentUser,
+            groupID: payload.groupId,
+          })
+        );
+      }
+    });
 };
 export const leaveGroup = (payload) => async (dispatch, getState) => {
+  const token = localStorage.getItem("id_token");
   await axios
     .post("http://localhost:3001/leaveGroup", {
       groupId: payload.groupId,
       userId: payload.currentUser,
+    }, {
+      headers: {
+        'Authorization': token,
+      }
     })
     .then((response) => {
       if (response.status === 201) {

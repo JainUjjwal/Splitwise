@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers";
+const util = require("../reducers/utilities");
 //create the Navbar Component
 const Navbar = (props) => {
   //handle logout to destroy the cookie
@@ -9,8 +10,9 @@ const Navbar = (props) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const isLoggedIn = user ? user.isLogged : false;
+  const isLoggedIn2 = util.isLoggedIn()
   const handleLogout = () => {
-    history.push('/login');
+    history.push('/');
     dispatch(
       logout({
         username: null,
@@ -23,7 +25,7 @@ const Navbar = (props) => {
       
   };
   let navLogin = null;
-  if (isLoggedIn) {
+  if (isLoggedIn2) {
     navLogin = (
       <span>
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">

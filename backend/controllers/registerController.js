@@ -1,6 +1,7 @@
 // const db = require("../dbconnection");
 const bcrypt = require("bcrypt");
 const users = require("../model/UsersModel");
+const utils = require("../lib/utils")
 // const getDb = require("../mongoutil").getDb;
 // Bcrypt scrambler
 const saltRounds = 10;
@@ -40,7 +41,8 @@ const register = (req, res) => {
         let newUser = new users(data);
         await newUser.save().then((result)=>{
             req.session.user = newUser
-            res.status(202).send({ userId:result._id, message: "Sign up successful" });
+            const jwt = utils.issueJWT(result)
+            res.status(202).json({ userId:result._id, message: "Sign up successful", token:jwt.token, expiresIn: jwt.expires });
         });
       }
     })
