@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { sendComment } from "../reducers/GroupPageReducer";
 import FormInput from "./FormInput";
 
 const CommentModal = (props) => {
   let [buttonState, setButtonState] = useState(true);
-  let [done,setDone] = useState(false)
-  const dispatch = useDispatch();
-  useEffect(()=>{
-
-  },[done])
   const disableCheck = () => {
     if (document.getElementById("comment").value.length > 0) {
       setButtonState(false);

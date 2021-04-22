@@ -20,7 +20,7 @@ const ProfileReducer = (state = initialState, action) => {
 export const getProfile = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   await axios
-    .get("http://localhost:3001/profile", {
+    .get("http://localhost:3010/profile", {
       params: { userId: payload.userId },
       headers: {
         'Authorization': token,
@@ -48,7 +48,7 @@ export const updateProfile = (payload) => async (dispatch, getState) => {
   formData.append("currency", payload.updatedData.currency);
   formData.append("timezone", payload.updatedData.timezone);
   await axios
-    .post("http://localhost:3001/profile", formData, {
+    .post("http://localhost:3010/profile", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         'Authorization': token,

@@ -11,6 +11,7 @@ const fileUpload = require('express-fileupload');
 // const initDb = require("./mongoutil").initDb;
 const mongoose = require('mongoose');
 const passport = require('passport');
+
 // const mongoDBO = require('./mongoCon');
 // console.log(
 //   mongoDBO
@@ -88,8 +89,8 @@ app.use(CreateGroupRoute);
 //starting server on port 3001
 const uri = "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{ app.listen(3001);
-console.log("Server Listening on port 3001");
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{ app.listen(3010);
+console.log("Server Listening on port 3010");
 })
 
 mongoose.set('useFindAndModify', false);

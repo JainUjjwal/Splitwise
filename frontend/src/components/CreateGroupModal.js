@@ -66,6 +66,7 @@ const CreateGroupModal = (props) => {
   };
   return (
     <Modal show={props.show} onHide={closeModal}>
+      {console.log(props.friends)}
       <Modal.Header closeButton>
         <Modal.Title>Create Group.</Modal.Title>
       </Modal.Header>
@@ -87,8 +88,7 @@ const CreateGroupModal = (props) => {
         />
         {searchTerm.length > 0 && props.friends
           ? props.friends.map((friend, index) => {
-              return friend.Fname.search(searchTerm) > -1 ||
-                friend.username.search(searchTerm) > -1 ? (
+              return friend.username.search(searchTerm) > -1 ? (
                 <div className="mt-4" key={index}>
                   {friend.Fname} ({friend.username}){" "}
                   <Button

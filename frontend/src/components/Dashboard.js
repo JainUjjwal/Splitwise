@@ -11,7 +11,7 @@ const Dashboard = () => {
   const username = user ? user.username : false;
   const Fname = user ? user.Fname : false;
   const userId = user ? user.userId : false;
-  const isLoggedIn = user ? user.isLogged : false;
+  // const isLoggedIn = user ? user.isLogged : false;
   
   // Dashboard Data getter
   const dashboardData = useSelector((state)=>state.dashboard)
@@ -56,9 +56,7 @@ const Dashboard = () => {
     dispatch(settle({userId: userId, deletionId: deletionId}))
     setSettleState(true);
   };
-  let newIsLogged = util.isLoggedIn()
   let redirectVar = null;
-  console.log(util.isLoggedIn());
   if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }

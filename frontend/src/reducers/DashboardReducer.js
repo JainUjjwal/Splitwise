@@ -20,7 +20,7 @@ const DashboardReducer = (state=initialState ,action)=>{
 export const getDashboard = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
     await axios
-      .get("http://localhost:3001/dashboard", {
+      .get("http://localhost:3010/dashboard", {
         params: { userId: payload.userId },
         headers: {
           'Authorization': token,
@@ -42,7 +42,7 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
 export const settle = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
     await axios
-      .post("http://localhost:3001/settle", {
+      .post("http://localhost:3010/settle", {
         userId: payload.userId,
         user2: payload.deletionId,
       },{headers: {

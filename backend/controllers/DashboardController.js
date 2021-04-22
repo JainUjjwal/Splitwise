@@ -1,4 +1,4 @@
-const db = require("../dbconnection");
+const kafka = require("../kafka/client");
 const users = require("../model/UsersModel");
 const userRelation = require("../model/UserRelationModel");
 var dataBlock = [
@@ -18,38 +18,55 @@ const userInfopost = (req, res) => {
 };
 
 const getUserList = async (req, res) => {
-  const currentUser = req.query.userId;
-  let userList;
-  let newDataBlock = {};
-  await users.find({ _id: { $ne: req.query.userId } }, (err, result) => {
-    // console.log(result)
-    userList = result;
-  });
-  await userRelation.find({ user1: req.query.userId }, async (err, result) => {
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].user2 in newDataBlock) {
-        let updatedBalance =
-          newDataBlock[result[i].user2].amount + result[i].balance;
-        newDataBlock[result[i].user2].amount = updatedBalance;
-        if (updatedBalance >= 0) {
-          newDataBlock[result[i].user2].typeClass = true;
-        } else {
-          newDataBlock[result[i].user2].typeClass = false;
-        }
+  kafka.make_request("dashboard", req.query, (err, result) => {
+    if (err) {
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
+    } else {
+      // console.log("Inside else");
+      if (result.err) {
+        res.status(250).send(result);
       } else {
-        let userinfo = await users.findOne({_id:result[i].user2}).exec()
-        console.log()
-        newDataBlock[result[i].user2] = {
-          id: result[i].user2,
-          Fname: userinfo.Fname,
-          amount: result[i].balance,
-          typeClass: result[i].balance >= 0 ? true : false,
-        };
+        res.send(result);
       }
     }
-    // console.log(newDataBlock);
-    await res.send({ userList: userList, dataBlock: newDataBlock });
   });
+
+  // const currentUser = req.query.userId;
+  // let userList;
+  // let newDataBlock = {};
+  // await users.find({ _id: { $ne: req.query.userId } }, (err, result) => {
+  //   // console.log(result)
+  //   userList = result;
+  // });
+  // await userRelation.find({ user1: req.query.userId }, async (err, result) => {
+  //   for (let i = 0; i < result.length; i++) {
+  //     if (result[i].user2 in newDataBlock) {
+  //       let updatedBalance =
+  //         newDataBlock[result[i].user2].amount + result[i].balance;
+  //       newDataBlock[result[i].user2].amount = updatedBalance;
+  //       if (updatedBalance >= 0) {
+  //         newDataBlock[result[i].user2].typeClass = true;
+  //       } else {
+  //         newDataBlock[result[i].user2].typeClass = false;
+  //       }
+  //     } else {
+  //       let userinfo = await users.findOne({_id:result[i].user2}).exec()
+  //       console.log()
+  //       newDataBlock[result[i].user2] = {
+  //         id: result[i].user2,
+  //         Fname: userinfo.Fname,
+  //         amount: result[i].balance,
+  //         typeClass: result[i].balance >= 0 ? true : false,
+  //       };
+  //     }
+  //   }
+  //   // console.log(newDataBlock);
+  //   await res.send({ userList: userList, dataBlock: newDataBlock });
+  // });
 };
 
 module.exports = { userInfopost, getUserList };

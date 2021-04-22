@@ -21,7 +21,7 @@ export const history = (payload) => async (dispatch, getState) => {
   if (util.isLoggedIn()) {
     await axios
       .post(
-        "http://localhost:3001/history",
+        "http://localhost:3010/history",
         { userId: payload.redux_userId },
         {
           headers: {
