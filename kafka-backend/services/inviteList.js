@@ -9,13 +9,16 @@ const handle_request = async (msg, callback) => {
       if (err) {
         callback(null, { err: err });
       }
-      result.forEach((group) => {
-        inviteGroup.push({ id: group._id, name: group.groupName });
-      });
+      
 
       if (result.length > 0) {
+        result.forEach((group) => {
+          inviteGroup.push({ id: group._id, name: group.groupName });
+        });
           console.log("sending invite list ")
         callback(null, { inviteGroup: inviteGroup });
+      }else{
+        callback(null, {err:"no invites"})
       }
     }
   );

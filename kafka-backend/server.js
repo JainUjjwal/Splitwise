@@ -1,13 +1,16 @@
 var connection =  new require('./kafka/Connection');
 //topics files
 //var signin = require('./services/signin.js');
-var Books = require('./services/books.js');
 var login = require('./services/login')
 var register = require('./services/register')
 var dashboard = require('./services/dashboard')
 var groupList = require('./services/groupList')
 var inviteList = require('./services/inviteList')
 var addBill = require('./services/addBill')
+var newComment = require('./services/newComment')
+var settle = require('./services/settle')
+var profile = require('./services/profile')
+var history = require('./services/history')
 const mongoose = require('mongoose');
 const uri = "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
 var options = {
@@ -25,6 +28,8 @@ mongoose.connect(uri, options, (err, res) => {
         console.log(`MongoDB Connected`);
     }
 })
+
+mongoose.set('useFindAndModify', false);
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -65,3 +70,7 @@ handleTopicRequest("dashboard",dashboard)
 handleTopicRequest("group_list",groupList)
 handleTopicRequest("invite_list",inviteList)
 handleTopicRequest("add_bill",addBill)
+handleTopicRequest("new_comment",newComment)
+handleTopicRequest("settle",settle)
+handleTopicRequest("profile",profile)
+handleTopicRequest("history",history)

@@ -1,17 +1,21 @@
 const fs = require("fs");
 const users = require("../model/UsersModel");
+const kafka = require("../kafka/client");
 
 const get_userInfo = async (req, res) => {
-  const userId = req.query.userId;
-  await users.findById(userId, (err, result) => {
+  kafka.make_request("profile", req.query, (err, result) => {
     if (err) {
-      res.send({ err: err });
-    }
-    if (result) {
-      console.log(result);
-      res.status(200).send(result);
+      console.log("Inside err");
+      res.json({
+        status: "error",
+        msg: "System Error, Try Again.",
+      });
     } else {
-      res.status(252).send({ message: "User Info not found" });
+      if (result.message) {
+        res.status(252).send(result);
+      } else {
+        res.status(200).send(result);
+      }
     }
   });
 };
