@@ -11,6 +11,8 @@ import {
   sendComment,
 } from "../reducers/GroupPageReducer";
 import CommentModal from "./CommentModal";
+const util = require("../reducers/utilities");
+
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
@@ -54,19 +56,7 @@ const GroupPage = (param) => {
       dialogClose();
     });
   };
-  const addComment = (comment, id) =>{
-    dispatch(
-      sendComment({
-        groupId: groupId,
-        transactionID: id,
-        currentUser: currentUser,
-        Fname: userFname,
-        comment: comment,
-      })
-    ).then(()=>{
-      dialogClose();
-    });
-  }
+  
   const LeaveGroupHandler = async () => {
     dispatch(leaveGroup({ currentUser: currentUser, groupId: groupId })).then(
       () => {
@@ -91,29 +81,42 @@ const GroupPage = (param) => {
   const editGroup = () => {
     setEditStatus(true);
   };
-
+  const addComment = (comment, id) =>{
+    dispatch(
+      sendComment({
+        groupId: groupId,
+        transactionID: id,
+        currentUser: currentUser,
+        Fname: userFname,
+        comment: comment,
+      })
+    ).then(()=>{
+      // let data_to_send = {target:{dataset:{id:transactionID}}}
+      // OpenCommentModal(data_to_send)
+      // console.log(data_to_send)
+      // dialogClose();
+    });
+  }
   const OpenCommentModal = (e) =>{
     console.log(e.target.dataset)
-    setCommentState(true)
-    setTransactionID( e.target.dataset.id);
+    setTransactionID( e.target.dataset.id)
     redux_data.forEach(element=>{
       if(element.id === e.target.dataset.id){
         setCommentData(element.comments)
       }
     })
+    setCommentState(true)
   }
-  //Redirection to login if redux state not set
-  const isLoggedIn = user ? user.isLogged : false;
+  //Redirection to login if localstorage token is not set
+  // const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
-  if (!isLoggedIn) {
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
   return (
     <div className="container-fluid">
       {redirectVar}
       <div className="row">
-        {/* DISPLAYING AMOUNT FOR EACH GROUP MEMBER */}
-        {/* ######################### */}
         <div className="col mt-4">
           <h3 className="">User Balance</h3>
           {redux_groupInfo

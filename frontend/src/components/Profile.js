@@ -4,24 +4,24 @@ import { Card, Image, Button } from "react-bootstrap";
 import "./profile.css";
 import { useSelector, useDispatch } from "react-redux";
 import { Redirect } from "react-router-dom";
-import {getProfile, updateProfile} from "../reducers/ProfileReducer"
+import { getProfile, updateProfile } from "../reducers/ProfileReducer";
 const FormData = require("form-data");
 // import { Link } from "react-router-dom";
 
 const Profile = () => {
   const redux_user = useSelector((state) => state.user);
   const redux_userId = redux_user ? redux_user.userId : false;
-  const redux_userInfo = useSelector((state)=>state.profile);
+  const redux_userInfo = useSelector((state) => state.profile);
   let redux_profile = redux_userInfo ? redux_userInfo.info : false;
-  let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : false
+  let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : false;
   // let [userInfo, setUserInfo] = useState(redux_profile);
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();
   let [imageUrl, setImageUrl] = useState(redux_imageURL);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getProfile({userId: redux_userId ? redux_userId : "" }))
+    dispatch(getProfile({ userId: redux_userId ? redux_userId : "" }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -33,7 +33,6 @@ const Profile = () => {
     setImage(e.target.files[0]);
   };
   const saveEdit = async () => {
-    
     const formData = new FormData();
 
     const updatedData = {
@@ -53,7 +52,9 @@ const Profile = () => {
     formData.append("lang", updatedData.lang);
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timeZone);
-    dispatch(updateProfile({redux_userId: redux_userId,updatedData:updatedData}))
+    dispatch(
+      updateProfile({ redux_userId: redux_userId, updatedData: updatedData })
+    );
     setEditStatus(false);
   };
 
@@ -62,8 +63,10 @@ const Profile = () => {
   };
   const user = useSelector((state) => state.user);
   const isLoggedIn = user ? user.isLogged : false;
+  const util = require("../reducers/utilities");
+
   let redirectVar = null;
-  if (!isLoggedIn) {
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
   return (
@@ -80,7 +83,7 @@ const Profile = () => {
             <div className="row">
               <div className="col">
                 <Image
-                  src={ imageUrl ? imageUrl : redux_imageURL }
+                  src={imageUrl ? imageUrl : redux_imageURL}
                   alt="not found"
                   style={{
                     height: "100%",
@@ -99,7 +102,9 @@ const Profile = () => {
                         <input
                           type="email"
                           id="newEmail"
-                          defaultValue={redux_profile ? redux_profile.username : ""}
+                          defaultValue={
+                            redux_profile ? redux_profile.username : ""
+                          }
                         />
                       ) : redux_profile ? (
                         redux_profile.username
@@ -115,7 +120,9 @@ const Profile = () => {
                         <input
                           type="name"
                           id="newName"
-                          defaultValue={redux_profile ? redux_profile.Fname : ""}
+                          defaultValue={
+                            redux_profile ? redux_profile.Fname : ""
+                          }
                         />
                       ) : redux_profile ? (
                         redux_profile.Fname
@@ -131,7 +138,9 @@ const Profile = () => {
                         <input
                           type="number"
                           id="newNumber"
-                          defaultValue={redux_profile ? redux_profile.phoneNumber : ""}
+                          defaultValue={
+                            redux_profile ? redux_profile.phoneNumber : ""
+                          }
                         />
                       ) : redux_profile ? (
                         redux_profile.phoneNumber
@@ -165,7 +174,9 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newcurrency"
-                          defaultValue={redux_profile ? redux_profile.currency : ""}
+                          defaultValue={
+                            redux_profile ? redux_profile.currency : ""
+                          }
                         >
                           <option>USD</option>
                           <option>KWD</option>
@@ -186,7 +197,9 @@ const Profile = () => {
                       {editStatus ? (
                         <select
                           id="newtimezone"
-                          defaultValue={redux_profile ? redux_profile.timeZone : ""}
+                          defaultValue={
+                            redux_profile ? redux_profile.timeZone : ""
+                          }
                         >
                           <option>PST</option>
                           <option>GMT</option>

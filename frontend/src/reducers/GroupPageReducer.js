@@ -20,12 +20,13 @@ const GroupPageReducer = (state = initialState, action) => {
 export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
   console.log(payload);
   const token = localStorage.getItem("id_token");
+  const userId = localStorage.getItem("userId")
   await axios
     .post(
       "http://localhost:3010/groupPage",
       {
         groupID: payload.groupID,
-        userId: payload.userId,
+        userId: payload.userId?payload.userId:userId,
       },
       {
         headers: {

@@ -3,6 +3,8 @@ const kafka = require("../kafka/client");
 // const dbpool = require('../dbconnection');
 
 const transactionList = async (req, res) => {
+  console.log("check")
+  console.log(req.body)
   kafka.make_request("history", req.body, (err, result) => {
     if (err) {
       console.log("Inside err");

@@ -45,10 +45,8 @@ export const login = (payload) => async (dispatch, getState) => {
     })
     .then((response) => {
       console.log("Status Code : ", response.status);
-      console.log(response)
       if (response.status === 200) {
         // <Redirect to="/dashboard" />
-        console.log(response)
         util.setLocalStorage(response.data);
         dispatch(setLogin({...payload, isLogged:true, userId:response.data.userId, Fname:response.data.Fname}));
       } else {

@@ -88,7 +88,7 @@ const getGroupInfo = async (req, res) => {
           groupName: result.groupName,
           members: mongoMemberList,
         };
-        sendResponse(dummyInfo, newTransactionList);
+        sendResponse(dummyInfo, newTransactionList.reverse());
       }
     );
   });

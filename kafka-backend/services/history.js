@@ -44,7 +44,7 @@ const handle_request = async (msg, callback) => {
         callback(null, {err:err})
     }
     let sendData = await testFunc(result, currentUser);
-    let newStore = sendData.newStore;
+    let newStore = sendData.newStore.reverse();
     let groupList = sendData.groupList;
     callback(null, { newStore, groupList })
     // res.status(200).send({ newStore, groupList });

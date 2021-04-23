@@ -19,9 +19,10 @@ const DashboardReducer = (state=initialState ,action)=>{
 
 export const getDashboard = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
+  const userId = localStorage.getItem('userId')
     await axios
       .get("http://localhost:3010/dashboard", {
-        params: { userId: payload.userId },
+        params: { userId: payload.userId?payload.userId:userId },
         headers: {
           'Authorization': token,
         }
@@ -33,7 +34,6 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
         } else {
         //   setUserList(res.data.userList);
         //   setData(res.data.dataBlock);
-        console.log(res.data)
         dispatch(setDashboard({userList: res.data.userList, data: res.data.dataBlock}))
         }
       });

@@ -19,11 +19,12 @@ const History = () => {
   let filteredData;
   let sortData;
 
-  let [size,setSize]=useState();
-  console.log(size);
-  let number_of_pages = Math.round(redux_transactions.length / 2);
-  console.log(number_of_pages);
+  let [size,setSize]=useState(2);
 
+  console.log(size);
+
+  let number_of_pages = Math.round(redux_transactions.length / size);
+  console.log(number_of_pages);
   let dispatch = useDispatch();
 
   useEffect(() => {
@@ -119,10 +120,11 @@ const History = () => {
       
     }
   };
+  const util = require("../reducers/utilities");
 
-  const isLoggedIn = user ? user.isLogged : false;
+  // const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
-  if (!isLoggedIn) {
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
 

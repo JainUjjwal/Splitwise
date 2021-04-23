@@ -4,14 +4,15 @@ const setLocalStorage = (responseObj) => {
 
     // Adds the expiration time defined on the JWT to the current moment
     const expiresAt = moment().add(Number.parseInt(responseObj.expiresIn), 'days');
-    console.log(responseObj)
     localStorage.setItem('id_token', responseObj.token);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
+    localStorage.setItem('userId',responseObj.userId)
 } 
 
 const logoutUtil = ()=> {
     localStorage.removeItem("id_token");
     localStorage.removeItem("expires_at");
+    localStorage.removeItem("userId");
 }
 
 const getExpiration = () => {

@@ -29,7 +29,7 @@ const GroupReducer = (state = initialState, action) => {
 export const createGroup = (payload) => async (dispatch, getState) => {
   const addedFriend = payload.addedFriend;
   const groupName = payload.groupName;
-  const currentUser = payload.currentUser;
+  const currentUser = payload.currentUser?payload.currentUser:localStorage.getItem("userId");
   const token = localStorage.getItem("id_token");
   await axios
     .post(
@@ -52,9 +52,10 @@ export const createGroup = (payload) => async (dispatch, getState) => {
 // Function to get data for my groups
 export const getInviteInfo = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
+  const userId = localStorage.getItem("userId")
   await axios
     .get("http://localhost:3010/mygroups", {
-      params: { userId: payload.userId },
+      params: { userId: payload.userId?payload.userId:userId },
       headers: {
         'Authorization': token,
       }
@@ -71,9 +72,10 @@ export const getInviteInfo = (payload) => async (dispatch, getState) => {
 };
 
 export const getGroupInfo = (payload) => async (dispatch, getState) => {
-  const token = localStorage.getItem("id_token");
+  const token = localStorage.getItem("id_token")
+  const userId = localStorage.getItem("userId")
   await axios
-    .post("http://localhost:3010/mygroups", { userId: payload.userId }, {headers: {
+    .post("http://localhost:3010/mygroups", { userId: payload.userId?payload.userId:userId }, {headers: {
       'Authorization': token,
     }})
     .then((res) => {
@@ -88,7 +90,7 @@ export const getGroupInfo = (payload) => async (dispatch, getState) => {
 // functions to handle group rejection or accept request
 export const groupRejection = (payload) => async (dispatch, getState) => {
   const rejectedGroup = payload.rejectedGroup;
-  const userId = payload.userId;
+  const userId = payload.userId?payload.userId:localStorage.getItem("userId");
   const token = localStorage.getItem("id_token");
   console.log(payload);
   await axios
@@ -105,7 +107,7 @@ export const groupRejection = (payload) => async (dispatch, getState) => {
 
 export const groupAcception = (payload) => async (dispatch, getState) => {
   const acceptedGroup = payload.acceptedGroup;
-  const userId = payload.userId;
+  const userId = payload.userId?payload.userId:localStorage.getItem("userId");
   console.log("sending accept request");
   const token = localStorage.getItem("id_token");
   await axios

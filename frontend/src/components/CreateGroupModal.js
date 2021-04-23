@@ -66,7 +66,6 @@ const CreateGroupModal = (props) => {
   };
   return (
     <Modal show={props.show} onHide={closeModal}>
-      {console.log(props.friends)}
       <Modal.Header closeButton>
         <Modal.Title>Create Group.</Modal.Title>
       </Modal.Header>

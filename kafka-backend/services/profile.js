@@ -4,7 +4,7 @@ const handle_request = async (msg, callback) => {
     const userId = msg.userId;
     await users.findById(userId, (err, result) => {
       if (err) {
-        res.send({ err: err });
+        callback(null,{ err: err });
       }
       if (result) {
         callback(null, result)

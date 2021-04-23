@@ -117,11 +117,13 @@ const MyGroups = () => {
       : "";
   };
 
+  const util = require("../reducers/utilities");
   const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
-  if (!isLoggedIn) {
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
+  
   return (
     <div>
       {redirectVar}

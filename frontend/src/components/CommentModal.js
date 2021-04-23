@@ -11,6 +11,7 @@ const CommentModal = (props) => {
   };
   const addComment = () => {
     let comment = document.getElementById("comment").value;
+    props.comments.push({Fname:'You',commentText:comment})
     props.sendComment(comment,props.id);
   };
   return (
@@ -32,7 +33,7 @@ const CommentModal = (props) => {
                   marginBottom: "2px",
                 }}
               >
-                <b>{commentInfo.Fname}: </b> {commentInfo.commentText}{" "}
+                <b>{commentInfo.userId === props.userId?'You':commentInfo.Fname}: </b> {commentInfo.commentText}{" "}
                 <i style={{ color: "grey", float: "right" }}>{commentInfo.timeposted}</i>
               </div>
             ))
