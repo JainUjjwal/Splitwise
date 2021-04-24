@@ -12,19 +12,18 @@ const History = () => {
   let redux_transactions = redux_history ? redux_history.transactions : false;
   const redux_groups = redux_history ? redux_history.groups : false;
 
-  let [filteredHistory, setFilteredHistory] = useState(redux_transactions);
-  let [pageArray, setPageArray] = useState(["1"]);
+  let [filteredHistory, setFilteredHistory] = useState();
+  let [pageArray, setPageArray] = useState();
   let [temparray, setTemparray] = useState([]);
   let [flag, setFlag] = useState(true);
   let filteredData;
   let sortData;
 
-  let [size,setSize]=useState(2);
-
+  let [size, setSize] = useState(2);
   console.log(size);
-
   let number_of_pages = Math.round(redux_transactions.length / size);
   console.log(number_of_pages);
+
   let dispatch = useDispatch();
 
   useEffect(() => {
@@ -34,6 +33,7 @@ const History = () => {
 
   useEffect(() => {
     console.log(redux_transactions);
+    number_of_pages = Math.ceil(redux_transactions.length / size);
     console.log("number of pages: " + number_of_pages);
     if (number_of_pages === 0) {
       setPageArray(["1"]);
@@ -51,13 +51,14 @@ const History = () => {
       newtemparray.push(redux_transactions.slice(i, i + 2));
       setTemparray(newtemparray);
     }
-  }, []);
+  }, [redux_transactions]);
 
-  const sizeFilter = () => {
-    setSize(parseInt(document.getElementById("size").value));
-    console.log(size);
-    number_of_pages = Math.round(redux_transactions.length / size);
-
+  const sizeFilter = (event) => {
+    const selectedValueCount = parseInt(event.target.value);
+    setSize(selectedValueCount);
+    console.log(redux_transactions.length);
+    number_of_pages = Math.ceil(redux_transactions.length / selectedValueCount);
+    console.log(`selected pages ${number_of_pages}`);
     if (number_of_pages === 0) {
       setPageArray(["1"]);
     } else {
@@ -67,22 +68,22 @@ const History = () => {
       }
       setPageArray(newpageArray);
     }
-    console.log("page array: ")
+    console.log("page array: ");
     console.log(pageArray);
     var i, j;
     let newtemparray = [];
-    for (i = 0, j = redux_transactions.length; i < j; i += size) {
-      newtemparray.push(redux_transactions.slice(i, i + size));
-      setTemparray(newtemparray);
+    for (i = 0, j = redux_transactions.length; i < j; i += selectedValueCount) {
+      newtemparray.push(redux_transactions.slice(i, i + selectedValueCount));
     }
-    console.log(temparray);
+    setTemparray(newtemparray);
+    setFilteredHistory(newtemparray[0]);
+    console.log(newtemparray);
     // pageClick({target:{dataset:{id:0}}})
   };
 
   const pageClick = (e) => {
     console.log(e);
     const pageNumber = parseInt(e.target.dataset.id);
-    console.log(pageNumber);
     setFilteredHistory(temparray[pageNumber]);
     console.log(temparray);
   };
@@ -101,30 +102,53 @@ const History = () => {
 
   const groupFilter = () => {
     let filterTerm = document.getElementById("groupSelector").value;
+    var i, j;
     if (filterTerm === "All Groups") {
-      setFilteredHistory(redux_transactions);
+      number_of_pages = Math.ceil(redux_transactions.length / size);
+      let newpageArray = [];
+      for (let i = 0; i < number_of_pages; i++) {
+        newpageArray.push("" + (i + 1));
+      }
+      setPageArray(newpageArray);
+      let newtemparray = [];
+      for (i = 0, j = redux_transactions.length; i < j; i += size) {
+        newtemparray.push(redux_transactions.slice(i, i + size));
+      }
+      setTemparray(newtemparray);
+      setFilteredHistory(newtemparray[0]);
     } else {
-      console.log(filterTerm);
+      console.log(temparray);
       filteredData = redux_transactions.filter(
         (element) => element.group === filterTerm
       );
       // redux_transactions = filteredData;
-      console.log(filteredData.length);
-      if(filteredData.length>0){
+      if (filteredData.length > 0) {
+        number_of_pages = Math.ceil(filteredData.length / size);
+        let newpageArray = [];
+        for (let i = 0; i < number_of_pages; i++) {
+          newpageArray.push("" + (i + 1));
+        }
+        setPageArray(newpageArray);
+
+        let newtemparray = [];
+        for (i = 0, j = filteredData.length; i < j; i += size) {
+          newtemparray.push(filteredData.slice(i, i + size));
+        }
+        setTemparray(newtemparray);
+        setFilteredHistory(newtemparray[0]);
+        // setFilteredHistory(filteredData);
+        setFlag(true);
+      } else {
         setFilteredHistory(filteredData);
-        setFlag(true)
-      }else{
-        setFilteredHistory(filteredData);
-        setFlag(false)
+        setFlag(false);
+        setPageArray([]);
       }
-      
     }
   };
-  const util = require("../reducers/utilities");
 
-  // const isLoggedIn = user ? user.isLogged : false;
+  const isLoggedIn = user ? user.isLogged : false;
   let redirectVar = null;
-  if (!util.isLoggedIn()) {
+  if (!isLoggedIn) {
     redirectVar = <Redirect to="/login" />;
   }
 
@@ -150,9 +174,9 @@ const History = () => {
           )}
         </select>{" "}
         <select onChange={sizeFilter} id="size">
-          <option>2</option>
-          <option>5</option>
-          <option>10</option>
+          <option value="2">2</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
         </select>{" "}
       </div>
 
@@ -160,7 +184,7 @@ const History = () => {
         {/* filteredHistory.length > 1 || filteredHistory[0].amount */}
         {redux_transactions.length > 0
           ? filteredHistory && filteredHistory.length > 0
-            ? filteredHistory.map((transaction, index) =>(
+            ? filteredHistory.map((transaction, index) => (
                 //renders this on any filters being set
                 <div key={index} className="row pt-4">
                   <div className="col">
@@ -178,42 +202,48 @@ const History = () => {
                   )}
                 </div>
               ))
-            : flag ? redux_transactions.slice(0, size?size:2).map((transaction, index) => (
-                // defaults here
-                <div key={index} className="row pt-4">
-                  <div className="col">
-                    {transaction.payer} added <b>"{transaction.discription}"</b>{" "}
-                    in <b>"{transaction.group}"</b> at {transaction.timeStamp}
+            : flag
+            ? redux_transactions
+                .slice(0, size ? size : 2)
+                .map((transaction, index) => (
+                  // defaults here
+                  <div key={index} className="row pt-4">
+                    <div className="col">
+                      {transaction.payer} added{" "}
+                      <b>"{transaction.discription}"</b> in{" "}
+                      <b>"{transaction.group}"</b> at {transaction.timeStamp}
+                    </div>
+                    {transaction.status ? (
+                      <div style={{ color: "green" }}>
+                        You get back: ${transaction.amount}
+                      </div>
+                    ) : (
+                      <div style={{ color: "red" }}>
+                        You owe: ${transaction.amount}
+                      </div>
+                    )}
                   </div>
-                  {transaction.status ? (
-                    <div style={{ color: "green" }}>
-                      You get back: ${transaction.amount}
-                    </div>
-                  ) : (
-                    <div style={{ color: "red" }}>
-                      You owe: ${transaction.amount}
-                    </div>
-                  )}
-                </div>
-              )):"No transactions found"
+                ))
+            : "No transactions found"
           : "No transactions in history"}
       </div>
       <div className="mt-4">
         <Pagination>
           {pageArray
             ? pageArray.map((value, index) => {
-              console.log("inside return page array updates to...")
-              console.log(pageArray)
-              return(
-                <Pagination.Item
-                  id={index}
-                  key={index}
-                  onClick={pageClick}
-                  data-id={index}
-                >
-                  {value}
-                </Pagination.Item>
-              )})
+                console.log("inside return page array updates to...");
+                console.log(pageArray);
+                return (
+                  <Pagination.Item
+                    id={index}
+                    key={index}
+                    onClick={pageClick}
+                    data-id={index}
+                  >
+                    {value}
+                  </Pagination.Item>
+                );
+              })
             : ""}
         </Pagination>
       </div>

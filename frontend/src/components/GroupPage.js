@@ -16,8 +16,8 @@ const util = require("../reducers/utilities");
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
-  const currentUser = user ? user.userId : false;
-  const userFname = user ? user.Fname : false;
+  const currentUser = user ? user.userId : localStorage.getItem('userId');
+  const userFname = user ? user.Fname : localStorage.getItem('Fname');
   const redux_groupPage = useSelector((state) => state.groupPage);
   const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
   const redux_data = redux_groupPage ? redux_groupPage.data : false;
@@ -98,11 +98,25 @@ const GroupPage = (param) => {
     });
   }
   const OpenCommentModal = (e) =>{
-    console.log(e.target.dataset)
+    e.preventDefault()
+    console.log(e.target.dataset.id)
+    if(e.target.dataset.id){
+      console.log('localstore set')
+      localStorage.setItem('TransactionId', e.target.dataset.id)
+    }else{
+      console.log('failed to set localstore')
+      localStorage.setItem('TransactionId', e.target.dataset.id)
+    }
     setTransactionID( e.target.dataset.id)
+    // console.log(e.target.dataset.comments)
     redux_data.forEach(element=>{
       if(element.id === e.target.dataset.id){
-        setCommentData(element.comments)
+        if(!element.comments){
+          setCommentData([{commentText:'No comments on this transaction.'}])
+        }else{
+          setCommentData(element.comments)
+        }
+        
       }
     })
     setCommentState(true)
@@ -216,8 +230,8 @@ const GroupPage = (param) => {
                       ${friend.amount}
                     </Col>
                     <Col>
-                      <button type="button" className="btn btn-secondary" onClick = {OpenCommentModal} data-id = {friend.id} data-comments = {friend.comments}>
-                      <i className="bi bi-chat-left-quote"></i>
+                      <button type="button" className="btn btn-secondary" onClick = {OpenCommentModal} data-id = {friend.id}>
+                      <div className="bi bi-chat-left-quote" data-id = {friend.id}></div>
                       </button>
                       {/* {console.log("checking")} {console.log(friend.comments)} */}
                     </Col>

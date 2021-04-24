@@ -1,6 +1,5 @@
 import axios from "axios";
 import { setHistory } from "../actions";
-const util = require("./utilities");
 const initialState = { transactions: [{}], groups: [] };
 
 const HistoryReducers = (state = initialState, action) => {

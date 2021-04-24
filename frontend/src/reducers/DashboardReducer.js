@@ -41,9 +41,10 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
 
 export const settle = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
+  const userId = payload.userId?payload.userId:localStorage.getItem("userId")
     await axios
       .post("http://localhost:3010/settle", {
-        userId: payload.userId,
+        userId: userId,
         user2: payload.deletionId,
       },{headers: {
         'Authorization': token,

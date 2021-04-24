@@ -7,12 +7,15 @@ const setLocalStorage = (responseObj) => {
     localStorage.setItem('id_token', responseObj.token);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
     localStorage.setItem('userId',responseObj.userId)
+    localStorage.setItem('Fname',responseObj.Fname)
 } 
 
 const logoutUtil = ()=> {
     localStorage.removeItem("id_token");
     localStorage.removeItem("expires_at");
     localStorage.removeItem("userId");
+    localStorage.removeItem("Fname");
+    localStorage.removeItem("TransactionId");
 }
 
 const getExpiration = () => {

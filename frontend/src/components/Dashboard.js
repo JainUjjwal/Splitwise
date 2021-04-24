@@ -9,7 +9,7 @@ const util = require("../reducers/utilities");
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
-  const Fname = user ? user.Fname : false;
+  const Fname = user ? user.Fname : localStorage.getItem('Fname');
   const userId = user ? user.userId : false;
   // const isLoggedIn = user ? user.isLogged : false;
   
@@ -53,6 +53,7 @@ const Dashboard = () => {
 
   const settleHandler = async (e) => {
     let deletionId = e.target.dataset.id;
+    // console.log(deletionId);
     dispatch(settle({userId: userId, deletionId: deletionId}))
     setSettleState(true);
   };
