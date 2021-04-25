@@ -136,10 +136,10 @@ export const leaveGroup = (payload) => async (dispatch, getState) => {
     })
     .then((response) => {
       if (response.status === 201) {
-        console.log(response);
-        dispatch(getGroupPageInfo(null));
-      }
-      if (response.status === 202) {
+        // dispatch(getGroupPageInfo(null));
+        alert(response.data.message);
+
+      }else{
         alert(response.data.message);
       }
     });

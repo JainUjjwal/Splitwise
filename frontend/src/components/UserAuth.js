@@ -6,7 +6,7 @@ class userAuth {
   }
 
   isLoggedIn () {
-     axios.post("http://localhost:3010/dashboard").then((res) => {
+     axios.post("http://54.153.78.74:3010/dashboard").then((res) => {
         if (res.session) {
           this.sess = true;
         }
