@@ -11,7 +11,7 @@ const handle_request = async (msg, callback) => {
   let uploadPath = "";
   if (msg.files) {
     const image = msg.files.image;
-    uploadPath = "/var/www/html/userImages/" + msg.body.username + ".jpg";
+    uploadPath = "/Splitwise/frontend/public/userImages/" + msg.body.username + ".jpg";
     image.mv(uploadPath, function (err) {
       if (err) return res.status(500).send(err);
     });
