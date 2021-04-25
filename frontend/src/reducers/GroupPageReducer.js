@@ -23,7 +23,7 @@ export const getGroupPageInfo = (payload) => async (dispatch, getState) => {
   const userId = localStorage.getItem("userId")
   await axios
     .post(
-      "http://localhost:3010/groupPage",
+      "http://54.153.78.74:3010/groupPage",
       {
         groupID: payload.groupID,
         userId: payload.userId?payload.userId:userId,
@@ -49,7 +49,7 @@ export const editGroupName = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   await axios
     .post(
-      "http://localhost:3010/updateGroup",
+      "http://54.153.78.74:3010/updateGroup",
       {
         groupId: payload.groupId,
         groupName: payload.groupName,
@@ -76,7 +76,7 @@ export const addExpense = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   console.log(payload);
   await axios
-    .post("http://localhost:3010/addBill", {
+    .post("http://54.153.78.74:3010/addBill", {
       amount: payload.newAmount,
       discription: payload.newDiscription,
       groupId: payload.groupId,
@@ -101,7 +101,7 @@ export const addExpense = (payload) => async (dispatch, getState) => {
 export const sendComment = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   await axios
-    .post("http://localhost:3010/newComment", {
+    .post("http://54.153.78.74:3010/newComment", {
       commentText: payload.comment,
       Fname: payload.Fname,
       userId: payload.currentUser,
@@ -126,7 +126,7 @@ export const sendComment = (payload) => async (dispatch, getState) => {
 export const leaveGroup = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   await axios
-    .post("http://localhost:3010/leaveGroup", {
+    .post("http://54.153.78.74:3010/leaveGroup", {
       groupId: payload.groupId,
       userId: payload.currentUser,
     }, {

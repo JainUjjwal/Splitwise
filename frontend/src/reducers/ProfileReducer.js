@@ -22,7 +22,7 @@ export const getProfile = (payload) => async (dispatch, getState) => {
   const userId = localStorage.getItem("userId")
   console.log(payload.userId)
   await axios
-    .get("http://localhost:3010/profile", {
+    .get("http://54.153.78.74:3010/profile", {
       params: { userId: payload.userId?payload.userId:userId },
       headers: {
         'Authorization': token,
@@ -50,7 +50,7 @@ export const updateProfile = (payload) => async (dispatch, getState) => {
   formData.append("currency", payload.updatedData.currency);
   formData.append("timezone", payload.updatedData.timezone);
   await axios
-    .post("http://localhost:3010/profile", formData, {
+    .post("http://54.153.78.74:3010/profile", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         'Authorization': token,
