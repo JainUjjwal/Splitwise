@@ -7,13 +7,13 @@ const saltRounds = 10;
 
 const handle_request = async (msg, callback) => {
   console.log("this is msg")
-  console.log(msg)
+  console.log(msg.body)
   let uploadPath = "";
   if (msg.files) {
     const image = msg.files.image;
-    uploadPath = "/Splitwise/frontend/public/userImages/" + msg.body.username + ".jpg";
+    uploadPath = __dirname+"../../frontend/public/userImages/" + msg.body.username + ".jpg";
     image.mv(uploadPath, function (err) {
-      if (err) return res.status(500).send(err);
+      if (err) (callback(null, {err:err}));
     });
   }
   bcrypt.hash(msg.body.password, saltRounds, async (err, hash) => {
