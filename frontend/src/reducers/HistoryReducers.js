@@ -22,7 +22,7 @@ export const history = (payload) => async (dispatch, getState) => {
   console.log(payload);
   await axios
     .post(
-      "http://54.153.78.74:3010/history",
+      "http://3.101.73.198:3010/history",
       { userId:  userId },
       {
         headers: {
