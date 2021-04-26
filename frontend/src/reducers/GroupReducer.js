@@ -33,7 +33,7 @@ export const createGroup = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   await axios
     .post(
-      "http://54.153.78.74:3010/createGroup",
+      "http://3.101.73.198:3010/createGroup",
       { addedFriend, groupName, currentUser },
       {
         headers: {
@@ -54,7 +54,7 @@ export const getInviteInfo = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   const userId = localStorage.getItem("userId")
   await axios
-    .get("http://54.153.78.74:3010/mygroups", {
+    .get("http://3.101.73.198:3010/mygroups", {
       params: { userId: payload.userId?payload.userId:userId },
       headers: {
         'Authorization': token,
@@ -75,7 +75,7 @@ export const getGroupInfo = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token")
   const userId = localStorage.getItem("userId")
   await axios
-    .post("http://54.153.78.74:3010/mygroups", { userId: payload.userId?payload.userId:userId }, {headers: {
+    .post("http://3.101.73.198:3010/mygroups", { userId: payload.userId?payload.userId:userId }, {headers: {
       'Authorization': token,
     }})
     .then((res) => {
@@ -94,7 +94,7 @@ export const groupRejection = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   console.log(payload);
   await axios
-    .post("http://54.153.78.74:3010/rejInvStatus", { rejectedGroup, userId }, {headers: {
+    .post("http://3.101.73.198:3010/rejInvStatus", { rejectedGroup, userId }, {headers: {
       'Authorization': token,
     }})
     .then((response) => {
@@ -111,7 +111,7 @@ export const groupAcception = (payload) => async (dispatch, getState) => {
   console.log("sending accept request");
   const token = localStorage.getItem("id_token");
   await axios
-    .post("http://54.153.78.74:3010/accInvStatus", { acceptedGroup, userId },{headers: {
+    .post("http://3.101.73.198:3010/accInvStatus", { acceptedGroup, userId },{headers: {
       'Authorization': token,
     }})
     .then((response) => {

@@ -19,7 +19,7 @@ const passport = require('passport');
 
 app.use(
   cors({
-    origin: "http://54.153.78.74:3000",
+    origin: "http://3.101.73.198:3000",
     credentials: true,
     method: ["GET", "POST"],
   })
@@ -88,8 +88,13 @@ app.use(CreateGroupRoute);
 
 //starting server on port 3001
 const uri = "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
-
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{ app.listen(3010);
+var options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  poolSize: 500,
+  bufferMaxEntries: 0
+};
+mongoose.connect(uri, options).then(()=>{ app.listen(3010);
 console.log("Server Listening on port 3010");
 })
 

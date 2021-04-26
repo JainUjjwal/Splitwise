@@ -39,7 +39,7 @@ const userReducer = (state = initialState, action) => {
 export const login = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
   await axios
-    .post("http://54.153.78.74:3010/login", {
+    .post("http://3.101.73.198:3010/login", {
       username: payload.username,
       password: payload.password,
     })
@@ -69,7 +69,7 @@ export const register = (payload) => async (dispatch, getState) => {
   formData.append("phoneNumber",payload.phoneNumber);
   axios.defaults.withCredentials = true;
   await axios
-    .post("http://54.153.78.74:3010/register", formData, {headers: {
+    .post("http://3.101.73.198:3010/register", formData, {headers: {
       'Content-Type': 'multipart/form-data'
     }})
     .then((response) => {
@@ -91,7 +91,7 @@ export const register = (payload) => async (dispatch, getState) => {
 };
 export const logout = (payload) => async (dispatch, getState) =>{
   await axios
-    .post("http://54.153.78.74:3010/logout")
+    .post("http://3.101.73.198:3010/logout")
     .then((response) => {
       if (response.status === 204) {
         util.logoutUtil();
