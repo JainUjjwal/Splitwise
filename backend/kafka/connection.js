@@ -5,7 +5,7 @@ function ConnectionProvider() {
         // if (!this.kafkaConsumerConnection) {
 
             this.client = new kafka.KafkaClient("localhost:2181");
-            // this.client = new kafka.KafkaClient("http://3.101.73.198:2181");
+            // this.client = new kafka.KafkaClient("http://18.144.38.249:2181");
             /*this.client.refreshMetadata([{topic: topic_name}], (err) => {
                 if (err) {
                     console.warn('Error refreshing kafka metadata', err);
@@ -22,7 +22,7 @@ function ConnectionProvider() {
 
         if (!this.kafkaProducerConnection) {
             this.client = new kafka.KafkaClient("localhost:2181");
-            //this.client = new kafka.KafkaClient("http://3.101.73.198:2181");
+            //this.client = new kafka.KafkaClient("http://18.144.38.249:2181");
             /*this.client.refreshMetadata([{topic: topic_name}], (err) => {
                 if (err) {
                     console.warn('Error refreshing kafka metadata', err);
