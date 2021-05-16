@@ -24,7 +24,7 @@ const post_userInfo = async (req, res) => {
   let uploadPath = "";
   if (req.files) {
     const image = req.files.image;
-    uploadPath = "/var/www/html/userImages/" + req.body.username + ".jpg";
+    uploadPath = "D:/SJSU/CMPE\ 273/splitwise/frontend/public/userImages/" + req.body.username + ".jpg";
     fs.unlink(uploadPath, (err) => {
       console.log(err);
     });

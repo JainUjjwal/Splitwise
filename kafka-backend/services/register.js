@@ -9,12 +9,9 @@ const handle_request = async (msg, callback) => {
   console.log("this is msg")
   console.log(msg)
   let uploadPath = "";
-  if (msg.files) {
-    const image = msg.files.image;
-    uploadPath = "/var/www/html/userImages/" + msg.body.username + ".jpg";
-    image.mv(uploadPath, function (err) {
-      if (err) return res.status(500).send(err);
-    });
+  console.log(msg)
+  if (msg.path) {
+    uploadPath = msg.path
   }
   bcrypt.hash(msg.body.password, saltRounds, async (err, hash) => {
     if (err) {

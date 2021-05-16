@@ -43,14 +43,14 @@ app.use(express.json());
 
 // initDb((err)=>{
 
-app.get("/", function (req, res) {
-  //check if user session exits
-  console.log('here');
-  console.log(req.session.user);  
-  if (req.session.user) {
-    res.render("/dashboard");
-  } else res.render("/login");
-});
+// app.get("/", function (req, res) {
+//   //check if user session exits
+//   console.log('here');
+//   console.log(req.session.user);  
+//   if (req.session.user) {
+//     res.render("/dashboard");
+//   } else res.render("/login");
+// });
 
 require('./passportconfig')(passport);
 

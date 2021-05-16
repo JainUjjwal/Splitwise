@@ -83,7 +83,7 @@ const Profile = () => {
             <div className="row">
               <div className="col">
                 <Image
-                  src={imageUrl ? imageUrl : redux_imageURL}
+                  src={redux_imageURL.length>2 ? redux_imageURL : 'userImages/default.png'}
                   alt="not found"
                   style={{
                     height: "100%",

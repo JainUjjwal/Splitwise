@@ -3,17 +3,23 @@ const users = require("../model/UsersModel");
 const utils = require("../lib/utils");
 // Bcrypt scrambler
 const saltRounds = 10;
-const kafka = require('../kafka/client')
+const kafka = require("../kafka/client");
 
 const register = (req, res) => {
+  let uploadPath = "";
   let dataToSend = {
-    body:req.body
-  }
-  if(req.files){
-    let dataToSend = {
-      files:{image:req.files.image},
-      body:req.body
-    }
+    body: req.body,
+  };
+  if (req.files) {
+    const image = req.files.image;
+    uploadPath = "D:/SJSU/CMPE\ 273/splitwise/frontend/public/userImages/" + req.body.username + ".jpg";
+    image.mv(uploadPath, function (err) {
+      if (err) console.log(err);
+    });
+    dataToSend = {
+      path: uploadPath,
+      body: req.body,
+    };
   }
   kafka.make_request("register", dataToSend, (err, result) => {
     if (err) {
@@ -31,7 +37,6 @@ const register = (req, res) => {
     }
   });
 
-  
   // // const dbo = getDb();
   // let uploadPath = "";
   // if (req.files) {

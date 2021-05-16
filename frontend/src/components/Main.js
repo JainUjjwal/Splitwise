@@ -13,10 +13,10 @@ import History from "./History";
 import userAuth from "./UserAuth";
 //Create a Main Component
 class Main extends Component {
-  constructor() {
-    super();
-    this.authenticated = userAuth.isLoggedIn();
-  }
+  // constructor() {
+  //   super();
+  //   this.authenticated = userAuth.isLoggedIn();
+  // }
   render() {
     return (
       <div>
