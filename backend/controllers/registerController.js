@@ -29,7 +29,6 @@ const register = (req, res) => {
         msg: "System Error, Try Again.",
       });
     } else {
-      // console.log("Inside else");
       if (result.err) {
         res.status(203).send(result);
       }

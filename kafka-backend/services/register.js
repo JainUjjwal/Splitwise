@@ -7,7 +7,7 @@ const saltRounds = 10;
 
 const handle_request = async (msg, callback) => {
   console.log("this is msg")
-  console.log(msg)
+  console.log(msg.body)
   let uploadPath = "";
   console.log(msg)
   if (msg.path) {

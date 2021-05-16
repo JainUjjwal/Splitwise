@@ -13,7 +13,7 @@ const Profile = () => {
   const redux_userId = redux_user ? redux_user.userId : false;
   const redux_userInfo = useSelector((state) => state.profile);
   let redux_profile = redux_userInfo ? redux_userInfo.info : false;
-  let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : false;
+  let redux_imageURL = redux_userInfo ? redux_userInfo.imageUrl : '';
   // let [userInfo, setUserInfo] = useState(redux_profile);
   let [editStatus, setEditStatus] = useState(false);
   let [image, setImage] = useState();

@@ -49,7 +49,7 @@ const userReducer = (state = initialState, action) => {
 export const login = (payload) => async (dispatch, getState) => {
   axios.defaults.withCredentials = true;
   await axios
-    .post("http://localhost:3010/login", {
+    .post("http://3.101.73.198:3010/login", {
       username: payload.username,
       password: payload.password,
     })
