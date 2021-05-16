@@ -20,16 +20,14 @@ const ProfileReducer = (state = initialState, action) => {
 export const getProfile = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   const userId = localStorage.getItem("userId")
-  console.log(payload.userId)
   await axios
-    .get("http://3.101.73.198:3010/profile", {
+    .get("http://localhost:3010/profile", {
       params: { userId: payload.userId?payload.userId:userId },
       headers: {
         'Authorization': token,
       },
     })
     .then((res) => {
-      console.log(res.data);
       const url =
         res.data && res.data.imgPath && res.data.imgPath.length > 4
           ? "/userImages/" + res.data.username + ".jpg"
@@ -48,9 +46,9 @@ export const updateProfile = (payload) => async (dispatch, getState) => {
   formData.append("phoneNumber", payload.updatedData.phoneNumber);
   formData.append("lang", payload.updatedData.lang);
   formData.append("currency", payload.updatedData.currency);
-  formData.append("timezone", payload.updatedData.timezone);
+  formData.append("timezone", payload.updatedData.timeZone);
   await axios
-    .post("http://3.101.73.198:3010/profile", formData, {
+    .post("http://localhost:3010/profile", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         'Authorization': token,

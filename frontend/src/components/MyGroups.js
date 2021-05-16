@@ -48,7 +48,7 @@ const MyGroups = () => {
     redux_inviteList.splice(e.target.dataset.id, 1);
     setDone(!done);
     // Sending invite status to backend
-    // await  axios.post("http://3.101.73.198:3010/accInvStatus", { acceptedGroup }).then((response) => {
+    // await  axios.post("http://localhost:3010/accInvStatus", { acceptedGroup }).then((response) => {
     //   if (response.status === 269) {
     //     newGroupList.push(acceptedGroup);
     //     setGroupList(newGroupList);
@@ -69,7 +69,7 @@ const MyGroups = () => {
     );
     redux_inviteList.splice(e.target.dataset.id, 1);
     setDone(!done);
-    // await  axios.post("http://3.101.73.198:3010/rejInvStatus", { rejectedGroup }).then((response) => {
+    // await  axios.post("http://localhost:3010/rejInvStatus", { rejectedGroup }).then((response) => {
     //   if (response.status === 269) {
     //     let newInviteList = [...inviteList];
     //     newInviteList.splice(e.target.dataset.id, 1);

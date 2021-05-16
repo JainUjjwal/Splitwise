@@ -44,7 +44,7 @@ const Profile = () => {
       timeZone: document.getElementById("newtimezone").value,
       image: image,
     };
-    formData.append("userId", redux_userId);
+    formData.append("userId", localStorage.getItem('userId'));
     formData.append("image", image);
     formData.append("username", updatedData.username);
     formData.append("Fname", updatedData.Fname);
@@ -52,8 +52,9 @@ const Profile = () => {
     formData.append("lang", updatedData.lang);
     formData.append("currency", updatedData.currency);
     formData.append("timezone", updatedData.timeZone);
+    console.log(updatedData.timeZone)
     dispatch(
-      updateProfile({ redux_userId: redux_userId, updatedData: updatedData })
+      updateProfile({ redux_userId: localStorage.getItem('userId'), updatedData: updatedData })
     );
     setEditStatus(false);
   };
@@ -83,7 +84,7 @@ const Profile = () => {
             <div className="row">
               <div className="col">
                 <Image
-                  src={redux_imageURL.length>2 ? redux_imageURL : 'userImages/default.png'}
+                  src={redux_imageURL? redux_imageURL : 'userImages/default.png'}
                   alt="not found"
                   style={{
                     height: "100%",

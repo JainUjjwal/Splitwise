@@ -21,7 +21,7 @@ export const getDashboard = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
   const userId = localStorage.getItem('userId')
     await axios
-      .get("http://3.101.73.198:3010/dashboard", {
+      .get("http://localhost:3010/dashboard", {
         params: { userId: payload.userId?payload.userId:userId },
         headers: {
           'Authorization': token,
@@ -43,7 +43,7 @@ export const settle = (payload) => async (dispatch, getState) =>{
   const token = localStorage.getItem("id_token");
   const userId = payload.userId?payload.userId:localStorage.getItem("userId")
     await axios
-      .post("http://3.101.73.198:3010/settle", {
+      .post("http://localhost:3010/settle", {
         userId: userId,
         user2: payload.deletionId,
       },{headers: {

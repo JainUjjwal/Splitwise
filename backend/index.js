@@ -19,7 +19,7 @@ const passport = require('passport');
 
 app.use(
   cors({
-    origin: "http://3.101.73.198:3000",
+    origin: "http://localhost:3000",
     credentials: true,
     method: ["GET", "POST"],
   })
