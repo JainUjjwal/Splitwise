@@ -11,7 +11,7 @@ const fileUpload = require("express-fileupload");
 // const initDb = require("./mongoutil").initDb;
 const mongoose = require("mongoose");
 const passport = require("passport");
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, gql } = require("apollo-server-express");
 const {typeDefs} = require("./GraphQL/typeDefs")
 const {resolvers} = require('./GraphQL/resolvers') 
 
@@ -94,10 +94,13 @@ var options = {
   poolSize: 500,
   bufferMaxEntries: 0,
 };
+graphQL_server.start();
+graphQL_server.applyMiddleware({ app });
 mongoose.connect(uri, options).then(() => {
   app.listen(3010);
   console.log("Server Listening on port 3010");
-  graphQL_server.listen(4000).then(({url})=> console.log(`GQL server running on ${url}`))
+  console.log(`🚀 Server ready at http://localhost:3010${graphQL_server.graphqlPath}`)
+  // graphQL_server.listen(4000).then(({url})=> console.log(`GQL server running on ${url}`))
 });
 
 mongoose.set("useFindAndModify", false);

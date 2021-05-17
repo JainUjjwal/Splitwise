@@ -10,7 +10,7 @@ const resolvers = {
     },
     currentUser: async (parent, args, context, info) => {
       values = await users.findOne({ _id: args.userId }).then((res) => {
-        console.log(args.userId);
+          console.log(`fetched user information for ${args.userId}`)
         return res;
       });
       return values;

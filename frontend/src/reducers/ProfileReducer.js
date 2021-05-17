@@ -20,53 +20,57 @@ export const getProfile = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   const userId = localStorage.getItem("userId");
 
-  await axios
-    .get("http://localhost:3010/profile", {
-      params: { userId: payload.userId ? payload.userId : userId },
-      headers: {
-        Authorization: token,
-      },
-    })
-    .then((res) => {
-      const url =
-        res.data && res.data.imgPath && res.data.imgPath.length > 4
-          ? "/userImages/" + res.data.username + ".jpg"
-          : "/userImages/default.jpg";
-      dispatch(setProfile({ userInfo: res.data, imageUrl: url }));
-    });
-    let query = {query:` {
-      currentUser(userId:'${userId}'){
+  // await axios
+  //   .get("http://localhost:3010/profile", {
+  //     params: { userId: payload.userId ? payload.userId : userId },
+  //     headers: {
+  //       Authorization: token,
+  //     },
+  //   })
+  //   .then((res) => {
+  //     const url =
+  //       res.data && res.data.imgPath && res.data.imgPath.length > 4
+  //         ? "/userImages/" + res.data.username + ".jpg"
+  //         : "/userImages/default.jpg";
+  //     console.log(res.data);
+  //     dispatch(setProfile({ userInfo: res.data, imageUrl: url }));
+  //   });
+  let query = {
+    query: `
+    query{
+      currentUser(userId: "${userId}"){
         _id
         Fname
+        username
+        imgPath
         phoneNumber
         lang
         currency
         password
+        timeZone
       }
     }
-    `}
-  // await axios
-  //   .post("http://localhost:4000", query)
-  //   .then((result) => {
-  //     console.log(result.data);
-  //   });
-
-    fetch('http://localhost:4000', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ query: `
-    query { currentUser(userId:'${userId}'{
-      _id
-      Fname
-      phoneNumber
-      lang
-      currency
-      password
-    }}` 
-  }),
-})
-.then(res => res.json())
-.then(res => console.log(res.data));
+    `,
+  };
+  await axios
+    .post("http://localhost:3010/graphql", query, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((result) => {
+      const url =
+        result.data.data.currentUser &&
+        result.data.data.currentUser.imgPath &&
+        result.data.data.currentUser.imgPath.length > 4
+          ? "/userImages/" + result.data.data.currentUser.username + ".jpg"
+          : "/userImages/default.jpg";
+      console.log(result.data.data.currentUser);
+      dispatch(
+        setProfile({ userInfo: result.data.data.currentUser, imageUrl: url })
+      );
+      console.log(result.data.data);
+    });
 };
 
 export const updateProfile = (payload) => async (dispatch, getState) => {

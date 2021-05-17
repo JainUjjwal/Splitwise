@@ -2,7 +2,7 @@ const { gql } = require("apollo-server");
 
 const typeDefs = gql`
   input UserInput {
-    email: String
+    userId: String
   }
   type Query {
     currentUser(userId: String): user
