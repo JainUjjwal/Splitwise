@@ -92,7 +92,7 @@ const MyGroups = () => {
       ? listOfInvites.map((group, index) => (
           <Row className="pt-4" key={index}>
             <Col xs={9} className="border-right">
-              <span>{group.name}</span>
+              <span>{group.groupName}</span>
             </Col>
             <Col>
               <div className="btn-group mx2 ml-4">
@@ -161,7 +161,7 @@ const MyGroups = () => {
                 group.name.toLowerCase().search(searchTerm) > -1 ? (
                 <Row className="pt-4" key={index}>
                   <Col xs={9} className="border-right">
-                    <p>{group.name}</p>
+                    <p>{group.groupName}</p>
                   </Col>
                   <Col>
                     <div className="btn-group mx2 ml-5">

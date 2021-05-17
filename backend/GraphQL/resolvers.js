@@ -138,7 +138,65 @@ const resolvers = {
         });
       return values;
     },
+    getHistory: async (parents, args, context, info) => {
+        console.log(args)
+        const currentUser = args.userId
+        values2 = await groups.find({ "groupMembers.userId": currentUser }).then(async(result) => {
+            let sendData = await fetchFormattedTransactions(result, currentUser);
+            // console.log(sendData);
+            let newStore = sendData.newStore
+            let groupList = sendData.groupList
+            // res.status(200).send({ newStore, groupList });
+            return newStore
+          });
+          return values2
+    },
+    getGroupList: async(parents, args, context, info) =>{
+        console.log(args)
+        const currentUser = args.userId
+        values2 = await groups.find({ "groupMembers.userId": currentUser }).then(async(result) => {
+            let sendData = await fetchFormattedTransactions(result, currentUser);
+            // console.log(sendData);
+            let newStore = sendData.newStore
+            let groupList = sendData.groupList
+            // res.status(200).send({ newStore, groupList });
+            console.log(groupList)
+            return groupList
+          });
+          return values2
+    },
   },
 };
-
+const fetchFormattedTransactions = async (result, currentUser) => {
+    let newStore = [];
+    let groupList = [];
+    for (let j = 0; j < result.length; j++) {
+      if (!groupList.includes(result[j].groupName)) {
+        groupList.push(result[j].groupName);
+      }
+      await transactions.find(
+        { groupId: result[j]._id },
+        (err, transactionResult) => {
+          // EACH TRANSACTION BEING PUSHED GROUPWISE
+          for (let i = 0; i < transactionResult.length; i++) {
+            let entry = {
+              payer:
+                transactionResult[i].userId != currentUser
+                  ? transactionResult[i].Fname
+                  : "You",
+              payee: "john doe",
+              discription: transactionResult[i].discription,
+              amount: transactionResult[i].amount,
+              group: result[j].groupName,
+              status: transactionResult[i].userId != currentUser ? false : true,
+              timeStamp: transactionResult[i].createdAt,
+            };
+            newStore.push(entry);
+          } 
+        }
+      );
+    }
+    // console.log(newStore)
+    return {newStore,groupList}
+  };
 module.exports = { resolvers };

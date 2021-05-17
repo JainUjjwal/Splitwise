@@ -53,38 +53,85 @@ export const createGroup = (payload) => async (dispatch, getState) => {
 export const getInviteInfo = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
   const userId = localStorage.getItem("userId")
+  let query = {
+    query: `
+    query{
+      getInvites(userId: "${userId}"){
+        _id
+        groupName
+      }
+    }
+    `,
+  };
   await axios
-    .get("http://localhost:3010/mygroups", {
-      params: { userId: payload.userId?payload.userId:userId },
-      headers: {
-        'Authorization': token,
-      }
-    })
-    .then((res) => {
-      if (res.status === 201) {
-        console.log(res.data.inviteGroup);
-        dispatch(setInviteList({ ...payload, invites: res.data.inviteGroup }));
-      }
-      if (res.status === 101) {
-        console.log("Error in getting group info");
-      }
-    });
+  .post("http://localhost:3010/graphql", query, {
+    headers: {
+      Authorization: token,
+    },
+  }).then((result)=>{
+    console.log(result.data.data.getInvites)
+    if (result.status === 200) {
+      console.log('/////////////////')
+      console.log(result.data.data.getInvites);
+      dispatch(setInviteList({ ...payload, invites: result.data.data.getInvites }));
+    }
+  })
+  // await axios
+  //   .get("http://localhost:3010/mygroups", {
+  //     params: { userId: payload.userId?payload.userId:userId },
+  //     headers: {
+  //       'Authorization': token,
+  //     }
+  //   })
+  //   .then((res) => {
+  //     if (res.status === 201) {
+  //       console.log('/////////////////')
+  //       console.log(res.data.inviteGroup);
+  //       dispatch(setInviteList({ ...payload, invites: res.data.inviteGroup }));
+  //     }
+  //     if (res.status === 101) {
+  //       console.log("Error in getting group info");
+  //     }
+  //   });
 };
 
 export const getGroupInfo = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token")
   const userId = localStorage.getItem("userId")
-  await axios
-    .post("http://localhost:3010/mygroups", { userId: payload.userId?payload.userId:userId }, {headers: {
-      'Authorization': token,
-    }})
-    .then((res) => {
-      if (res.status === 201) {
-        console.log("get group info");
-        console.log(res.data.myGroups);
-        dispatch(setGroupList({ ...payload, groups: res.data.myGroups }));
+  let query = {
+    query: `
+    query{
+      getGroups(userId: "${userId}"){
+        _id
+        groupName
       }
-    });
+    }
+    `,
+  };
+  await axios
+  .post("http://localhost:3010/graphql", query, {
+    headers: {
+      Authorization: token,
+    },
+  }).then((result)=>{
+    console.log(result.data.data.getGroups)
+    if (result.status === 200) {
+      console.log('/////////////////')
+      console.log(result.data.data.getGroups);
+      dispatch(setGroupList({ ...payload, groups: result.data.data.getGroups }));
+    }
+  })
+  // await axios
+  //   .post("http://localhost:3010/mygroups", { userId: payload.userId?payload.userId:userId }, {headers: {
+  //     'Authorization': token,
+  //   }})
+  //   .then((res) => {
+  //     if (res.status === 201) {
+  //       console.log("get group info");
+  //       console.log(res.data.myGroups);
+  //       dispatch(setGroupList({ ...payload, groups: res.data.myGroups }));
+  //     }
+  //   });
 };
 
 // functions to handle group rejection or accept request

@@ -13,6 +13,8 @@ const typeDefs = gql`
     getGroup(groupId: String, userId:String):group
     getGroupPageMembers(groupId: String, userId: String):[groupPageMemberList]
     getGroupTransactions(groupId: String, userId: String):[transaction]
+    getHistory(userId: String):[historyTransaction]
+    getGroupList(userId: String):[String]
     hello: String
   }
   type users {
@@ -59,6 +61,18 @@ const typeDefs = gql`
       commentText: String
       Fname: String
       userId: String
+  }
+  type historyTransaction {
+      payer: String
+      payee: String
+      discription: String
+      amount: Float
+      group: String
+      status: Boolean
+      timeStam: String
+  }
+  type groupList {
+      name:[String]
   }
 `;
 

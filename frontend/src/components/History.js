@@ -20,9 +20,9 @@ const History = () => {
   let sortData;
 
   let [size, setSize] = useState(2);
-  console.log(size);
+  
   let number_of_pages = Math.round(redux_transactions.length / size);
-  console.log(number_of_pages);
+  
 
   let dispatch = useDispatch();
 
@@ -32,9 +32,7 @@ const History = () => {
   }, []);
 
   useEffect(() => {
-    console.log(redux_transactions);
     number_of_pages = Math.ceil(redux_transactions.length / size);
-    console.log("number of pages: " + number_of_pages);
     if (number_of_pages === 0) {
       setPageArray(["1"]);
     } else {
@@ -44,7 +42,6 @@ const History = () => {
       }
       setPageArray(newpageArray);
     }
-    console.log(pageArray);
     var i, j;
     let newtemparray = [];
     for (i = 0, j = redux_transactions.length; i < j; i += 2) {
@@ -154,7 +151,7 @@ const History = () => {
 
   return (
     <div className="container">
-      {redirectVar}
+      {/* {redirectVar} */}
       <div className="my-4">
         <h2>Transaction History</h2>
       </div>
@@ -231,8 +228,6 @@ const History = () => {
         <Pagination>
           {pageArray
             ? pageArray.map((value, index) => {
-                console.log("inside return page array updates to...");
-                console.log(pageArray);
                 return (
                   <Pagination.Item
                     id={index}
