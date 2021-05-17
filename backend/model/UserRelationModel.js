@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const UserRelation = mongoose.Schema({
-  user1: {type:Object, default:{userId: String, Fname: String}},
-  user2: {type:Object, default:{userId: String, Fname: String}},
+  user1: {type:mongoose.Schema.Types.ObjectId, ref:'users'},
+  user2: {type:mongoose.Schema.Types.ObjectId, ref:'users'},
   groupId: String,
   balance: Number,
 });

@@ -3,7 +3,6 @@ import { setProfile } from "../actions";
 const FormData = require("form-data");
 const initialState = null;
 
-
 const ProfileReducer = (state = initialState, action) => {
   switch (action.type) {
     case "setProfile":
@@ -19,12 +18,13 @@ const ProfileReducer = (state = initialState, action) => {
 
 export const getProfile = (payload) => async (dispatch, getState) => {
   const token = localStorage.getItem("id_token");
-  const userId = localStorage.getItem("userId")
+  const userId = localStorage.getItem("userId");
+
   await axios
     .get("http://localhost:3010/profile", {
-      params: { userId: payload.userId?payload.userId:userId },
+      params: { userId: payload.userId ? payload.userId : userId },
       headers: {
-        'Authorization': token,
+        Authorization: token,
       },
     })
     .then((res) => {
@@ -34,6 +34,39 @@ export const getProfile = (payload) => async (dispatch, getState) => {
           : "/userImages/default.jpg";
       dispatch(setProfile({ userInfo: res.data, imageUrl: url }));
     });
+    let query = {query:` {
+      currentUser(userId:'${userId}'){
+        _id
+        Fname
+        phoneNumber
+        lang
+        currency
+        password
+      }
+    }
+    `}
+  // await axios
+  //   .post("http://localhost:4000", query)
+  //   .then((result) => {
+  //     console.log(result.data);
+  //   });
+
+    fetch('http://localhost:4000', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ query: `
+    query { currentUser(userId:'${userId}'{
+      _id
+      Fname
+      phoneNumber
+      lang
+      currency
+      password
+    }}` 
+  }),
+})
+.then(res => res.json())
+.then(res => console.log(res.data));
 };
 
 export const updateProfile = (payload) => async (dispatch, getState) => {
@@ -51,7 +84,7 @@ export const updateProfile = (payload) => async (dispatch, getState) => {
     .post("http://localhost:3010/profile", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        'Authorization': token,
+        Authorization: token,
       },
     })
     .then((res, req) => {

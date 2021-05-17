@@ -5,17 +5,17 @@ const session = require("express-session");
 // const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
 // const db = require('./dbconnection');
 // app.set("view engine", "ejs");
 // const initDb = require("./mongoutil").initDb;
-const mongoose = require('mongoose');
-const passport = require('passport');
+const mongoose = require("mongoose");
+const passport = require("passport");
+const { ApolloServer, gql } = require("apollo-server");
+const {typeDefs} = require("./GraphQL/typeDefs")
+const {resolvers} = require('./GraphQL/resolvers') 
 
-// const mongoDBO = require('./mongoCon');
-// console.log(
-//   mongoDBO
-// );
+const graphQL_server = new ApolloServer({typeDefs, resolvers});
 
 app.use(
   cors({
@@ -46,27 +46,27 @@ app.use(express.json());
 // app.get("/", function (req, res) {
 //   //check if user session exits
 //   console.log('here');
-//   console.log(req.session.user);  
+//   console.log(req.session.user);
 //   if (req.session.user) {
 //     res.render("/dashboard");
 //   } else res.render("/login");
 // });
 
-require('./passportconfig')(passport);
+require("./passportconfig")(passport);
 
 // This will initialize the passport object on every request
 app.use(passport.initialize());
 
 // User Route
-const userRoute = require('./routes/UserRoutes'); 
+const userRoute = require("./routes/UserRoutes");
 app.use(userRoute);
 
 // dashboard route
-const dashboardRoute = require('./routes/DashboardRoute');
+const dashboardRoute = require("./routes/DashboardRoute");
 app.use(dashboardRoute);
 
 // My Groups route
-const myGroupsRoute = require('./routes/MyGroupsRoute');
+const myGroupsRoute = require("./routes/MyGroupsRoute");
 app.use(myGroupsRoute);
 
 //single Group Page route
@@ -74,29 +74,31 @@ const groupPageRoute = require("./routes/GroupPageRoute");
 app.use(groupPageRoute);
 
 //transacton history page route
-const HistoryPageRoute = require('./routes/HistoryPageRoute');
+const HistoryPageRoute = require("./routes/HistoryPageRoute");
 app.use(HistoryPageRoute);
 
 //Profile Page Route
-const ProfileRoute = require('./routes/ProfileRoute');
+const ProfileRoute = require("./routes/ProfileRoute");
 app.use(ProfileRoute);
 
 //Create Group Route
-const CreateGroupRoute = require('./routes/CreateGroupRoute');
+const CreateGroupRoute = require("./routes/CreateGroupRoute");
 app.use(CreateGroupRoute);
 
-
 //starting server on port 3001
-const uri = "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
+const uri =
+  "mongodb+srv://admin:rootadmin@splitdb.6smji.mongodb.net/Splitwise?retryWrites=true&w=majority";
 var options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   poolSize: 500,
-  bufferMaxEntries: 0
+  bufferMaxEntries: 0,
 };
-mongoose.connect(uri, options).then(()=>{ app.listen(3010);
-console.log("Server Listening on port 3010");
-})
+mongoose.connect(uri, options).then(() => {
+  app.listen(3010);
+  console.log("Server Listening on port 3010");
+  graphQL_server.listen(4000).then(({url})=> console.log(`GQL server running on ${url}`))
+});
 
-mongoose.set('useFindAndModify', false);
+mongoose.set("useFindAndModify", false);
 // })
