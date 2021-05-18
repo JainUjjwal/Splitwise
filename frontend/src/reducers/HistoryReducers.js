@@ -46,6 +46,7 @@ export const history = (payload) => async (dispatch, getState) => {
     }
     `,
   };
+  axios.defaults.withCredentials = false;
 
   const groupListQL = await axios.post(`${API_URL}/graphql`, query1, {
     headers: {

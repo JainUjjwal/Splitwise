@@ -1,17 +1,8 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
-  input UserInput {
-    username: String!
-    password: String!
-    Fname: String!
-    imgPath: String
-    phoneNumber: String
-    currency: String
-    timeZone: String
-  }
   type Query {
-    login(username: String, password: String): user
+    login(username: String, password: String): signUpReturn
     currentUser(userId: String): user
     userList(userId: String): [users]
     dashboardData(userId: String): [user]
@@ -22,7 +13,6 @@ const typeDefs = gql`
     getGroupTransactions(groupId: String, userId: String): [transaction]
     getHistory(userId: String): [historyTransaction]
     getGroupList(userId: String): [String]
-    hello: String
   }
   type Mutation {
     signUp(
@@ -122,6 +112,7 @@ const typeDefs = gql`
   }
   type signUpReturn {
     userId: String
+    Fname: String
     message: String
     token: String
     expiresIn: String

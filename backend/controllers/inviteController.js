@@ -4,7 +4,9 @@ const users = require("../model/UsersModel");
 const userRelation = require("../model/UserRelationModel");
 const accept = async (req, res) => {
   const currentUser = req.body.userId;
-  acceptedGroupId = req.body.acceptedGroup.id;
+  const acceptedGroupId = req.body.acceptedGroup._id;
+  console.log(req.body)
+  console.log(`This is the current user ${currentUser}`)
   await groups
     .findOneAndUpdate(
       { _id: acceptedGroupId, "groupMembers.userId": currentUser },
@@ -43,7 +45,7 @@ const accept = async (req, res) => {
 
 const reject = async (req, res) => {
   const currentUser = req.body.userId;
-  rejectedGroupId = req.body.rejectedGroup.id;
+  rejectedGroupId = req.body.rejectedGroup._id;
   await groups
     .findOneAndUpdate(
       { _id: rejectedGroupId },

@@ -7,8 +7,35 @@ const utils = require("../lib/utils");
 
 const resolvers = {
   Query: {
-    hello: () => {
-      return `hey sup ? `;
+    login: async (parent, args, context, info) => {
+      const { username, password } = args;
+      values = await users.find({ username: username }).then((result) => {
+        console.log(result);
+        if (result.length > 0) {
+          return bcrypt
+            .compare(password, result[0].password)
+            .then((response) => {
+              if (response) {
+                console.log("success");
+                console.log(result);
+                const tokenObject = utils.issueJWT(result[0]);
+                return {
+                    userId: result[0]._id,
+                    Fname: result[0].Fname,
+                    message: "Successful Login",
+                    success: true,
+                    token: tokenObject.token,
+                    expiresIn: tokenObject.expires,
+                  }
+              } else {
+                throw new Error("Username and Password combination incorrect");
+              }
+            });
+        } else {
+          throw new Error("User does not exist");
+        }
+      });
+      return values
     },
     currentUser: async (parent, args, context, info) => {
       values = await users.findOne({ _id: args.userId }).then((res) => {
@@ -176,7 +203,6 @@ const resolvers = {
     signUp: async (parent, args, context, info) => {
       let uploadPath = "";
       const saltRounds = 10;
-
       const { username, password, Fname, phoneNumber } = args;
       if (args.files) {
         const image = args.files.image;

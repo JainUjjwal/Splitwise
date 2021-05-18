@@ -8,7 +8,7 @@ import {
   setGroupList,
   setInviteList,
   setGroupPage,
-  setProfile
+  setProfile,
 } from "../actions";
 import { API_URL } from "../APIurl";
 const util = require("./utilities");
@@ -48,33 +48,62 @@ const userReducer = (state = initialState, action) => {
 };
 
 export const login = (payload) => async (dispatch, getState) => {
-  axios.defaults.withCredentials = true;
-  await axios
-    .post("http://localhost:3010/login", {
-      username: payload.username,
-      password: payload.password,
-    })
-    .then((response) => {
-      console.log("Status Code : ", response.status);
-      if (response.status === 200) {
-        util.setLocalStorage(response.data);
-        dispatch(
-          setLogin({
-            ...payload,
-            isLogged: true,
-            userId: response.data.userId,
-            Fname: response.data.Fname,
-          })
-        );
-      } else {
-        dispatch(setLogin({ err: response.data.message, isLogged: false }));
-        // return {err: response.data.message}
+  axios.defaults.withCredentials = false;
+  const query = {
+    query: `{
+      login(username:"${payload.username}", password:"${payload.password}"){
+        Fname
+        token
+        expiresIn
+        userId
+        message
       }
-    })
-    .catch((error) => {
-      const errorMessage = "Oops! Something went wrong!";
-      dispatch(setLogin({ err: errorMessage, isLogged: false }));
-    });
+    }`,
+  };
+  await axios.post(`${API_URL}/graphql`, query).then((response) => {
+    if (response.data.errors) {
+      dispatch(
+        setLogin({ err: response.data.errors[0].message, isLogged: false })
+      );
+    } else {
+      console.log(response);
+      util.setLocalStorage(response.data.data.login);
+      dispatch(
+        setLogin({
+          ...payload,
+          isLogged: true,
+          userId: response.data.data.login.userId,
+          Fname: response.data.data.login.Fname,
+        })
+      );
+    }
+  });
+  // await axios
+  //   .post("http://localhost:3010/login", {
+  //     username: payload.username,
+  //     password: payload.password,
+  //   })
+  //   .then((response) => {
+  //     console.log("Status Code : ", response.status);
+  //     if (response.status === 200) {
+  //       util.setLocalStorage(response.data);
+  //       dispatch(
+  //         setLogin({
+  //           ...payload,
+  //           isLogged: true,
+  //           userId: response.data.userId,
+  //           Fname: response.data.Fname,
+  //         })
+  //       );
+  //     } else {
+  //       dispatch(setLogin({ err: response.data.message, isLogged: false }));
+  //       // return {err: response.data.message}
+  //     }
+  //   })
+  //   .catch((error) => {
+  //     const errorMessage = "Oops! Something went wrong!";
+  //     dispatch(setLogin({ err: errorMessage, isLogged: false }));
+  //   });
 };
 
 export const register = (payload) => async (dispatch, getState) => {
@@ -85,24 +114,29 @@ export const register = (payload) => async (dispatch, getState) => {
   formData.append("Fname", payload.Fname);
   formData.append("phoneNumber", payload.phoneNumber);
   axios.defaults.withCredentials = true;
-  const mutation = {query:`
-  mutation {
-    signUp(username: "${payload.username}" password:"${payload.password}" Fname:"${payload.Fname}" phoneNumber:"${payload.phoneNumber}"){
+  const mutation = {
+    mutation: `
+  query {
+    signUp(username: "${payload.username}", 
+    password:"${payload.password}", 
+    Fname:"${payload.Fname}", 
+    phoneNumber:"${payload.phoneNumber}"){
       userId
       message
       token
       expiresIn
     }
   }
-  `}
-  console.log(mutation)
+  `,
+  };
+  console.log(mutation);
   axios.defaults.withCredentials = false;
-  await axios.post(`${API_URL}/graphql`, mutation).then((response)=>{
-    if(response.errors){
+  await axios.post(`${API_URL}/graphql`, mutation).then((response) => {
+    if (response.errors) {
       dispatch(setRegister({ err: "User Already Exists", isLogged: false }));
-    }else{
+    } else {
       console.log("success");
-      console.log(response.data.data.signUp)
+      console.log(response.data.data.signUp);
       util.setLocalStorage(response.data.data.signUp);
       dispatch(
         setRegister({
@@ -112,7 +146,7 @@ export const register = (payload) => async (dispatch, getState) => {
         })
       );
     }
-  })
+  });
   // await axios
   //   .post("http://localhost:3010/register", formData, {
   //     headers: {
@@ -121,15 +155,15 @@ export const register = (payload) => async (dispatch, getState) => {
   //   })
   //   .then((response) => {
   //     if (response.status === 202) {
-        // console.log("success");
-        // util.setLocalStorage(response);
-        // dispatch(
-        //   setRegister({
-        //     ...payload,
-        //     userId: response.data.userId,
-        //     isLogged: true,
-        //   })
-        // );
+  // console.log("success");
+  // util.setLocalStorage(response);
+  // dispatch(
+  //   setRegister({
+  //     ...payload,
+  //     userId: response.data.userId,
+  //     isLogged: true,
+  //   })
+  // );
   //     } else if (response.status === 203) {
   //       console.log(response.data);
   //       dispatch(setRegister({ err: "User Already Exists", isLogged: false }));

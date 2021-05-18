@@ -165,7 +165,7 @@ const MyGroups = () => {
                   </Col>
                   <Col>
                     <div className="btn-group mx2 ml-5">
-                      <Button data-id={group.id} onClick={groupRedirection}>
+                      <Button data-id={group._id} onClick={groupRedirection}>
                         View Group
                       </Button>
                     </div>

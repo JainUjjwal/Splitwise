@@ -63,6 +63,9 @@ export const getInviteInfo = (payload) => async (dispatch, getState) => {
     }
     `,
   };
+  axios.defaults.withCredentials = false;
+
+  
   await axios
   .post("http://localhost:3010/graphql", query, {
     headers: {
@@ -71,7 +74,6 @@ export const getInviteInfo = (payload) => async (dispatch, getState) => {
   }).then((result)=>{
     console.log(result.data.data.getInvites)
     if (result.status === 200) {
-      console.log('/////////////////')
       console.log(result.data.data.getInvites);
       dispatch(setInviteList({ ...payload, invites: result.data.data.getInvites }));
     }
@@ -108,6 +110,8 @@ export const getGroupInfo = (payload) => async (dispatch, getState) => {
     }
     `,
   };
+  axios.defaults.withCredentials = false;
+
   await axios
   .post("http://localhost:3010/graphql", query, {
     headers: {
@@ -140,6 +144,7 @@ export const groupRejection = (payload) => async (dispatch, getState) => {
   const userId = payload.userId?payload.userId:localStorage.getItem("userId");
   const token = localStorage.getItem("id_token");
   console.log(payload);
+  
   await axios
     .post("http://localhost:3010/rejInvStatus", { rejectedGroup, userId }, {headers: {
       'Authorization': token,
