@@ -2,6 +2,8 @@ const users = require("../model/UsersModel");
 const userRelation = require("../model/UserRelationModel");
 const groups = require("../model/GroupModel");
 const transactions = require("../model/TransactionModel");
+const bcrypt = require("bcrypt");
+const utils = require("../lib/utils");
 
 const resolvers = {
   Query: {
@@ -10,7 +12,7 @@ const resolvers = {
     },
     currentUser: async (parent, args, context, info) => {
       values = await users.findOne({ _id: args.userId }).then((res) => {
-          console.log(`fetched user information for ${args.userId}`)
+        console.log(`fetched user information for ${args.userId}`);
         return res;
       });
       return values;
@@ -139,64 +141,120 @@ const resolvers = {
       return values;
     },
     getHistory: async (parents, args, context, info) => {
-        console.log(args)
-        const currentUser = args.userId
-        values2 = await groups.find({ "groupMembers.userId": currentUser }).then(async(result) => {
-            let sendData = await fetchFormattedTransactions(result, currentUser);
-            // console.log(sendData);
-            let newStore = sendData.newStore
-            let groupList = sendData.groupList
-            // res.status(200).send({ newStore, groupList });
-            return newStore
-          });
-          return values2
+      console.log(args);
+      const currentUser = args.userId;
+      values2 = await groups
+        .find({ "groupMembers.userId": currentUser })
+        .then(async (result) => {
+          let sendData = await fetchFormattedTransactions(result, currentUser);
+          // console.log(sendData);
+          let newStore = sendData.newStore;
+          let groupList = sendData.groupList;
+          // res.status(200).send({ newStore, groupList });
+          return newStore;
+        });
+      return values2;
     },
-    getGroupList: async(parents, args, context, info) =>{
-        console.log(args)
-        const currentUser = args.userId
-        values2 = await groups.find({ "groupMembers.userId": currentUser }).then(async(result) => {
-            let sendData = await fetchFormattedTransactions(result, currentUser);
-            // console.log(sendData);
-            let newStore = sendData.newStore
-            let groupList = sendData.groupList
-            // res.status(200).send({ newStore, groupList });
-            console.log(groupList)
-            return groupList
-          });
-          return values2
+    getGroupList: async (parents, args, context, info) => {
+      console.log(args);
+      const currentUser = args.userId;
+      values2 = await groups
+        .find({ "groupMembers.userId": currentUser })
+        .then(async (result) => {
+          let sendData = await fetchFormattedTransactions(result, currentUser);
+          // console.log(sendData);
+          let newStore = sendData.newStore;
+          let groupList = sendData.groupList;
+          // res.status(200).send({ newStore, groupList });
+          console.log(groupList);
+          return groupList;
+        });
+      return values2;
+    },
+  },
+  Mutation: {
+    signUp: async (parent, args, context, info) => {
+      let uploadPath = "";
+      const saltRounds = 10;
+
+      const { username, password, Fname, phoneNumber } = args;
+      if (args.files) {
+        const image = args.files.image;
+        uploadPath =
+          "D:/SJSU/CMPE 273/splitwise/frontend/public/userImages/" +
+          username +
+          ".jpg";
+        image.mv(uploadPath, function (err) {
+          if (err) console.log(err);
+        });
+      }
+      values = await bcrypt.hash(password, saltRounds).then(async (hash) => {
+        const data = {
+          username: username,
+          Fname: Fname,
+          phoneNumber: phoneNumber,
+          lang: "English",
+          currency: "USD",
+          password: hash,
+          imgPath: uploadPath,
+          timeZone: "PST",
+        };
+        return await users.find({ username: username }).then( async (result) => {
+          // console.log(result);
+          if (result.length > 0) {
+            throw new Error("user already exists");
+          } else {
+            let newUser = new users(data);
+            return await newUser.save().then((result) => {
+            //   req.session.user = newUser;
+              const jwt = utils.issueJWT(result);
+              return {
+                userId: result._id,
+                message: "Sign up successful",
+                token: jwt.token,
+                expiresIn: jwt.expires,
+              };
+            });
+          }
+        });
+      });
+      console.log(values);
+      return values
     },
   },
 };
+
+// Helper function for fetching groupPage Data
 const fetchFormattedTransactions = async (result, currentUser) => {
-    let newStore = [];
-    let groupList = [];
-    for (let j = 0; j < result.length; j++) {
-      if (!groupList.includes(result[j].groupName)) {
-        groupList.push(result[j].groupName);
-      }
-      await transactions.find(
-        { groupId: result[j]._id },
-        (err, transactionResult) => {
-          // EACH TRANSACTION BEING PUSHED GROUPWISE
-          for (let i = 0; i < transactionResult.length; i++) {
-            let entry = {
-              payer:
-                transactionResult[i].userId != currentUser
-                  ? transactionResult[i].Fname
-                  : "You",
-              payee: "john doe",
-              discription: transactionResult[i].discription,
-              amount: transactionResult[i].amount,
-              group: result[j].groupName,
-              status: transactionResult[i].userId != currentUser ? false : true,
-              timeStamp: transactionResult[i].createdAt,
-            };
-            newStore.push(entry);
-          } 
-        }
-      );
+  let newStore = [];
+  let groupList = [];
+  for (let j = 0; j < result.length; j++) {
+    if (!groupList.includes(result[j].groupName)) {
+      groupList.push(result[j].groupName);
     }
-    // console.log(newStore)
-    return {newStore,groupList}
-  };
+    await transactions.find(
+      { groupId: result[j]._id },
+      (err, transactionResult) => {
+        // EACH TRANSACTION BEING PUSHED GROUPWISE
+        for (let i = 0; i < transactionResult.length; i++) {
+          let entry = {
+            payer:
+              transactionResult[i].userId != currentUser
+                ? transactionResult[i].Fname
+                : "You",
+            payee: "john doe",
+            discription: transactionResult[i].discription,
+            amount: transactionResult[i].amount,
+            group: result[j].groupName,
+            status: transactionResult[i].userId != currentUser ? false : true,
+            timeStamp: transactionResult[i].createdAt,
+          };
+          newStore.push(entry);
+        }
+      }
+    );
+  }
+  // console.log(newStore)
+  return { newStore, groupList };
+};
 module.exports = { resolvers };

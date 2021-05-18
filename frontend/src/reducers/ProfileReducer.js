@@ -1,6 +1,7 @@
 import axios from "axios";
 import { setProfile } from "../actions";
 const FormData = require("form-data");
+const {API_URL} = require('../APIurl')
 const initialState = null;
 
 const ProfileReducer = (state = initialState, action) => {
@@ -53,7 +54,7 @@ export const getProfile = (payload) => async (dispatch, getState) => {
     `,
   };
   await axios
-    .post("http://localhost:3010/graphql", query, {
+    .post(`${API_URL}/graphql`, query, {
       headers: {
         Authorization: token,
       },
@@ -85,7 +86,7 @@ export const updateProfile = (payload) => async (dispatch, getState) => {
   formData.append("currency", payload.updatedData.currency);
   formData.append("timezone", payload.updatedData.timeZone);
   await axios
-    .post("http://localhost:3010/profile", formData, {
+    .post(`${API_URL}/profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: token,

@@ -10,6 +10,7 @@ import {
   setGroupPage,
   setProfile
 } from "../actions";
+import { API_URL } from "../APIurl";
 const util = require("./utilities");
 const FormData = require("form-data");
 const initialState = null;
@@ -84,32 +85,60 @@ export const register = (payload) => async (dispatch, getState) => {
   formData.append("Fname", payload.Fname);
   formData.append("phoneNumber", payload.phoneNumber);
   axios.defaults.withCredentials = true;
-  await axios
-    .post("http://localhost:3010/register", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then((response) => {
-      if (response.status === 202) {
-        console.log("success");
-        util.setLocalStorage(response);
-        dispatch(
-          setRegister({
-            ...payload,
-            userId: response.data.userId,
-            isLogged: true,
-          })
-        );
-      } else if (response.status === 203) {
-        console.log(response.data);
-        dispatch(setRegister({ err: "User Already Exists", isLogged: false }));
-      } else {
-        console.log("Error on registation");
-        console.log(response.data.err);
-        dispatch(setRegister({ err: "Registration Error", isLogged: false }));
-      }
-    });
+  const mutation = {query:`
+  mutation {
+    signUp(username: "${payload.username}" password:"${payload.password}" Fname:"${payload.Fname}" phoneNumber:"${payload.phoneNumber}"){
+      userId
+      message
+      token
+      expiresIn
+    }
+  }
+  `}
+  console.log(mutation)
+  axios.defaults.withCredentials = false;
+  await axios.post(`${API_URL}/graphql`, mutation).then((response)=>{
+    if(response.errors){
+      dispatch(setRegister({ err: "User Already Exists", isLogged: false }));
+    }else{
+      console.log("success");
+      console.log(response.data.data.signUp)
+      util.setLocalStorage(response.data.data.signUp);
+      dispatch(
+        setRegister({
+          ...payload,
+          userId: response.data.data.signUp.userId,
+          isLogged: true,
+        })
+      );
+    }
+  })
+  // await axios
+  //   .post("http://localhost:3010/register", formData, {
+  //     headers: {
+  //       "Content-Type": "multipart/form-data",
+  //     },
+  //   })
+  //   .then((response) => {
+  //     if (response.status === 202) {
+        // console.log("success");
+        // util.setLocalStorage(response);
+        // dispatch(
+        //   setRegister({
+        //     ...payload,
+        //     userId: response.data.userId,
+        //     isLogged: true,
+        //   })
+        // );
+  //     } else if (response.status === 203) {
+  //       console.log(response.data);
+  //       dispatch(setRegister({ err: "User Already Exists", isLogged: false }));
+  //     } else {
+  //       console.log("Error on registation");
+  //       console.log(response.data.err);
+  //       dispatch(setRegister({ err: "Registration Error", isLogged: false }));
+  //     }
+  //   });
 };
 export const logout = (payload) => async (dispatch, getState) => {
   await axios.post("http://localhost:3010/logout").then((response) => {
