@@ -199,14 +199,14 @@ const resolvers = {
           imgPath: uploadPath,
           timeZone: "PST",
         };
-        return await users.find({ username: username }).then( async (result) => {
+        return await users.find({ username: username }).then(async (result) => {
           // console.log(result);
           if (result.length > 0) {
             throw new Error("user already exists");
           } else {
             let newUser = new users(data);
             return await newUser.save().then((result) => {
-            //   req.session.user = newUser;
+              //   req.session.user = newUser;
               const jwt = utils.issueJWT(result);
               return {
                 userId: result._id,
@@ -219,7 +219,90 @@ const resolvers = {
         });
       });
       console.log(values);
-      return values
+      return values;
+    },
+    AcceptInvite: async (parent, args, context, info) => {
+      const { userId, groupId } = args;
+      values = await groups
+        .findOneAndUpdate(
+          { _id: groupId, "groupMembers.userId": userId },
+          { $set: { "groupMembers.$.inviteStatus": 1 } },
+          { new: true }.then(async (updateResult) => {
+            console.log("\n\n\n Update Result");
+            console.log(updateResult);
+            let updateObj = [];
+            updateResult.groupMembers.forEach((member) => {
+              if (member.inviteStatus == 1 && member.userId != userId) {
+                updateObj.push({
+                  user1: userId,
+                  user2: member.userId,
+                  balance: 0,
+                  groupId: updateResult._id,
+                });
+                updateObj.push({
+                  user1: member.userId,
+                  user2: userId,
+                  balance: 0,
+                  groupId: updateResult._id,
+                });
+              }
+            });
+            updateObj.forEach(async (element) => {
+              let newUserRelation = new userRelation(element);
+              await newUserRelation.save().then(console.log("saved"));
+            });
+          })
+        )
+        .then(() => {
+          return true;
+        });
+      console.log(values);
+      return values;
+    },
+    RejectInvite: async (parent, args, context, info) => {
+      const { userId, groupId } = args;
+      values = await groups
+        .findOneAndUpdate(
+          { _id: groupId },
+          { $pull: { groupMembers: { userId: userId } } },
+          { new: true }
+        )
+        .then((result) => {
+          console.log(result);
+          return true;
+        })
+        .catch((err) => {
+          console.log(err);
+          throw new Error("Failed to reject invite");
+        });
+      return values;
+    },
+    addComment: async (parent, args, context, info) => {
+      const { userId, transactionId, Fname, comment } = args;
+      // values = await
+
+      // return values
+    },
+    createGroup: async (parent, args, context, info) => {
+      const { userId, groupId, memberList } = args;
+      // values = await
+
+      // return values
+    },
+    updateProfile: async (parent, args, context, info) => {
+      const {
+        _id,
+        Fname,
+        username,
+        phoneNumber,
+        imgPath,
+        lang,
+        timeZone,
+        currency,
+      } = args;
+      // values = await
+
+      // return values
     },
   },
 };

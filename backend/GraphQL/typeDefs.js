@@ -11,24 +11,57 @@ const typeDefs = gql`
     timeZone: String
   }
   type Query {
+    login(username: String, password: String): user
     currentUser(userId: String): user
     userList(userId: String): [users]
     dashboardData(userId: String): [user]
-    getGroups(userId: String):[group]
-    getInvites(userId: String):[group]
-    getGroup(groupId: String, userId:String):group
-    getGroupPageMembers(groupId: String, userId: String):[groupPageMemberList]
-    getGroupTransactions(groupId: String, userId: String):[transaction]
-    getHistory(userId: String):[historyTransaction]
-    getGroupList(userId: String):[String]
+    getGroups(userId: String): [group]
+    getInvites(userId: String): [group]
+    getGroup(groupId: String, userId: String): group
+    getGroupPageMembers(groupId: String, userId: String): [groupPageMemberList]
+    getGroupTransactions(groupId: String, userId: String): [transaction]
+    getHistory(userId: String): [historyTransaction]
+    getGroupList(userId: String): [String]
     hello: String
   }
   type Mutation {
-      signUp(username: String!,
-        password: String!,
-        Fname: String!,
-        imgPath: String,
-        phoneNumber: String): signUpReturn
+    signUp(
+      username: String!
+      password: String!
+      Fname: String!
+      imgPath: String
+      phoneNumber: String
+    ): signUpReturn
+    AcceptInvite(userId: String, groupId: String): Boolean
+    RejectInvite(userId: String, groupId: String): Boolean
+    addBill(
+      userId: String
+      groupId: String
+      amount: Float
+      discription: String
+    ): Boolean
+    addComment(
+      userId: String
+      Fname: String
+      transactionId: String
+      comment: String
+    ): Boolean
+    createGroup(
+      userId: String
+      groupName: String
+      memberList: [String]
+    ): Boolean
+    updateProfile(
+      _id: String!
+      username: String
+      Fname: String
+      imgPath: String
+      phoneNumber: String
+      lang: String
+      currency: String
+      timeZone: String
+      imgPath: String
+    ): user
   }
   type users {
     _id: String
@@ -52,13 +85,13 @@ const typeDefs = gql`
     groupMembers: [member]
   }
   type member {
-      userId: String,
-      inviteStatus: Int
+    userId: String
+    inviteStatus: Int
   }
   type groupPageMemberList {
-      name: String
-      amount: Float
-      status: Boolean
+    name: String
+    amount: Float
+    status: Boolean
   }
   type transaction {
     id: String
@@ -70,22 +103,22 @@ const typeDefs = gql`
     comments: [comment]
   }
   type comment {
-      timePosted: String
-      commentText: String
-      Fname: String
-      userId: String
+    timePosted: String
+    commentText: String
+    Fname: String
+    userId: String
   }
   type historyTransaction {
-      payer: String
-      payee: String
-      discription: String
-      amount: Float
-      group: String
-      status: Boolean
-      timeStam: String
+    payer: String
+    payee: String
+    discription: String
+    amount: Float
+    group: String
+    status: Boolean
+    timeStam: String
   }
   type groupList {
-      name:[String]
+    name: [String]
   }
   type signUpReturn {
     userId: String
