@@ -102,7 +102,7 @@ const Register = () => {
             style={user && user.regError ? true : false}
           />
           <FormInput
-            text="First Name"
+            text="Name"
             id="Fname"
             type="text"
             onChange={FnameHandler}
@@ -119,7 +119,7 @@ const Register = () => {
             style={user && user.regError ? true : false}
           />
           <div className="form-group col-sm">
-            <input type="file" className="custom-file-input form-comtrol" name = "profieImage" id="profileImage" accept='image/*' onChange={uploadImage} style={{display:'inline-block', width: '90%'}} required />
+            <input type="file" className="custom-file-input form-comtrol" name = "profieImage" id="profileImage" accept='image/*' onChange={uploadImage} style={{display:'inline-block', width: '90%'}} />
             <label className="custom-file-label" htmlFor="profileImage">
               Upload Image
             </label>

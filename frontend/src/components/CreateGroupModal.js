@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 import FormInput from "./FormInput";
+import { useDispatch, useSelector } from "react-redux";
+import {createGroup} from "../reducers/GroupReducer"
 const CreateGroupModal = (props) => {
+  const redux_user = useSelector((state)=>state.user)
+  const currentUser = redux_user?redux_user.userId:false
   const [groupName, setGroupName] = useState("");
   const [addedFriend, setAddedFriend] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [show, setShow] = useState(props.show);
+  const dispatch = useDispatch();
   const searchTermHandler = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
@@ -14,13 +18,16 @@ const CreateGroupModal = (props) => {
   const addFriend = (e) => {
     if (show) {
     } //just removing eslint warning for no-unused-vars
-    let key = parseInt(e.target.dataset.id);
+    let key = e.target.dataset.id
+    console.log(key)
     props.friends.forEach((element, index) => {
-      if (element.userId === key) {
+      
+      if (element._id === key) {
+        // console.log(element.userId)
         setAddedFriend([
           ...addedFriend,
           {
-            userId: element.userId,
+            userId: element._id,
             username: element.username,
             Fname: element.Fname,
           },
@@ -32,30 +39,25 @@ const CreateGroupModal = (props) => {
   };
 
   const removeFriend = (e) => {
-    let key = parseInt(e.target.dataset.id);
+    let key = e.target.dataset.id;
+    console.log(key)
     addedFriend.forEach((element, index) => {
+      console.log(element)
       if (element.userId === key) {
         props.friends.push(element);
         removeKey = index;
+        console.log("element: " + element)
+        console.log("removing key "+removeKey)
       }
     });
     let newList = [...addedFriend];
+    console.log("newList element to splice: "+ newList[removeKey])
     newList.splice(removeKey, 1);
     setAddedFriend(newList);
   };
   const createGroupFunction = async () => {
-    await axios
-      .post("http://18.144.25.88:3001/createGroup", { addedFriend, groupName })
-      .then((response) => {
-        //ADD CONFIRMATION ON GROUP CREATION
-        if (response.status === 202) {
-          alert(response.data.err);
-        }
-        if (response.status === 251) {
-          alert("Group created!");
-        }
-      });
-    setShow(props.hide);
+    dispatch(createGroup({addedFriend: addedFriend, groupName: groupName, currentUser: currentUser}))
+    setTimeout(closeModal(),2000);
   };
   const closeModal = () => {
     props.friends.push(...addedFriend);
@@ -75,6 +77,7 @@ const CreateGroupModal = (props) => {
           onChange={(e) => {
             setGroupName(e.target.value);
           }}
+          required = {true}
         />
         <FormInput
           id="GroupSearch"
@@ -84,13 +87,12 @@ const CreateGroupModal = (props) => {
         />
         {searchTerm.length > 0 && props.friends
           ? props.friends.map((friend, index) => {
-              return friend.Fname.search(searchTerm) > -1 ||
-                friend.username.search(searchTerm) > -1 ? (
+              return friend.username.search(searchTerm) > -1 ? (
                 <div className="mt-4" key={index}>
                   {friend.Fname} ({friend.username}){" "}
                   <Button
                     className="float-right"
-                    data-id={friend.userId}
+                    data-id={friend._id}
                     onClick={addFriend}
                   >
                     Add
@@ -105,6 +107,7 @@ const CreateGroupModal = (props) => {
           ? addedFriend.map((confirmed, index) => (
               <div className="mt-4" key={index}>
                 {confirmed.Fname} ({confirmed.username}){" "}
+                {console.log(confirmed)}
                 <Button
                   variant="danger"
                   className="float-right"
@@ -121,7 +124,7 @@ const CreateGroupModal = (props) => {
         <Button variant="secondary" onClick={closeModal}>
           Close
         </Button>
-        <Button variant="success" onClick={createGroupFunction}>
+        <Button variant="success" onClick={createGroupFunction} disabled={addedFriend.length>0 && groupName? false : true }>
           Create Group
         </Button>
       </Modal.Footer>

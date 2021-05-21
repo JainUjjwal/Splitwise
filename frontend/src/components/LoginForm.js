@@ -4,7 +4,7 @@ import SubmitButton from "./SubmitButton";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers";
 import { Link, Redirect } from "react-router-dom";
-
+const util = require("../reducers/utilities");
 //Login component
 const LoginForm = () => {
   var [username, setUsername] = useState("");
@@ -31,7 +31,8 @@ const LoginForm = () => {
     );
   };
   let redirectVar = null;
-  if (user ? user.isLogged : false) {
+  
+  if (util.isLoggedIn()) {
     redirectVar = <Redirect to="/dashboard" />;
   }
 

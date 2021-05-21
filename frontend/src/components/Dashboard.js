@@ -1,30 +1,34 @@
 import React, { useEffect, useState } from "react";
-// import SubmitButton from "./SubmitButton";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import axios from "axios";
 import CreateGroupModal from "./CreateGroupModal";
-// import Navbar from './Nav2';
-// import {selectUser} from "../features/userSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
+import { getDashboard, settle } from "../reducers/DashboardReducer";
+const util = require("../reducers/utilities");
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user);
   const username = user ? user.username : false;
+  const Fname = user ? user.Fname : localStorage.getItem('Fname');
   const userId = user ? user.userId : false;
-  const isLoggedIn = user ? user.isLogged : false;
+  // const isLoggedIn = user ? user.isLogged : false;
+  
+  // Dashboard Data getter
+  const dashboardData = useSelector((state)=>state.dashboard)
+  const redux_data = dashboardData? dashboardData.balance : false;
+  const redux_userList = dashboardData ? dashboardData.friendList : false;
+  
   var [openGroupDialog, setOpenGroupDialog] = useState(false);
   // DATABLOCK MUST BE UPDATED USING AXIOS CALL
   let [total, setTotal] = useState();
-  var [data, setData] = useState();
-  var [userList, setUserList] = useState();
   let [settleState, setSettleState] = useState();
+  const dispatch = useDispatch();
   // var userInfo;
   useEffect(() => {
     let credit = 0;
     let debt = 0;
-    if (data) {
-      Object.values(data).forEach((element) => {
+    if (redux_data) {
+      Object.values(redux_data).forEach((element) => {
         element.typeClass
           ? (credit += element.amount)
           : (debt += element.amount);
@@ -32,28 +36,13 @@ const Dashboard = () => {
     }
     setTotal({ ...total, credit: credit, debt: Math.abs(debt) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [redux_data]);
 
-  let getDashboardData = async () => {
-    await axios
-      .get("http://18.144.25.88:3001/dashboard", {
-        params: { username: username, userId:userId },
-      })
-      .then((res) => {
-        //Getting list of users to pass to create group modal
-        if (res.data.message === "User Info not found") {
-          console.log("no users in the database");
-        } else {
-          setUserList(res.data.userList);
-          setData(res.data.dataBlock);
-        }
-      });
-  };
   useEffect(() => {
+    dispatch(getDashboard({ username: username, userId: userId }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //axios call for updating total balance and settling balance list changes
-    getDashboardData();
   }, []);
+
   const openDialog = () => {
     setOpenGroupDialog(true);
   };
@@ -61,34 +50,27 @@ const Dashboard = () => {
   const dialogClose = () => {
     setOpenGroupDialog(false);
   };
+
   const settleHandler = async (e) => {
-    // let newData = {...data};
     let deletionId = e.target.dataset.id;
     // console.log(deletionId);
-    // delete newData[deletionId];
-
-    // // newData.splice(e.target.dataset.id, 1);
-    // setData(newData);
-    await  axios.post("http://18.144.25.88:3001/settle", { userId:userId, user2: deletionId }).then((res) => {
-      if (res.status === 200) {
-        setSettleState(true);
-        test();
-      }
-    });
+    dispatch(settle({userId: userId, deletionId: deletionId}))
+    setSettleState(true);
   };
   let redirectVar = null;
-  if (!isLoggedIn) {
+  if (!util.isLoggedIn()) {
     redirectVar = <Redirect to="/login" />;
   }
+
   return (
     <div>
       {redirectVar}
       <div className="mt-3 mx-auto">
-        <h3 className="container">Welcome {username}</h3>
+        <h3 className="container">Welcome {Fname}</h3>
         <CreateGroupModal
           show={openGroupDialog}
           hide={dialogClose}
-          friends={userList}
+          friends={redux_userList}
         />
         <Container className="mt-5">
           <div
@@ -163,8 +145,8 @@ const Dashboard = () => {
 
           {/* Rendering individual friend balanceList */}
 
-          {data
-            ? Object.entries(data).map(([id, friend], index) => (
+          {redux_data
+            ? Object.entries(redux_data).map(([id, friend], index) => (
                 <div id={id} className="pb-4" key={id}>
                   <Row className="text-center">
                     <Col id="name">{friend.Fname}</Col>

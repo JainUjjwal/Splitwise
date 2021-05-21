@@ -13,10 +13,10 @@ import History from "./History";
 import userAuth from "./UserAuth";
 //Create a Main Component
 class Main extends Component {
-  constructor() {
-    super();
-    this.authenticated = userAuth.isLoggedIn();
-  }
+  // constructor() {
+  //   super();
+  //   this.authenticated = userAuth.isLoggedIn();
+  // }
   render() {
     return (
       <div>
@@ -25,12 +25,9 @@ class Main extends Component {
           <Route path="/" exact component={Landing} />
           <Route path="/login" component={LoginForm} />
           <Route path="/register" component={Register} />
-          {/* <Route path="*" render={() => <Redirect to="/login" />} /> */}
           {/*Render Different Component based on Route*/}
 
           <Route path="/dashboard" component={Dashboard}/>
-
-          {/* <Route path="/dashboard" component={Dashboard} /> */}
           <Route path="/mygroups" component={MyGroups} />
           <Route path="/groupPage" component={GroupPage} />
           <Route path="/profile" component={Profile} />

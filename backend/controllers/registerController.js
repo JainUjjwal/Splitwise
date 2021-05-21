@@ -1,60 +1,64 @@
-const db = require("../dbconnection");
 const bcrypt = require("bcrypt");
+const users = require("../model/UsersModel");
+const utils = require("../lib/utils");
 // Bcrypt scrambler
 const saltRounds = 10;
+// const kafka = require("../kafka/client");
 
 const register = (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const Fname = req.body.Fname;
-  const num = req.body.phoneNumber;
-  console.log(num);
-  const image = req.files.image;
-  uploadPath ="/userImages/" + username + ".jpg";
-  image.mv(uploadPath, function (err) {
-    if (err) return res.status(500).send(err);
-  });
-  db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
-    (err, result) => {
+  let uploadPath = "";
+  if (req.files) {
+    const image = req.files.image;
+    uploadPath = "D:/SJSU/CMPE\ 273/splitwise/frontend/public/userImages/" + req.body.username + ".jpg";
+    image.mv(uploadPath, function (err) {
+      if (err) console.log(err);
+    });
+  }
+  // kafka.make_request("register", dataToSend, (err, result) => {
+  //   if (err) {
+  //     console.log("Inside err");
+  //     res.json({
+  //       status: "error",
+  //       msg: "System Error, Try Again.",
+  //     });
+  //   } else {
+  //     if (result.err) {
+  //       res.status(203).send(result);
+  //     }
+  //     res.status(202).json(result);
+  //   }
+  // });
+  bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
+    if (err) {
+      console.log(err);
+    }
+    const data = {
+      username: req.body.username,
+      Fname: req.body.Fname,
+      phoneNumber: req.body.phoneNumber,
+      lang: "English",
+      currency: "USD",
+      password: hash,
+      imgPath: uploadPath,
+      timeZone: "PST",
+    };
+    await users.find({ username: req.body.username }, async (err, result)=>{
       if (err) {
         console.log(err);
-      } else {
-        if (result.length > 0) {
-          res.status(203).send({ err: "user already exists" });
-        } else {
-          bcrypt.hash(password, saltRounds, (err, hash) => {
-            if (err) {
-              console.log(err);
-            }
-            console.log("right before db query " + num);
-            db.query(
-              "INSERT INTO users (username, Fname, phoneNumber, imgPath) VALUES (?,?,?,?); INSERT INTO passwordTable(pass) VALUES (?)",
-              [username, Fname, num, uploadPath, hash],
-              (err, result) => {
-                if (err) {
-                  console.log('oops 1');
-                  res.send({ err: err });
-                } else {
-                  console.log('yes 1')
-                  res.status(202).send({ message: "Sign up successful" });
-                }
-              }
-            );
-          });
-        }
       }
-    }
-  );
-// Setting session variable
-  db.query(
-    "select * from users where username = ?",
-    [username],
-    (err, result) => {
-      req.session.user = result;
-    }
-  );
+      // console.log(result);
+      if(result.length>0){
+        res.status(203).send({ err: "user already exists" });
+      }else{
+        let newUser = new users(data);
+        await newUser.save().then((result)=>{
+            req.session.user = newUser
+            const jwt = utils.issueJWT(result)
+            res.status(202).json({ userId:result._id, message: "Sign up successful", token:jwt.token, expiresIn: jwt.expires });
+        });
+      }
+    })
+  });
 };
 
 module.exports = { register };

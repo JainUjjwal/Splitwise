@@ -1,39 +1,57 @@
 const db = require("../dbconnection");
+const transactions = require("../model/TransactionModel");
+const groups = require("../model/GroupModel");
+// const dbpool = require('../dbconnection');
 
-const transactionList = (req, res) => {  
-  const currentUser = req.body.userId
-  // Database calls
-  db.query(
-    "SELECT users.Fname, transactionTable.transactionId, userTransaction.user1, userTransaction.user2, transactionTable.discription, userTransaction.amountPerPerson, groupTable.groupName, transactionTable.ts from transactionTable INNER JOIN userTransaction on userTransaction.transactionId = transactionTable.transactionId INNER JOIN groupTable on groupTable.groupId = transactionTable.groupId INNER JOIN users ON users.userId = userTransaction.user1 WHERE user1 = (?) OR user2 = (?) ORDER BY transactionTable.ts DESC;",
-    [currentUser, currentUser],
-    (err,result)=>{
-      if(err){
-        console.log(err);
-      }else{
-        let newStore = []
-        // console.log(result);
-        var uniqueTransactions = result.reduce((unique, o) => {
-          if (!unique.some((obj) => obj.transactionId === o.transactionId)) {
-            unique.push(o);
-          }
-          return unique;
-        }, []);
-        uniqueTransactions.forEach(element=>{
-          let entry = {payer: element.user1!=currentUser?element.Fname:'You', payee:element.user2, discription:element.discription, amount: element.amountPerPerson, group:element.groupName, status: element.user1!=currentUser?false:true, timeStamp: element.ts};
-          newStore.push(entry);
-        })
-        let groupList = [];
-        newStore.forEach((element) => {
-          if (!groupList.includes(element.group)) {
-            groupList.push(element.group);
-          }
-        });
-        res.send({ newStore, groupList });
-        // console.log(newStore);
-        console.log('sent transaction history');
-      }
+const testFunc = async (result, currentUser) => {
+  let newStore = [];
+  let groupList = [];
+  for (let j = 0; j < result.length; j++) {
+    if (!groupList.includes(result[j].groupName)) {
+      groupList.push(result[j].groupName);
     }
-  );
+    console.log("J: "+j)
+    await transactions.find(
+      { groupId: result[j]._id },
+      (err, transactionResult) => {
+        // EACH TRANSACTION BEING PUSHED GROUPWISE
+        for (let i = 0; i < transactionResult.length; i++) {
+          let entry = {
+            payer:
+              transactionResult[i].userId != currentUser
+                ? transactionResult[i].Fname
+                : "You",
+            payee: "john doe",
+            discription: transactionResult[i].discription,
+            amount: transactionResult[i].amount,
+            group: result[j].groupName,
+            status: transactionResult[i].userId != currentUser ? false : true,
+            timeStamp: transactionResult[i].createdAt,
+          };
+          newStore.push(entry);
+        } 
+      }
+    );
+  }
+  console.log(newStore)
+  return {newStore,groupList}
+};
+
+const transactionList = async (req, res) => {
+  const currentUser = req.body.userId;
+  let groupList = [];
+  let newStore = [];
+  groups.find({ "groupMembers.userId": currentUser }, async (err, result) => {
+    // console.log("we have groups");
+    // console.log(result);
+    let sendData = await testFunc(result, currentUser);
+    console.log("WE HAVE X");
+    console.log(sendData);
+    let newStore = sendData.newStore
+    let groupList = sendData.groupList
+    res.status(200).send({ newStore, groupList });
+  });
+  // Database calls
 };
 
 module.exports = { transactionList };

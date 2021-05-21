@@ -1,41 +1,66 @@
-const db = require("../dbconnection");
+// const db = require("../dbconnection");
 const bcrypt = require("bcrypt");
+const utils = require("../lib/utils");
+// const kafka = require("../kafka/client");
+const users = require('../model/UsersModel')
 
-
-const login_user_post = (req, res) => {
+const login_user_post = async (req, res) => {
+  // kafka.make_request("login", req.body, (err, result) => {
+  //   if (err) {
+  //     console.log("Inside err");
+  //     res.json({
+  //       status: "error",
+  //       msg: "System Error, Try Again.",
+  //     });
+  //   } else {
+  //     // console.log("Inside else");
+  //     if (result.err) {
+  //       res.status(250).send({
+  //         message: "Username and Password combination incorrect.",
+  //       });
+  //     res.end("Login unsuccessful");
+  //     }else{
+  //       res.status(200).send(result);
+  //       res.end("Login Successful");
+  //     }
+      
+  //   }
+  // });
   const username = req.body.username;
   const password = req.body.password;
-  db.query(
-    "SELECT * FROM users INNER JOIN passwordTable ON users.userId = passwordTable.userId WHERE username = ?",
-    username,
-    (err, result) => {
-      if (err) {
-        res.send({ err: err });
-      }
-      if (result.length > 0) {
-        bcrypt.compare(password, result[0].pass, (error, response) => {
-          if (response) {
-            req.session.user = result[0];
-            // res.writeHead(200, {
-            //   "Content-Type": "text/plain",
-            // })
-            res.send({userId: result[0].userId,message:"Successful Login"});
-            res.end("Login Successful");
-            
-          } else {
-            res.status(250).send({
-              message: "Username and Password combination incorrect.",
-            });
-          }
-        });
-      } else {
-        res
-          .status(252)
-          .send({ message: "Username and Password combination incorrect." });
-      }
+  await users.find({ username: username }, (err, result) => {
+    console.log(result)
+    if (result.length>0) {
+      bcrypt.compare(password, result[0].password, (error, response) => {
+        if (response) {
+          console.log("success");
+          req.session.user = result;
+          // res.writeHead(200, {
+          //   "Content-Type": "text/plain",
+          // })
+          console.log(result);
+          const tokenObject = utils.issueJWT(result[0]);
+          res.status(200).send({
+            userId: result[0]._id,
+            Fname: result[0].Fname,
+            message: "Successful Login",
+            success: true,
+            token: tokenObject.token,
+            expiresIn: tokenObject.expires,
+          });
+          res.end("Login Successful");
+        } else {
+          res.status(250).send({
+            message: "Username and Password combination incorrect.",
+          });
+        }
+      });
+    } else {
+      res
+        .status(252)
+        .send({ message: "Username and Password combination incorrect." });
     }
-  );
-  // console.log(req.session.user);
+  });
 };
 
 const login_user_get = (req, res) => {

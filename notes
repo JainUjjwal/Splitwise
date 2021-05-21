@@ -67,6 +67,84 @@ Settle up.                                                          #DONE
 Leave Group.
 
 
+MONGODB
 
-Jmeter ----
-jdbc:mysql://splitwise.cdastitva5m4.us-east-2.rds.amazonaws.com:3306/split
+Collections 
+
+users{
+    userId: $obj
+    username: string
+    Fname: string
+    phoneNumber: string
+    lang: string
+    currency: string
+    password: string
+    imgPath: string
+}
+
+
+
+userInteraction{
+     user 1: [
+        {
+            userId: string
+            balance: float
+            groupId: 
+        }
+        {
+            userId: string
+            balance: float
+            groupId: 
+        }
+    ]
+}
+
+groups{
+    groupId: $obj,
+    groupName: string,
+    groupImage: string,
+    groupMembers:[
+        {
+            userId: string, 
+            inviteStatus: 0
+        }
+        {
+            userId: string, 
+            inviteStatus: 0
+        }
+        {
+            userId: string, 
+            inviteStatus: 0
+        }
+    ]
+}
+
+transactions{
+    transactionId: $obj,
+    userId: string,
+    groupId: string,
+    amount: float,
+    discription: string,
+    timeStamp: time,
+    comments: [
+        {
+            commentId: int 
+            commentText: string
+        }
+        {
+            commentId: int 
+            commentText: string
+        }
+    ]
+}
+
+
+
+.\kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+
+.\kafka-topics.bat --list --zookeeper localhost:2181
+
+
+.\kafka-server-start.bat ..\..\config\server.properties 
+
+.\zookeeper-server-start.bat ..\..\config\zookeeper.properties

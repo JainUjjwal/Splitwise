@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import AddBillModal from "./AddBillModal";
 import { Button, Row, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redirect, useHistory } from "react-router-dom";
+import {
+  editGroupName,
+  getGroupPageInfo,
+  addExpense,
+  leaveGroup,
+  sendComment,
+} from "../reducers/GroupPageReducer";
+import CommentModal from "./CommentModal";
+const util = require("../reducers/utilities");
+
 const GroupPage = (param) => {
   const history = useHistory();
   const user = useSelector((state) => state.user);
-  const currentUser = user?user.userId:false;
-  let [groupInfo, setGroupInfo] = useState();
+  const currentUser = user ? user.userId : localStorage.getItem('userId');
+  const userFname = user ? user.Fname : localStorage.getItem('Fname');
+  const redux_groupPage = useSelector((state) => state.groupPage);
+  const redux_groupInfo = redux_groupPage ? redux_groupPage.groupInfo : false;
+  const redux_data = redux_groupPage ? redux_groupPage.data : false;
+  let [commentState, setCommentState] = useState(false);
+  let [transactionID, setTransactionID] = useState('');
   let [openBillDialog, setOpenBillDialog] = useState(false);
   let [editStatus, setEditStatus] = useState(false);
-  let [data, setData] = useState();
+  let [commentData, setCommentData] = useState({commentText:"failed to load information"});
+  const dispatch = useDispatch();
   var searchParams = new URLSearchParams(param.location.search);
-  const dataSetter = async () => {
-    await axios
-      .post("http://18.144.25.88:3001/groupPage", {
-        groupID: searchParams.get("id"),
-        userId: currentUser
-      })
-      .then((response) => {
-        setGroupInfo(response.data.dummyInfo);
-        setData(response.data.transactionList);
-      });
-  };
+  const groupId = searchParams.get("id");
   useEffect(() => {
-    dataSetter();
+    // dataSetter();
+    dispatch(getGroupPageInfo({ userId: currentUser, groupID: groupId }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -34,84 +40,101 @@ const GroupPage = (param) => {
   };
   const dialogClose = () => {
     setOpenBillDialog(false);
+    setCommentState(false);
+    setCommentData({commentText:"failed to load information"})
   };
   const addBill = async (newDiscription, newAmount) => {
-    await axios
-      .post("http://18.144.25.88:3001/addBill", {
-        amount: newAmount,
-        discription: newDiscription,
-        groupId: searchParams.get("id"),
-        userId: currentUser
+    dispatch(
+      addExpense({
+        Fname: userFname,
+        newAmount: newAmount,
+        newDiscription: newDiscription,
+        currentUser: currentUser,
+        groupId: groupId,
       })
-      .then((response) => {
-        console.log(response);
-      });
-    let newdata = [...data];
-    newdata.push({
-      discription: newDiscription,
-      amount: newAmount,
-      typeClass: true,
+    ).then(() => {
+      dialogClose();
     });
-    setData(newdata);
-    dialogClose();
-    dataSetter();
   };
-
-  //Redirection to login if redux state not set
   
-  const isLoggedIn = user ? user.isLogged : false;
-  let redirectVar = null;
-  if (!isLoggedIn) {
-    redirectVar = <Redirect to="/login" />;
-  }
-
   const LeaveGroupHandler = async () => {
-    const groupId = searchParams.get("id");
-    await axios
-      .post("http://18.144.25.88:3001/leaveGroup", { groupId: groupId, userId: currentUser })
-      .then((response) => {
-        if (response.status === 201) {
-          console.log(response);
-          history.push("/mygroups");
-          setGroupInfo("");
-        }
-        if (response.status === 202) {
-          alert(response.data.message);
-        }
-      });
+    dispatch(leaveGroup({ currentUser: currentUser, groupId: groupId })).then(
+      () => {
+        history.push("/mygroups");
+      }
+    );
   };
 
   const saveGroupName = async () => {
-    const groupId = searchParams.get("id");
     const groupName = document.getElementById("newGroupName").value;
-    await axios
-      .post("http://18.144.25.88:3001/updateGroup", {
-        groupId: groupId,
+    dispatch(
+      editGroupName({
+        currentUser: currentUser,
         groupName: groupName,
-        userId: currentUser
+        groupId: groupId,
       })
-      .then((response) => {
-        if (response.status === 201) {
-          setEditStatus(false);
-          dataSetter();
-        }
-      });
+    ).then(() => {
+      setEditStatus(false);
+    });
   };
 
   const editGroup = () => {
     setEditStatus(true);
   };
-
+  const addComment = (comment, id) =>{
+    dispatch(
+      sendComment({
+        groupId: groupId,
+        transactionID: id,
+        currentUser: currentUser,
+        Fname: userFname,
+        comment: comment,
+      })
+    ).then(()=>{
+      // let data_to_send = {target:{dataset:{id:transactionID}}}
+      // OpenCommentModal(data_to_send)
+      // console.log(data_to_send)
+      // dialogClose();
+    });
+  }
+  const OpenCommentModal = (e) =>{
+    e.preventDefault()
+    console.log(e.target.dataset.id)
+    if(e.target.dataset.id){
+      console.log('localstore set')
+      localStorage.setItem('TransactionId', e.target.dataset.id)
+    }else{
+      console.log('failed to set localstore')
+      localStorage.setItem('TransactionId', e.target.dataset.id)
+    }
+    setTransactionID( e.target.dataset.id)
+    // console.log(e.target.dataset.comments)
+    redux_data.forEach(element=>{
+      if(element.id === e.target.dataset.id){
+        if(!element.comments){
+          setCommentData([{commentText:'No comments on this transaction.'}])
+        }else{
+          setCommentData(element.comments)
+        }
+        
+      }
+    })
+    setCommentState(true)
+  }
+  //Redirection to login if localstorage token is not set
+  // const isLoggedIn = user ? user.isLogged : false;
+  let redirectVar = null;
+  if (!util.isLoggedIn()) {
+    redirectVar = <Redirect to="/login" />;
+  }
   return (
     <div className="container-fluid">
       {redirectVar}
       <div className="row">
-        {/* DISPLAYING AMOUNT FOR EACH GROUP MEMBER */}
-        {/* ######################### */}
         <div className="col mt-4">
           <h3 className="">User Balance</h3>
-          {groupInfo
-            ? groupInfo.members.map((member, index) => (
+          {redux_groupInfo
+            ? redux_groupInfo.members.map((member, index) => (
                 <div className="my-4" key={index}>
                   {member.name} :{" "}
                   <span
@@ -131,7 +154,7 @@ const GroupPage = (param) => {
             show={openBillDialog}
             hide={dialogClose}
             onBillSubmit={addBill}
-            groupID={searchParams.get("id")}
+            groupID={groupId}
           />
           <div className="my-4">
             {editStatus ? (
@@ -139,18 +162,23 @@ const GroupPage = (param) => {
                 <input
                   type="text"
                   id="newGroupName"
-                  defaultValue={groupInfo ? groupInfo.groupName : ""}
+                  defaultValue={
+                    redux_groupInfo ? redux_groupInfo.groupName : ""
+                  }
                 ></input>
               </div>
             ) : (
               <div>
-                <h2>{groupInfo ? groupInfo.groupName : ""}</h2>
+                <h2>{redux_groupInfo ? redux_groupInfo.groupName : ""}</h2>
               </div>
             )}
-            {/* <h2>{groupInfo ? groupInfo.groupName : ""}</h2> */}
           </div>
           <div className="btn-group mx2">
-            <Button variant="success" onClick={BillDialogOpen}>
+            <Button
+              variant="success"
+              onClick={BillDialogOpen}
+              disabled={editStatus}
+            >
               Add Expense
             </Button>
             {editStatus ? (
@@ -165,7 +193,11 @@ const GroupPage = (param) => {
             ) : (
               <Button onClick={editGroup}>Edit Group</Button>
             )}
-            <Button variant="danger" onClick={LeaveGroupHandler}>
+            <Button
+              variant="danger"
+              onClick={LeaveGroupHandler}
+              disabled={editStatus}
+            >
               Leave Group
             </Button>
           </div>
@@ -174,27 +206,40 @@ const GroupPage = (param) => {
               <Col xs={9} className="border-right">
                 <b>Description</b>
               </Col>
-              <Col>Total Amount</Col>
+              <Col className="border-right">Total Amount</Col>
+              <Col>Comments</Col>
             </Row>
           </div>
-          {data
-            ? data.map((friend, index) => (
+          {redux_data
+            ? redux_data.map((friend, index) => (
                 <div className="pt-4" key={index}>
                   <Row>
                     <Col xs={9} className="border-right">
-                      <b>{friend.discription}</b> paid by <b><i>{friend.Fname}</i></b> at <span style={{color:'grey'}}>{friend.ts}</span>
+                      <b>{friend.discription}</b> paid by{" "}
+                      <b>
+                        <i>{friend.Fname}</i>
+                      </b>{" "}
+                      at <span style={{ color: "grey" }}>{friend.ts}</span>
                     </Col>
                     <Col
+                      className="border-right"
                       style={
                         friend.typeClass ? { color: "green" } : { color: "red" }
                       }
                     >
                       ${friend.amount}
                     </Col>
+                    <Col>
+                      <button type="button" className="btn btn-secondary" onClick = {OpenCommentModal} data-id = {friend.id}>
+                      <div className="bi bi-chat-left-quote" data-id = {friend.id}></div>
+                      </button>
+                      {/* {console.log("checking")} {console.log(friend.comments)} */}
+                    </Col>
                   </Row>
                 </div>
               ))
             : ""}
+            <CommentModal show={commentState} hide= {dialogClose} userId = {currentUser} Fname = {userFname} id= {transactionID} groupId = {groupId} comments={commentData} sendComment={addComment} />
         </div>
       </div>
     </div>
